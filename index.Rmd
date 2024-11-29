@@ -1,0 +1,26 @@
+---
+title: "个人课程网站"
+author: "梁丹"
+date: "2024-11-28"
+output: 
+  html_document:
+    number_sections: true
+  css: nice.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 课程目录  
+1. [定量研究方法](./analyr/index.html)  
+1. [社会统计学]()  
+1. [社会科学研究方法]()  
+1. [环境政策分析]()  
+1. [资源与环境政策]()  
+
+
+  
+  
+  
+    
