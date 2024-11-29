@@ -1,6 +1,6 @@
 ---
 title: "调节效应、中介效应和结构方程"
-author: Dan Liang
+author: 
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:
@@ -10,7 +10,7 @@ output:
       collapsed: false
       smooth_scroll: false
     number_sections: true
-    css: "nice.css" 
+    css: "../../css/styles.css" 
 
 ---
 

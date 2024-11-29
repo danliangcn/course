@@ -1,29 +1,31 @@
 ---
 title: "定量研究方法"
-date: "2024-11-28"
+author: ""
+date: "`r Sys.Date()`"
 output: 
-  html_document:
-    number_sections: true
-  css: nice.css
+  prettydoc::html_pretty:
+    theme: architect
+    toc: no
+    number_sections: false
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### 统计分析与R语言应用部分  
-1. [课程介绍](./lecture1/introduction.html)
-1. [R语言基本设置与操作](./lecture2/rintro.html)  
-1. [一般统计方法的操作](./lecture3/basicstats.html)  
-1. [线性回归分析](./lecture4/lregress.html)  
-1. [logstic回归](./lecture5/logitreg.html)  
-1. [广义线性模型](./lecture6/glm.html)  
-1. [调节效应、中介效应与结构方程](./lecture7/sem.html)  
+## 统计分析与R语言应用部分  
+### [课程介绍](./lecture1/introduction.html)
+### [R语言基本设置与操作](./lecture2/rintro.html)  
+### [一般统计方法的操作](./lecture3/basicstats.html)  
+### [线性回归分析](./lecture4/lregress.html)  
+### [logstic回归](./lecture5/logitreg.html)  
+### [广义线性模型](./lecture6/glm.html)  
+### [调节效应、中介效应与结构方程](./lecture7/sem.html)  
   
   
     
   
     
-### 作业  
+## 作业  
 1. [R语言基本设置与一般统计方法作业](./analyr/assignment/assignment1.html)  
 1. [线性回归分析作业](./analyr/assignment/assignment2.html)  
