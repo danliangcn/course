@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### [logstic回归](./lecture5/logitreg.html)  
 ### [广义线性模型](./lecture6/glm.html)  
 ### [调节效应、中介效应与结构方程](./lecture7/sem.html)  
+### [网页爬取与机器学习](./lecture8/rapplication.html)
   
   
     
