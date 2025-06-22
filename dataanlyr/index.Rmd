@@ -1,5 +1,5 @@
 ---
-title: "定量研究方法"
+title: "数据分析与R语言应用"
 author: ""
 date: "`r Sys.Date()`"
 output: 
@@ -24,9 +24,3 @@ knitr::opts_chunk$set(echo = TRUE)
 ### [网页爬取与机器学习](./lecture8/rapplication.html)
   
   
-    
-  
-    
-## 作业  
-1. [R语言基本设置与一般统计方法作业](./analyr/assignment/assignment1.html)  
-1. [线性回归分析作业](./analyr/assignment/assignment2.html)  
