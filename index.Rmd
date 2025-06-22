@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## 课程目录  
-### [数据分析与R语言应用](./dataanalyr/index.html)  
+### [数据分析与R语言应用](./dataanlyr/index.html)  
 ### [定量研究方法]()  
 ### [社会统计学]()  
 ### [社会科学研究方法]()  
