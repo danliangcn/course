@@ -23,4 +23,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ### [调节效应、中介效应与结构方程](./lecture7/sem.html)  
 ### [网页爬取与机器学习](./lecture8/rapplication.html)
   
-  
+## 课堂练习  
+1. [R语言基本设置与一般统计方法练习](./assignment/exercise1.html)  
+1. [线性回归分析练习](./assignment)  
