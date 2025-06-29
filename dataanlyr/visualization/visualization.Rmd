@@ -78,8 +78,8 @@ cgss <- read_sav("cgss2015subset.sav")
 |dplyr	|mutate    |转换或重新编码变量        |
 |dplyr	|summarize |汇总数据                  |
 |dplyr	|group_by	 |识别需要进一步处理的子组  |
-|tidy 	|gather	   |将宽格式数据集转换为长格式|
-|tidy	  |spread    |将长格式数据集转换为宽格式|
+|tidyr 	|gather	   |将宽格式数据集转换为长格式|
+|tidyr	|spread    |将长格式数据集转换为宽格式|
   
 
 #### 选择变量  
