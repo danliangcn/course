@@ -380,7 +380,7 @@ color = sex选项位于aes函数中，将变量sex映射到图形的视觉特征
 
 - 先解决中文支持的问题  
 
-```{r message=FALSE}
+```{r message=FALSE, eval=(Sys.info()["sysname"] == "Darwin")}
 library(showtext)
 library(sysfonts)
 
@@ -836,13 +836,7 @@ ggplot(cgss, aes(x = region, fill = health)) +
   theme_minimal()
 ```
 
-
-
-在自定义图表部分中更详细地讨论了这些功能中的每一个（参见第11节）。
-
-接下来，让我们为每个细分添加百分比标签。首先，我们将创建一个包含必要标签的摘要数据集。
-
-
+  
 ### 两个尺度变量  
 两个尺度变量之间的关系通常使用散点图和折线图来显示。
 
