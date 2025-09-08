@@ -1,0 +1,2337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2019-07-04 四 17:25 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>线性回归</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="厦门大学公共事务学院" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">线性回归</h1>
+
+
+<div id="outline-container-org1bec9dd" class="outline-2">
+<h2 id="org1bec9dd"><span class="section-number-2">1</span> 线性回归基础</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+
+<div id="outline-container-org209e729" class="outline-3">
+<h3 id="org209e729"><span class="section-number-3">1.1</span> R语言的list对象</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+list对象可以用来“包裹”完全不同类型的变量对象，甚至可以是list对象，可以方便地将不同类型的参数传递给函数，或者获取一些不同类型对象组成的结果。
+</p>
+<div class="org-src-container">
+<pre class="src src-R">mylist <span style="color: #ce537a; font-weight: bold;">&lt;-</span> list(a=1, b=c(1,2), c=<span style="color: #2d9574;">"hello"</span>)
+mylist$a
+mylist$b
+mylist$c
+mylist[3]
+mylist[[<span style="color: #2d9574;">"c"</span>]]
+</pre>
+</div>
+
+<pre class="example">
+
+[1] 1
+
+[1] 1 2
+
+[1] "hello"
+
+$c
+[1] "hello"
+
+[1] "hello"
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org52ccfaa" class="outline-3">
+<h3 id="org52ccfaa"><span class="section-number-3">1.2</span> lm()函数的用法</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+先来一个假想的例子
+</p>
+<div class="org-src-container">
+<pre class="src src-R">x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 1:100
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 3*x + rnorm(100)
+res <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(y~x)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#22238;&#24402;&#32467;&#26524;&#27719;&#24635;</span>
+summary(res)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = y ~ x)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.30447 -0.61125  0.03239  0.58853  2.09624 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.309225   0.190754   1.621    0.108    
+x           2.996253   0.003279 913.669   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.9466 on 98 degrees of freedom
+Multiple R-squared:  0.9999,	Adjusted R-squared:  0.9999 
+F-statistic: 8.348e+05 on 1 and 98 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<p>
+提取回归相关结果
+</p>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25552;&#21462;&#22238;&#24402;&#31995;&#25968;</span>
+coef(res)
+
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#22238;&#24402;&#26041;&#31243;&#30340;&#27531;&#24046;</span>
+res$residuals
+resid(res)
+
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25552;&#21462;&#21327;&#26041;&#24046;&#30697;&#38453;</span>
+vcov(res)
+
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#35745;&#31639;&#26631;&#20934;&#35823;</span>
+sqrt(diag(vcov(res)))
+
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25552;&#21462;&#25311;&#21512;&#20540;</span>
+predict(res)
+
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#33719;&#21462;&#33258;&#21464;&#37327;&#26032;&#25968;&#25454;&#30340;&#39044;&#27979;&#20540;&#65292;&#39044;&#27979;&#21306;&#38388;&#65292;&#32622;&#20449;&#21306;&#38388;</span>
+xnew <span style="color: #ce537a; font-weight: bold;">&lt;-</span> data.frame(x=seq(-1,1,1))
+predict(res, newdata=xnew, interval = <span style="color: #2d9574;">"prediction"</span>)
+predict(res, newdata=xnew, interval = <span style="color: #2d9574;">"confidence"</span>)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb219cb7" class="outline-3">
+<h3 id="orgb219cb7"><span class="section-number-3">1.3</span> 回归示例：母亲教育与子女认知能力</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+数据集：<a href="./kidiq.dta">母亲教育与子女认知能力</a>
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">变量</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">kidscore</td>
+<td class="org-left">3-4岁小孩的认知测试分数</td>
+</tr>
+
+<tr>
+<td class="org-left">mom_hs</td>
+<td class="org-left">母亲是否上过高中</td>
+</tr>
+
+<tr>
+<td class="org-left">mom_iq</td>
+<td class="org-left">母亲的智商</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org80f2393" class="outline-3">
+<h3 id="org80f2393"><span class="section-number-3">1.4</span> 回归示例：单个预测变量</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li>采用母亲的智商预测3到4岁小孩的认知测试分数</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">library</span>(<span style="color: #2d9574;">"foreign"</span>)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#28165;&#38500;&#20869;&#23384;</span>
+<span style="color: #4f97d7;">rm</span>(list=ls())
+
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#36733;&#20837;&#25968;&#25454;</span>
+kidiq <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.dta(<span style="color: #2d9574;">"kidiq.dta"</span>)
+
+<span style="color: #4f97d7;">attach</span>(kidiq)
+
+fit0 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(kid_score~mom_iq)
+
+summary(fit0)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = kid_score ~ mom_iq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-56.753 -12.074   2.217  11.710  47.691 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 25.79978    5.91741    4.36 1.63e-05 ***
+mom_iq       0.60997    0.05852   10.42  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 18.27 on 432 degrees of freedom
+Multiple R-squared:  0.201,	Adjusted R-squared:  0.1991 
+F-statistic: 108.6 on 1 and 432 DF,  p-value: &lt; 2.2e-16
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org766cf8a" class="outline-3">
+<h3 id="org766cf8a"><span class="section-number-3">1.5</span> 回归示例：多个预测变量</h3>
+<div class="outline-text-3" id="text-1-5">
+<ul class="org-ul">
+<li>自变量：母亲是否上过高中、母亲的智商</li>
+<li>解释系数和截距</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit1 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm (kid_score ~ mom_hs + mom_iq)
+
+summary(fit1)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = kid_score ~ mom_hs
+mom_iq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-52.873 -12.663   2.404  11.356  49.545 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 25.73154    5.87521   4.380 1.49e-05 ***
+mom_hs       5.95012    2.21181   2.690  0.00742 ** 
+mom_iq       0.56391    0.06057   9.309  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 18.14 on 431 degrees of freedom
+Multiple R-squared:  0.2141,	Adjusted R-squared:  0.2105 
+F-statistic: 58.72 on 2 and 431 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<ul class="org-ul">
+<li>系数的解释：保持其他变量不变，预测变量单位变动相应的响应变量变动大小。</li>
+
+<li>注意：有时候在保持其他变量不变的情况下是不可能变动某个变量的，例如回归中同时包括IQ和 \(IQ^{2}\)，或者有交互项 mom_hs*mom_i</li>
+</ul>
+<p>
+q.
+</p>
+</div>
+</div>
+<div id="outline-container-orgc7282e8" class="outline-3">
+<h3 id="orgc7282e8"><span class="section-number-3">1.6</span> 回归示例：去除截距和添加交互项</h3>
+<div class="outline-text-3" id="text-1-6">
+<ul class="org-ul">
+<li>没有截距（常数项）</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit2 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm (kid_score ~ mom_hs + mom_iq - 1)
+
+summary(fit2)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = kid_score ~ mom_hs
+mom_iq - 1)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-55.348 -10.796   2.187  12.789  50.838 
+
+Coefficients:
+       Estimate Std. Error t value Pr(&gt;|t|)    
+mom_hs  5.99194    2.25786   2.654  0.00825 ** 
+mom_iq  0.81524    0.01979  41.189  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 18.51 on 432 degrees of freedom
+Multiple R-squared:  0.9571,	Adjusted R-squared:  0.9569 
+F-statistic:  4817 on 2 and 432 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<ul class="org-ul">
+<li>添加交互项</li>
+</ul>
+<p>
+增加一个交互项以允许IQ的回归系数随高中完成情况不同而变动
+</p>
+<div class="org-src-container">
+<pre class="src src-R">fit3 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm (kid_score ~ mom_hs + mom_iq + mom_hs:mom_iq)
+
+summary(fit3)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = kid_score ~ mom_hs
+mom_iq
+mom_hs:mom_iq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-52.092 -11.332   2.066  11.663  43.880 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   -11.4820    13.7580  -0.835 0.404422    
+mom_hs         51.2682    15.3376   3.343 0.000902 ***
+mom_iq          0.9689     0.1483   6.531 1.84e-10 ***
+mom_hs:mom_iq  -0.4843     0.1622  -2.985 0.002994 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.97 on 430 degrees of freedom
+Multiple R-squared:  0.2301,	Adjusted R-squared:  0.2247 
+F-statistic: 42.84 on 3 and 430 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<ul class="org-ul">
+<li>解释系数和截距  
+<ul class="org-ul">
+<li>截距： \(IQ=0 \quad hs=0\)（无意义）</li>
+<li>mom_hs的系数： IQ=0时，是否完成高中相应的孩子得分差异</li>
+<li>mom_iq的系数： 未完成高中母亲中，IQ增加所相应的孩子得分差异，红线斜率</li>
+<li>交互项的系数：母亲是否完成高中两组之间在IQ斜率上的差别</li>
+</ul></li>
+<li>快速添加交互项</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit4 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm (kid_score ~ mom_hs * mom_iq)
+
+summary(fit4)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = kid_score ~ mom_hs * mom_iq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-52.092 -11.332   2.066  11.663  43.880 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   -11.4820    13.7580  -0.835 0.404422    
+mom_hs         51.2682    15.3376   3.343 0.000902 ***
+mom_iq          0.9689     0.1483   6.531 1.84e-10 ***
+mom_hs:mom_iq  -0.4843     0.1622  -2.985 0.002994 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.97 on 430 degrees of freedom
+Multiple R-squared:  0.2301,	Adjusted R-squared:  0.2247 
+F-statistic: 42.84 on 3 and 430 DF,  p-value: &lt; 2.2e-16
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org26a6dcc" class="outline-3">
+<h3 id="org26a6dcc"><span class="section-number-3">1.7</span> 回归绘图：par()设置</h3>
+<div class="outline-text-3" id="text-1-7">
+<ul class="org-ul">
+<li>设置文本大小：</li>
+<li>cex 文本大小（2代表2倍大小）</li>
+<li>cex.axis 坐标轴刻度值大小</li>
+<li>cex.lab 坐标轴标识大小</li>
+<li>cex.main 图标题大小</li>
+<li>cex.sub 图副标题大小</li>
+<li>font 字体</li>
+<li>font.axis 坐标轴字体</li>
+<li>srt 图中文本旋转</li>
+<li>las 边缘文本旋转</li>
+<li>text()函数用来在plot制图中添加文字</li>
+<li>bg 背景色</li>
+<li>col 线条、符号颜色</li>
+<li>col.axis 坐标轴刻度值颜色</li>
+<li>colors()可了解颜色选择</li>
+<li>lty 线条类型</li>
+<li>lwd 线条宽度</li>
+<li>pch 数据符号</li>
+<li>lab 刻度数量</li>
+<li>xaxp x轴的刻度数量</li>
+<li>tck，tcl 刻度相对于图的长度</li>
+<li>mgp 坐标轴元素的间隔 eg. c(3,1,0)代表坐标轴的标识、刻度值、坐标轴线的位置</li>
+<li>usr 坐标轴范围（xmin,xmax,ymin,ymax）</li>
+<li>xlog,ylog x,y轴采用对数尺度</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25968;&#25454;&#30340;&#25955;&#28857;&#22270;</span>
+plot(x=mom_iq, y=kid_score)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#28155;&#21152;&#22238;&#24402;&#32447;</span>
+abline(fit0$coefficients[1], fit0$coefficients[2], col=<span style="color: #2d9574;">"black"</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="1.png" alt="1.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org00baf86" class="outline-3">
+<h3 id="org00baf86"><span class="section-number-3">1.8</span> 绘制更美观的散点图</h3>
+<div class="outline-text-3" id="text-1-8">
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#29983;&#25104;&#33258;&#21464;&#37327;&#26032;&#25968;&#25454;</span>
+iqhyp <span style="color: #ce537a; font-weight: bold;">&lt;-</span> seq(70,140,1)
+xnew <span style="color: #ce537a; font-weight: bold;">&lt;-</span> data.frame(mom_iq=iqhyp)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25552;&#21462;&#39044;&#27979;&#20540;&#21644;&#32622;&#20449;&#21306;&#38388;</span>
+kidpred <span style="color: #ce537a; font-weight: bold;">&lt;-</span> predict(fit0, newdata=xnew, interval=<span style="color: #2d9574;">"confidence"</span>, level=0.95)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#30830;&#23450;&#21046;&#22270;&#21442;&#25968;&#21644;&#32472;&#22270;&#21306;&#33539;&#22260;&#65292;&#26242;&#19981;&#32472;&#21046;&#28857;&#19982;&#22352;&#26631;</span>
+<span style="color: #4f97d7;">par</span>(cex.lab=1.5,mgp=c(2.5,0.8,0),family=<span style="color: #2d9574;">"STKaiti"</span>)
+plot(x=mom_iq, y=kid_score, xaxt=<span style="color: #2d9574;">"n"</span>, yaxt=<span style="color: #2d9574;">"n"</span>, type=<span style="color: #2d9574;">"n"</span>, xlab=<span style="color: #2d9574;">"&#27597;&#20146;&#26234;&#21830;"</span>, ylab=<span style="color: #2d9574;">"&#23567;&#23401;&#35748;&#30693;&#27979;&#35797;&#20998;&#25968;"</span>)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#32472;&#21046;&#39044;&#27979;&#20540;&#32622;&#20449;&#21306;&#38388;</span>
+xpoly <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(iqhyp, rev(iqhyp), iqhyp[1])
+ypoly <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(kidpred[,2], rev(kidpred[,3]), kidpred[1,2])
+polygon(x=xpoly, y=ypoly, col=<span style="color: #2d9574;">"grey60"</span>, border=<span style="color: #a45bad;">FALSE</span>)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#32472;&#21046;&#22238;&#24402;&#32447;</span>
+lines(x=iqhyp, y=kidpred[,1], col=<span style="color: #2d9574;">"black"</span>)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25353;&#29031;&#27597;&#20146;&#30340;&#25945;&#32946;&#31243;&#24230;&#26631;&#35782;&#25968;&#25454;&#28857;</span>
+points(x=mom_iq[mom_hs==0], y=kid_score[mom_hs==0],col=<span style="color: #2d9574;">"red"</span>,pch=20)
+points(x=mom_iq[mom_hs==1], y=kid_score[mom_hs==1],col=<span style="color: #2d9574;">"blue"</span>,pch=20)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#32472;&#21046;&#31616;&#21270;&#30340;&#22352;&#26631;</span>
+axis (1, c(80,100,120,140))
+axis (2, c(20,60,100,140))
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#32472;&#21046;&#22270;&#20363;</span>
+legend(118,38,legend = c(<span style="color: #2d9574;">"&#39640;&#20013;&#20197;&#19979;"</span>,<span style="color: #2d9574;">"&#39640;&#20013;&#20197;&#19978;"</span>), col = c(<span style="color: #2d9574;">"red"</span>,<span style="color: #2d9574;">"blue"</span>), pch=20, bty=<span style="color: #2d9574;">"n"</span>,cex=1.5)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="2.png" alt="2.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">detach</span>(kidiq)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfb0c21f" class="outline-2">
+<h2 id="orgfb0c21f"><span class="section-number-2">2</span> 线性回归假定和统计推断</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org2c2cc9e" class="outline-3">
+<h3 id="org2c2cc9e"><span class="section-number-3">2.1</span> 线性回归模型的表达式</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+线性回归的两种表达式：
+</p>
+
+<p>
+\[\begin{aligned}
+  y_i & =  X_i \beta+\epsilon_i \\
+      & =  \beta_1 X_{i1}+\cdots + \beta_k X_{ik} + \epsilon_i 
+\end{aligned},\qquad for \quad i=1,\cdots , n\]
+</p>
+
+<p>
+其中， \(\epsilon_i\) 相互独立，服从均值为0，标准差为 \(\sigma\) 正态分布  
+或者
+</p>
+
+<p>
+\[y_i \sim N(X_i \beta, \sigma^2),\qquad for \quad i=1,\cdots , n\]
+</p>
+
+<p>
+其中， \(X\) 是 \(n\times k\) 的预测变量矩阵，第 \(i\) 行为 \(X_{i}\)， \(\beta\) 是长度为 \(k\) 的列向量   
+</p>
+</div>
+</div>
+
+<div id="outline-container-org73462ea" class="outline-3">
+<h3 id="org73462ea"><span class="section-number-3">2.2</span> 线性回归的矩阵形式</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+方程表达：
+\[y_i=\beta_0+\beta_1 x_{1i}+\beta_2 x_{2i}+\epsilon_i\]
+矩阵表达：
+\[\begin{aligned}
+&\mathbf{y}=&\ &\mathbf{X}\ & \ &\boldsymbol{\beta} &+ \ &\boldsymbol{\epsilon} \\
+n&\times 1  &n &\times k    &k  &\times 1           &n   &\times 1
+\end{aligned}\]
+矩阵展开：
+</p>
+\begin{equation*}
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1      & x_{11} & x_{12} & \ldots & x_{1k} \\
+    1      &x_{12}  & x_{22} & \ldots & x_{2k} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    1      &x_{1n}  & x_{2n} & \ldots & x_{nk}
+  \end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\
+\beta_1 \\
+\vdots \\
+\beta_k
+\end{bmatrix}
++
+\begin{bmatrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{bmatrix}
+\end{equation*}
+
+<p>
+干扰项的均值
+</p>
+\begin{equation*}
+E(\epsilon)=
+\begin{bmatrix}
+E(\epsilon_1 )\\ E(\epsilon_2 )\\ \vdots \\ E(\epsilon_n)
+\end{bmatrix}
+=
+\begin{bmatrix}
+0\\ 0\\ \vdots \\ 0
+\end{bmatrix}
+\end{equation*}
+
+<p>
+干扰项的协方差矩阵
+</p>
+\begin{equation*}
+\Sigma = 
+\begin{bmatrix}
+var(\epsilon_1 ) &cov(\epsilon_1 , \epsilon_2 ) &\dots &cov(\epsilon_1 ,\epsilon_n ) \\
+cov(\epsilon_2 ,\epsilon_1 ) &var(\epsilon_2 ) &\dots &cov(\epsilon_2 ,\epsilon_n ) \\
+\vdots & \vdots & \ddots & \vdots \\
+cov(\epsilon_n ,\epsilon_1 ) &cov(\epsilon_n , \epsilon_2 ) &\dots &var(\epsilon_n ) \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+E(\epsilon_{1}^2 ) &E(\epsilon_1 \epsilon_2 ) &\dots &E(\epsilon_1 \epsilon_n ) \\
+E(\epsilon_2 \epsilon_1 ) &E(\epsilon_{2}^2 ) &\dots &E(\epsilon_2 \epsilon_n ) \\
+\vdots & \vdots & \ddots & \vdots \\
+E(\epsilon_n \epsilon_1 ) &E(\epsilon_n \epsilon_2 ) &\dots &E(\epsilon_{n}^2 ) \\
+\end{bmatrix}
+\end{equation*}
+
+<p>
+可以简化成外积形式
+\[\Sigma=E(\boldsymbol{\epsilon} \boldsymbol{\epsilon^{'}})\]
+</p>
+
+<p>
+如果线性回归假定成立（随机抽样假定和同方差假定），那么协方差矩阵有更简单的形式。
+</p>
+\begin{equation*}
+\Sigma = 
+\begin{bmatrix}
+\epsilon^2 &0 &\dots &0 \\
+0          &\epsilon^2 &\dots &0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 &0 &\dots &\epsilon^2 
+\end{bmatrix}
+=\sigma^2 \boldsymbol{I}
+\end{equation*}
+</div>
+</div>
+
+<div id="outline-container-orgf449f20" class="outline-3">
+<h3 id="orgf449f20"><span class="section-number-3">2.3</span> 最小二乘法拟合模型</h3>
+<div class="outline-text-3" id="text-2-3">
+<ul class="org-ul">
+<li>采用最小二乘法拟合模型后得到估计量 \(\hat \beta\) 和 \(\hat \sigma\)
+
+<ul class="org-ul">
+<li>找到让误差平方和最小的 \(\boldsymbol{\hat \beta}\)： \(\sum_{i=1}^{n}(y_i-X_i \hat \beta)^2\)</li>
+
+<li>对于给定的 \(X,y\) , 当 \(\hat\beta=(X^{'}X)^{-1}X^{'}y\) 时，误差平方和最小</li>
+
+<li>同时，估计协方差矩阵 \(V_{\beta}\hat \sigma^2\) ，其中 \(V_{\beta}=(X^tX)^{-1}\) 相应的对角线元素就是回归系数 \(\beta\) 的方差，即 \(\sqrt{V_{\beta 11}}\hat \sigma\)</li>
+</ul></li>
+
+<li>估计量的标准：
+<ul class="org-ul">
+<li>无偏性：\(E(\hat\beta-\beta) \)</li>
+<li>有效性：平均而言与真实值最近。\(MSE=E[(\beta-\hat\beta)^2]=Var(\hat\beta)+Bias(\hat\beta|\beta)^2\)</li>
+<li>一致性：随着样本量增加，渐进于真实值（计量经济领域更为重视）。 \(E(\hat\beta-\beta)\rightarrow 0 \quad N \rightarrow \infty \)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org0c500d1" class="outline-3">
+<h3 id="org0c500d1"><span class="section-number-3">2.4</span> 线性回归模型估计的问题</h3>
+<div class="outline-text-3" id="text-2-4">
+<ul class="org-ul">
+<li>遗漏变量偏误： \[income_i=\beta_0+\beta_1 edu_i + \epsilon_i \]</li>
+<li>模型设定偏误：\[income_i=\beta_0+\beta_1 edu_i + \beta_2 age_i + \epsilon_i \]</li>
+<li>选择性偏误：高收入无应答</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(100,0,24)
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rep(0,100)
+inceg <span style="color: #ce537a; font-weight: bold;">&lt;-</span> data.frame(edu=x,income=y)
+error <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rnorm(100)
+inceg[inceg$edu&lt;=12,<span style="color: #2d9574;">"income"</span>] <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 100+20*inceg[inceg$edu&lt;=12,<span style="color: #2d9574;">"edu"</span>]
+inceg[inceg$edu&gt;12,<span style="color: #2d9574;">"income"</span>] <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 100+30*inceg[inceg$edu&gt;12,<span style="color: #2d9574;">"edu"</span>]
+inceg$income <span style="color: #ce537a; font-weight: bold;">&lt;-</span> inceg$income + 50*error
+fit0 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(income~edu, data = inceg)
+fit1 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(income~edu, data = inceg[inceg$edu&lt;=12,])
+summary(fit0)
+summary(fit1)
+plot(x=inceg$edu,y=inceg$income, xlab = <span style="color: #2d9574;">"education"</span>, ylab = <span style="color: #2d9574;">"income"</span>, pch=20, type = <span style="color: #2d9574;">"n"</span>)
+abline(a=coef(fit0)[1],b=coef(fit0)[2])
+abline(a=coef(fit1)[1],b=coef(fit1)[2],col=<span style="color: #2d9574;">"red"</span>)
+points(x=inceg[inceg$edu&lt;=12,<span style="color: #2d9574;">"edu"</span>],y=inceg[inceg$edu&lt;=12,<span style="color: #2d9574;">"income"</span>],col=<span style="color: #2d9574;">"red"</span>,pch=20)
+points(x=inceg[inceg$edu&gt;12,<span style="color: #2d9574;">"edu"</span>],y=inceg[inceg$edu&gt;12,<span style="color: #2d9574;">"income"</span>],col=<span style="color: #2d9574;">"blue"</span>,pch=20)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="3.png" alt="3.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>完全共线性：\[entrance_i=\beta_0+\beta_1 language_i + \beta_2 math_i + \beta_3 totalscore +\epsilon_i \]</li>
+</ul>
+<p>
+部分共线性或多重共线性条件下，回归依然是无偏和有效的，只是难以区分这些相关性较强的变量，说明缺乏数据来精准回答研究问题。
+</p>
+<ul class="org-ul">
+<li>协变量内生：
+<ul class="org-ul">
+<li>制度与行为</li>
+<li>内生性会导致回归系数是有偏的，并且是不一致的，即增加样本量也无济于事。</li>
+<li>通过研究设计来解决内生性问题：实验法、工具变量回归、回归断点设计、自然实验等。</li>
+</ul></li>
+<li>异方差：
+<ul class="org-ul">
+<li>可以采用残差图来识别异方差</li>
+</ul></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(1000,1,100)
+error <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rnorm(1000,mean=0,sd=1*x)
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 10+ 3*x +error
+plot(x,y)
+fit0 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(y~x)
+abline(a=coef(fit0)[1],b=coef(fit0)[2])
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="4.png" alt="4.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>序列相关：时间或空间上相关.</li>
+
+<li>非正态：误差不服从正态分布，即随机过程非正态。 \(credit cards =\beta_0+\beta_1 income + \epsilon \)</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org917c777" class="outline-3">
+<h3 id="org917c777"><span class="section-number-3">2.5</span> 误差方差与多元正态分布</h3>
+<div class="outline-text-3" id="text-2-5">
+<ul class="org-ul">
+<li>每个观测都包含系统项（\(x_i \beta\)）和随机项 \(\epsilon_i \)</li>
+<li>n维向量 \(\boldsymbol{\epsilon}\)服从多元正态分布： \(\boldsymbol{\epsilon}\sim \boldsymbol{MVN(0,\Sigma)}\)</li>
+</ul>
+\begin{equation*}
+\begin{bmatrix}
+X_1 \\
+X_2
+\end{bmatrix}
+= MVN(
+\begin{bmatrix}
+\mu_1 \\
+\mu_2
+\end{bmatrix}
+,
+\begin{bmatrix}
+\sigma_1^2 &\sigma_{1,2} \\
+\sigma_{1,2} &\sigma_2^2 
+\end{bmatrix}
+)
+\end{equation*}
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">library</span> (intoo)
+<span style="color: #4f97d7;">library</span> (bivariate)
+<span style="color: #4f97d7;">library</span> (MASS)
+<span style="color: #4f97d7;">par</span>(mfrow=c(2,2))
+f = nbvpdf (0, 0, 1, 1, 0)
+plot(f,T)
+plot(f)
+f = nbvpdf (0, 0, 1, 1, 0.8)
+plot(f,T)
+plot(f)
+<span style="color: #4f97d7;">par</span>(mfrow=c(1,1))
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="5.png" alt="5.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org89ed923" class="outline-3">
+<h3 id="org89ed923"><span class="section-number-3">2.6</span> 回归的假定与高斯-马尔科夫定理</h3>
+<div class="outline-text-3" id="text-2-6">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">假定</th>
+<th scope="col" class="org-left">表达式</th>
+<th scope="col" class="org-left">假设不成立</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">1 无完全共线性</td>
+<td class="org-left">rank(X)=k,k&lt;n</td>
+<td class="org-left">无法识别回归系数</td>
+</tr>
+
+<tr>
+<td class="org-left">2 X外生</td>
+<td class="org-left">E(X&epsilon; )=0</td>
+<td class="org-left">有偏，且不随N增加而改善</td>
+</tr>
+
+<tr>
+<td class="org-left">3 误差项零均值</td>
+<td class="org-left">E(&epsilon;)=0</td>
+<td class="org-left">有偏，且不随N增加而改善</td>
+</tr>
+
+<tr>
+<td class="org-left">4 无序列相关</td>
+<td class="org-left">\(E(\epsilon_{i} \epsilon_{j})=0, i\neq j \)</td>
+<td class="org-left">无偏但无效，标准误不正确</td>
+</tr>
+
+<tr>
+<td class="org-left">5 同方差</td>
+<td class="org-left">\(E(\epsilon^{'} \epsilon)=\sigma^{2}\boldsymbol{I} \)</td>
+<td class="org-left">无偏但无效，标准误不正确</td>
+</tr>
+
+<tr>
+<td class="org-left">6 误差项服从正态分布</td>
+<td class="org-left">\(\epsilon\sim N(0,\sigma^{2})\)</td>
+<td class="org-left">标准误不正确，但随N增加而改善</td>
+</tr>
+</tbody>
+</table>
+<ul class="org-ul">
+<li>如果假定1-5都成立，则最小二乘法的估计量是最优线性无偏估计量（best linear unbiased estimator, BLUE）</li>
+<li>如果假定6也成立，则为最小方差无偏的，即在所有线性和非线性估计量中方差最小。</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org43dcb13" class="outline-3">
+<h3 id="org43dcb13"><span class="section-number-3">2.7</span> 回归系数方差的估计</h3>
+<div class="outline-text-3" id="text-2-7">
+<ul class="org-ul">
+<li>回归系数的协方差矩阵</li>
+</ul>
+<p>
+\[Var(\boldsymbol{\hat \beta})=\boldsymbol{\hat \Sigma_{\beta}}=E[(\boldsymbol{\hat \beta - \beta})(\boldsymbol{\hat \beta - \beta})^{'}]=\sigma_{\epsilon}^2 (\boldsymbol{X^{'}X})^{-1}\]
+</p>
+<ul class="org-ul">
+<li>回归系数的分布</li>
+</ul>
+<p>
+\[\boldsymbol{\hat \beta}\sim MVN(\boldsymbol{\beta},\sigma_{\epsilon}^2 (\boldsymbol{X^{'}X})^{-1})\]
+</p>
+<ul class="org-ul">
+<li>回归系数的标准误</li>
+</ul>
+<p>
+\[se(\boldsymbol{\hat \beta})=\sqrt{diag(\sigma_{\epsilon}^2 (\boldsymbol{X^{'}X})^{-1})}\]
+</p>
+<ul class="org-ul">
+<li>可以通过t检验对回归系数进行显著性检验，如果系数的估计值与0的距离大于2个标准差，那么它在统计上就是显著的</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org54d8abb" class="outline-2">
+<h2 id="org54d8abb"><span class="section-number-2">3</span> 线性回归推断示例</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgd1b2df1" class="outline-3">
+<h3 id="orgd1b2df1"><span class="section-number-3">3.1</span> 例子：职业声望和收入</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li>变量：职业声望、收入（男性平均）、职业类型（蓝领、白领、专家）</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">library</span>(car)
+data(Duncan)
+<span style="color: #4f97d7;">par</span>(cex.lab=1.5,mgp=c(2.5,0.8,0),mfrow=c(1,1),family=<span style="color: #2d9574;">"STFangsong"</span>)
+
+plot(x=Duncan$prestige,y=Duncan$income, xlab = <span style="color: #2d9574;">"&#32844;&#19994;&#22768;&#26395;"</span>, ylab = <span style="color: #2d9574;">"&#25910;&#20837;"</span>, pch=20, type = <span style="color: #2d9574;">"n"</span>)
+points(x=Duncan[Duncan$type==<span style="color: #2d9574;">"bc"</span>,<span style="color: #2d9574;">"prestige"</span>],y=Duncan[Duncan$type==<span style="color: #2d9574;">"bc"</span>,<span style="color: #2d9574;">"income"</span>],col=<span style="color: #2d9574;">"blue"</span>,pch=20)
+text(x=Duncan[Duncan$type==<span style="color: #2d9574;">"bc"</span>,<span style="color: #2d9574;">"prestige"</span>],y=Duncan[Duncan$type==<span style="color: #2d9574;">"bc"</span>,<span style="color: #2d9574;">"income"</span>]-2,labels=rownames(Duncan[Duncan$type==<span style="color: #2d9574;">"bc"</span>,]),col=<span style="color: #2d9574;">"blue"</span>)
+points(x=Duncan[Duncan$type==<span style="color: #2d9574;">"wc"</span>,<span style="color: #2d9574;">"prestige"</span>],y=Duncan[Duncan$type==<span style="color: #2d9574;">"wc"</span>,<span style="color: #2d9574;">"income"</span>],col=<span style="color: #2d9574;">"darkgreen"</span>,pch=20)
+text(x=Duncan[Duncan$type==<span style="color: #2d9574;">"wc"</span>,<span style="color: #2d9574;">"prestige"</span>],y=Duncan[Duncan$type==<span style="color: #2d9574;">"wc"</span>,<span style="color: #2d9574;">"income"</span>]-2,labels=rownames(Duncan[Duncan$type==<span style="color: #2d9574;">"wc"</span>,]),col=<span style="color: #2d9574;">"darkgreen"</span>)
+points(x=Duncan[Duncan$type==<span style="color: #2d9574;">"prof"</span>,<span style="color: #2d9574;">"prestige"</span>],y=Duncan[Duncan$type==<span style="color: #2d9574;">"prof"</span>,<span style="color: #2d9574;">"income"</span>],col=<span style="color: #2d9574;">"red"</span>,pch=20)
+text(x=Duncan[Duncan$type==<span style="color: #2d9574;">"prof"</span>,<span style="color: #2d9574;">"prestige"</span>],y=Duncan[Duncan$type==<span style="color: #2d9574;">"prof"</span>,<span style="color: #2d9574;">"income"</span>]-2,labels=rownames(Duncan[Duncan$type==<span style="color: #2d9574;">"prof"</span>,]),col=<span style="color: #2d9574;">"red"</span>)
+legend(5,80,legend = c(<span style="color: #2d9574;">"&#34013;&#39046;"</span>,<span style="color: #2d9574;">"&#30333;&#39046;"</span>,<span style="color: #2d9574;">"&#19987;&#23478;"</span>), col = c(<span style="color: #2d9574;">"blue"</span>,<span style="color: #2d9574;">"green"</span>,<span style="color: #2d9574;">"red"</span>), pch=20, bty=<span style="color: #2d9574;">"n"</span>,cex=1.2)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="6.png" alt="6.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>线性回归函数的使用</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(prestige~income+education,data=Duncan)
+summary(fit)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = prestige ~ income
+education, data = Duncan)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-29.538  -6.417   0.655   6.605  34.641 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -6.06466    4.27194  -1.420    0.163    
+income       0.59873    0.11967   5.003 1.05e-05 ***
+education    0.54583    0.09825   5.555 1.73e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 13.37 on 42 degrees of freedom
+Multiple R-squared:  0.8282,	Adjusted R-squared:   0.82 
+F-statistic: 101.2 on 2 and 42 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<ul class="org-ul">
+<li>计算和绘制预测值的置信区间</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">xhyp <span style="color: #ce537a; font-weight: bold;">&lt;-</span> seq(min(Duncan$income), max(Duncan$income),1)
+zhyp <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rep(mean(Duncan$education), length(xhyp))
+hypo <span style="color: #ce537a; font-weight: bold;">&lt;-</span> data.frame(income=xhyp, education=zhyp)
+pred <span style="color: #ce537a; font-weight: bold;">&lt;-</span> predict(fit, newdata=hypo, interval=<span style="color: #2d9574;">"confidence"</span>,level=0.95)
+
+plot(y=Duncan$prestige, x=Duncan$income, xlab = <span style="color: #2d9574;">"Income"</span>, ylab = <span style="color: #2d9574;">"Prestige"</span>, type=<span style="color: #2d9574;">"n"</span>)
+lines(x=xhyp, y=pred[,1])
+lines(x=xhyp, y=pred[,2], lty=<span style="color: #2d9574;">"dashed"</span>)
+lines(x=xhyp, y=pred[,3], lty=<span style="color: #2d9574;">"dashed"</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="7.png" alt="7.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2991291" class="outline-2">
+<h2 id="org2991291"><span class="section-number-2">4</span> 线性回归模型设定与拟合</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orgf38c2f2" class="outline-3">
+<h3 id="orgf38c2f2"><span class="section-number-3">4.1</span> 模型设定</h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li>观察性研究需要面对大量关于模型设定的批评，审稿和评议人会经常要求“应该控制某某变量”。</li>
+<li>遗漏变量偏误</li>
+<li>协变量变换</li>
+<li>响应变量变换</li>
+<li>诊断异方差和模型误设</li>
+<li>拟合优度检验</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgcb73edc" class="outline-3">
+<h3 id="orgcb73edc"><span class="section-number-3">4.2</span> 遗留变量偏误</h3>
+<div class="outline-text-3" id="text-4-2">
+<ul class="org-ul">
+<li>当遗漏变量效应为0，或者遗漏变量与协变量的相关系数为0时，遗漏变量不会造成回归系数估计偏误。在其他情况下，都应该尽可能纳入。</li>
+<li>如果纳入变量确实无关，会导致损失自由度和在控制无关变量后，相关协变量的变异降低，即标准误会上升。</li>
+<li>那么实证中如何决定是否纳入变量？由于我们并不知道真实的模型是什么样子，我们要通过选择不同的模型设定展现模型的稳健性，试试看多大程度的模型改变才能使得推断结果发生变化。需要的改变越大，则说明模型越稳健.值得注意的是，如果模型中存在相互抵消的偏误，增加部分遗漏变量，可能效果适得其反。</li>
+<li>我们应该剔除“处理后”变量，否则它可能会遮掩解释变量的效应。</li>
+<li>检验多个假设需要多个模型设定。</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfbb190d" class="outline-3">
+<h3 id="orgfbb190d"><span class="section-number-3">4.3</span> 协变量多项式变换</h3>
+<div class="outline-text-3" id="text-4-3">
+<ul class="org-ul">
+<li>可以增加二次项、三次项、四次项等，但是要防止过度拟合，即样本数据与模型完全拟合，但是对于样本外数据拟合程度反而很低。</li>
+<li>多项式设定一般不超过二次项，小样本得出的多项式拟合不可靠，需要样本外数据验证。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#27169;&#25311;&#22810;&#39033;&#24335;</span>
+<span style="color: #4f97d7;">rm</span>(list=ls())
+set.seed(258)
+x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(10,1,10)
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> x + rnorm(10,0,3)
+xout <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(10,1,10)
+yout <span style="color: #ce537a; font-weight: bold;">&lt;-</span> xout + rnorm(10,0,3)
+
+models <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(<span style="color: #2d9574;">"y~x"</span>,<span style="color: #2d9574;">"y~x+I(x^2)"</span>,<span style="color: #2d9574;">"y~x+I(x^2)+I(x^3)+I(x^4)"</span>,<span style="color: #2d9574;">"y~x+I(x^2)+I(x^3)+I(x^4)+I(x^5)+I(x^6)+I(x^7)+I(x^8)+I(x^9)+I(x^10)"</span>)
+obs <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 10
+xhy <span style="color: #ce537a; font-weight: bold;">&lt;-</span> seq(0,12,0.1)
+polymord <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(1,2,4,10)
+<span style="color: #4f97d7;">par</span>(mfrow=c(4,2))
+<span style="color: #4f97d7; font-weight: bold;">for</span>(i <span style="color: #4f97d7; font-weight: bold;">in</span> 1:4) {
+  polym <span style="color: #ce537a; font-weight: bold;">&lt;-</span> polymord[i]
+  fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(formula = models[i])
+  modelsum <span style="color: #ce537a; font-weight: bold;">&lt;-</span> summary(fit)
+  modelinfo <span style="color: #ce537a; font-weight: bold;">&lt;-</span> paste(<span style="color: #2d9574;">"Obs:"</span>, obs, <span style="color: #2d9574;">"Order:"</span>, polym, <span style="color: #2d9574;">"SE:"</span>, round(modelsum$sigma, digits=2), <span style="color: #2d9574;">"R&#8722;Squared:"</span>, round(modelsum$r.squared, digits=2))
+  plot(x=x, y=y, pch=20, main = modelinfo,xlim = c(0,12),ylim=c(-1,15))
+  lines(x=xhy, y=predict(fit,newdata=data.frame(x=xhy)),col=<span style="color: #2d9574;">"red"</span>)
+
+  pred <span style="color: #ce537a; font-weight: bold;">&lt;-</span> predict(fit, newdata=data.frame(x=xout),se.fit = T)
+  sigmaout <span style="color: #ce537a; font-weight: bold;">&lt;-</span> sqrt(sum((yout-pred$fit)^2)/pred$df)
+  rsqdout <span style="color: #ce537a; font-weight: bold;">&lt;-</span> (cor(yout, pred$fit))^2
+  modelinfo <span style="color: #ce537a; font-weight: bold;">&lt;-</span>  paste(<span style="color: #2d9574;">"Obs:"</span>, obs, <span style="color: #2d9574;">"Order:"</span>, polym, <span style="color: #2d9574;">"SE:"</span>, round(sigmaout, digits=2), <span style="color: #2d9574;">"R&#8722;Squared:"</span>, round(rsqdout, digits=2))
+  plot(x=xout, y=yout, pch=20, col=<span style="color: #2d9574;">"blue"</span>, main = modelinfo,xlim = c(0,12),ylim=c(-1,15))
+  lines(x=xhy, y=predict(fit,newdata=data.frame(x=xhy)),col=<span style="color: #2d9574;">"red"</span>)
+}
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="8.png" alt="8.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7dd29e4" class="outline-3">
+<h3 id="org7dd29e4"><span class="section-number-3">4.4</span> 变量对数变换</h3>
+<div class="outline-text-3" id="text-4-4">
+<ul class="org-ul">
+<li>协变量的对数变换：</li>
+</ul>
+<p>
+\[Y=\beta_0+\beta_1 log(x_1 ) + \beta_2 X_2 + \dots + \epsilon \]
+</p>
+<ul class="org-ul">
+<li>响应变量的对数变换：</li>
+</ul>
+<p>
+\[log(y)=\beta_0+\beta_1 X_1 + \beta_2 X_2 + \dots + \epsilon \]
+</p>
+<ul class="org-ul">
+<li>如果Y是有界的连续变量，比如落在0到1之间，那么我们需要转化后让它能够在 -&infin; 和 + &infin; 之间变动。</li>
+</ul>
+<p>
+\[log(\frac{y}{1-y})=\beta_0+\beta_1 log(x_1 ) + \beta_2 X_2 + \dots + \epsilon \]
+</p>
+<ul class="org-ul">
+<li>注意Y不能包含0或者1，不是logit模型，是logit转换的响应变量，只是从变量变换角度得到较好的拟合效果。</li>
+<li>对于任意的\(y\in (a,b)\)，都可以转换 \(y^*=\frac{y-a}{b-a}\)，同样不能有恰好a或b的取值。</li>
+</ul>
+<ul class="org-ul">
+<li>这些变量变换后的模型，本质依旧是线性模型，依然可以用最小二乘估计得到无偏有效的结果。</li>
+<li>含零值协变量的对数与logit变换（Christopher Adolph）
+<ul class="org-ul">
+<li>通常会直接将0先转换成一个比较小的数（0.1或者0.001等），然后再取对数，但是对小数取对数会引入非常大的偏差。</li>
+<li>如果0值占比很少，可以删除，但是需要评估删除可能对模型估计造成的影响。</li>
+<li>在对因变量变换前，要认真考虑数据的生成过程，这些0值是否意味着不一样的分布，可能要选择广义线性模型，例如泊松回归等。</li>
+<li>如果是协变量，建议采用生成两个变量：1个虚拟变量 \(D_i\) 当\(x_i >0\)为1，否则为0 ；1个对数变量当 \(x_{i}=0\) 时为0，不为0为\(log(x_i)\). 那么，此时如何解释回归系数？</li>
+</ul></li>
+</ul>
+<p>
+\[y_i=\beta_0 + \beta_1 D_i + \beta_2 log^{'}(x_i)+\epsilon_i \] 
+</p>
+<ul class="org-ul">
+<li>对于logit变换，则生成三个变量：1个虚拟变量 \(D_i\) 当\(x_i >0\)为1，否则为0 ；另1个虚拟变量 \(M_i\) 当\(x_i \geqslant 1\)为1，否则为0 ；1个logit变量当 \(x_{i} = 0\) 或者 \(x_{i} = 1\) 时为0，其他正常情况下为\(logit(x_i)\).</li>
+</ul>
+<p>
+\[y_i=\beta_0 + \beta_1 D_i + \beta_2 M_i + \beta_3 logit^{'}(x_i)+\epsilon_i \]
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7ff96a4" class="outline-3">
+<h3 id="org7ff96a4"><span class="section-number-3">4.5</span> 变量变化后的模型解释</h3>
+<div class="outline-text-3" id="text-4-5">
+<ul class="org-ul">
+<li>响应变量对数化后，回归系数表示1单位X的变化相应的Y的百分比变化。</li>
+<li>协变量对数化，回归系数表示1%的X的变化相应的Y的水平变化。</li>
+<li>响应变量与协变量都对数化后，回归系数表示1%的X的变化相应的Y的百分比变化。</li>
+<li>对于多项式系数，制作\(X\)与\(\hat Y\)的变化图来展示，不应分开解释各个多项式的系数。</li>
+<li>对于交互项\(X \times Z\)，对X与Z不同组合制作\(X\)与\(\hat Y\)的变化图来展示，不应分开解释各个项的系数。</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org0703346" class="outline-3">
+<h3 id="org0703346"><span class="section-number-3">4.6</span> 模型设定示例：预期寿命的影响因素</h3>
+<div class="outline-text-3" id="text-4-6">
+<ul class="org-ul">
+<li>数据来源：罗伯特·J.巴罗，夏威尔·萨拉-伊-马丁《经济增长》所引用的<a href="http://www.columbia.edu/~xs23/data/barrlee.htm">Barro-Lee数据集</a>（我们只使用<a href="./life.csv">整理后85年数据</a>)</li>
+<li>135个国家的人均GDP（gdpcap）、25岁以上平均受教育年限（school）、公民自由度（civlib，由低到高1-7分）、近期战争时间比例（wartime）。</li>
+<li>原始数据提取与转换（可跳过）</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fert <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.table(<span style="color: #2d9574;">"~/Downloads/barlee/fert.prn"</span>, quote=<span style="color: #2d9574;">"\""</span>, comment.char=<span style="color: #2d9574;">""</span>, nrows = 138)
+gdpcap <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.table(<span style="color: #2d9574;">"~/Downloads/barlee/gdpsh5.prn"</span>, quote=<span style="color: #2d9574;">"\""</span>, comment.char=<span style="color: #2d9574;">""</span>, nrows = 138)
+school <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.table(<span style="color: #2d9574;">"~/Downloads/barlee/human.prn"</span>, quote=<span style="color: #2d9574;">"\""</span>, comment.char=<span style="color: #2d9574;">""</span>, nrows = 138)
+politics <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.table(<span style="color: #2d9574;">"~/Downloads/barlee/pinstab.prn"</span>, quote=<span style="color: #2d9574;">"\""</span>, comment.char=<span style="color: #2d9574;">""</span>, nrows = 138)
+ctycode <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.table(<span style="color: #2d9574;">"~/Downloads/barlee/cty.prn"</span>, quote=<span style="color: #2d9574;">"\""</span>, comment.char=<span style="color: #2d9574;">""</span>, nrows = 138)
+
+life <span style="color: #ce537a; font-weight: bold;">&lt;-</span> data.frame(lifeexp=fert$V18, gdpcap=gdpcap$V8, school=school$V6, civlib=politics$V15, wartime=politics$V6)
+write.csv(life, file = <span style="color: #2d9574;">"~/downloads/barlee/life.csv"</span>)
+
+</pre>
+</div>
+<ul class="org-ul">
+<li>先来一个简单的回归，只有教育系数显著，是否符合你的预期？会不会模型设定错误？</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">life <span style="color: #ce537a; font-weight: bold;">&lt;-</span> read.csv(file = <span style="color: #2d9574;">"~/downloads/barlee/life.csv"</span>)
+life <span style="color: #ce537a; font-weight: bold;">&lt;-</span> na.omit(life)
+fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(formula = lifeexp ~ gdpcap + school + civlib + wartime,data = life)
+summary(fit)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = lifeexp ~ gdpcap
+school
+civlib
+wartime, data = life)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-13.2871  -3.0705  -0.0368   4.6629  12.1285 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 52.9671697  3.0379356  17.435  &lt; 2e-16 ***
+gdpcap       0.0003216  0.0002551   1.260    0.211    
+school       2.3866392  0.4102266   5.818 9.01e-08 ***
+civlib      -0.7522863  0.4861266  -1.548    0.125    
+wartime      1.0936902  5.5354286   0.198    0.844    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 5.43 on 90 degrees of freedom
+Multiple R-squared:  0.7509,	Adjusted R-squared:  0.7399 
+F-statistic: 67.84 on 4 and 90 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<ul class="org-ul">
+<li>我们所看到的效应关系是真实的吗？三个途径去验证
+<ul class="org-ul">
+<li>标准误和相关检验：t检验和F检验（见回归输出结果）</li>
+<li>残差的模式</li>
+</ul></li>
+</ul>
+<p>
+残差的理想模式：
+</p>
+<div class="org-src-container">
+<pre class="src src-R">x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(1000,1,100)
+error <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rnorm(1000)
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 10+ 3*x +error
+fit0 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(y~x)
+plot(x=x,y=fit0$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="9.png" alt="9.png" />
+</p>
+</div>
+
+<p>
+存在异方差时的模式：
+</p>
+<div class="org-src-container">
+<pre class="src src-R">x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(1000,1,100)
+error <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rnorm(1000,mean=0,sd=1*x)
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> 10+ 3*x +error
+fit0 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(y~x)
+plot(x=x,y=fit0$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="10.png" alt="10.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>存在离群值</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org977ff76" class="outline-3">
+<h3 id="org977ff76"><span class="section-number-3">4.7</span> 加权最小二乘法</h3>
+<div class="outline-text-3" id="text-4-7">
+<ul class="org-ul">
+<li>存在异方差，则具有较高误差方差的观测含有较少的信息，而具有较低误差方差的观测含有较多的信息。</li>
+<li>如果我们能在估计中给予低误差方差观察较高权重，那么能得到更有效的估计。那么相应的最小化误差平方和也变为最小化 <b>加权误差平方和</b> 。</li>
+</ul>
+<p>
+\[\sum^{n}_{i=1} w_i \epsilon_{i}^{2}=\boldsymbol{\epsilon^{'}W\epsilon}\]
+</p>
+<ul class="org-ul">
+<li>回归系数加权最小二乘估计：</li>
+</ul>
+<p>
+\[\boldsymbol{\hat \beta}_{WLS}=(\boldsymbol{X^{'}WX})^{-1}\boldsymbol{X^{'}Wy}\]
+</p>
+<ul class="org-ul">
+<li>上式其中W为对角线为权重的对角阵，每个权重应该与每个y观测的标准差成反比，即</li>
+</ul>
+<p>
+\[\epsilon_i\sim N(0,\sigma^2_i )\quad \sigma^2_i = 1/w^2_i \]
+</p>
+<ul class="org-ul">
+<li>如果我们通过样本性质能够确定权重，lm()函数中可以通过weights参数设定权重。</li>
+<li>如果不知道权重，可以利用残差估计权重（残差平方对自变量回归的拟合值的倒数），即可行广义最小二乘法。</li>
+<li>通过该方法获取的标准误，即为怀特标准误、稳健标准误、三明治标准误、异方差一致标准误等。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">library</span>(lmtest); <span style="color: #4f97d7;">library</span>(car)
+vc <span style="color: #ce537a; font-weight: bold;">&lt;-</span> hccm(fit, type = <span style="color: #2d9574;">"hc1"</span>)                
+se.corrected <span style="color: #ce537a; font-weight: bold;">&lt;-</span> sqrt(diag(vc))
+coeftest(fit, vcov=vc)
+</pre>
+</div>
+
+<pre class="example">
+
+t test of coefficients:
+
+               Estimate  Std. Error t value  Pr(&gt;|t|)    
+(Intercept) 52.96716974  3.29289359 16.0853 &lt; 2.2e-16 ***
+gdpcap       0.00032156  0.00026753  1.2020    0.2325    
+school       2.38663924  0.42745500  5.5834 2.473e-07 ***
+civlib      -0.75228629  0.50324260 -1.4949    0.1384    
+wartime      1.09369023  5.30329592  0.2062    0.8371    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org0804126" class="outline-3">
+<h3 id="org0804126"><span class="section-number-3">4.8</span> 示例的残差图</h3>
+<div class="outline-text-3" id="text-4-8">
+<div class="org-src-container">
+<pre class="src src-R">plot(fit$fitted.values,fit$residuals, main=<span style="color: #2d9574;">"life expectancy against fitted Y"</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="11.png" alt="11.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>有异方差问题吗？还有什么问题？</li>
+<li>残差与拟合值相关，意味着什么？</li>
+<li>分别检查残差与各个协变量的关系
+<ul class="org-ul">
+<li>残差与公民自由度的关系</li>
+</ul></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$civlib,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="12.png" alt="12.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与战时比例的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$wartime,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="13.png" alt="13.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与教育的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$school,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="14.png" alt="14.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与GDP的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$gdpcap,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="15.png" alt="15.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org83e9a99" class="outline-3">
+<h3 id="org83e9a99"><span class="section-number-3">4.9</span> 示例修正模型设定</h3>
+<div class="outline-text-3" id="text-4-9">
+<ul class="org-ul">
+<li>公民自由度、战时比例与残差似乎没有明显模式，而教育和GDP和残差有明显的非线性相关关系。</li>
+<li>残差中的模式意味着模型设定错误。</li>
+<li>如果看到有曲线相关关系，可以考虑添加二次项或进行对话变换。</li>
+<li>重新设定模型，将教育和GDP变换为对数项。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(formula = lifeexp ~ I(log(gdpcap)) + I(log(school)) + civlib + wartime, data=life)
+summary(fit)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = lifeexp ~ I(log(gdpcap))
+I(log(school))
+civlib
+
+    wartime, data = life)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-11.5038  -1.9584   0.2405   2.0338  11.0816 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     13.1893     5.4439   2.423   0.0174 *  
+I(log(gdpcap))   5.3730     0.6867   7.825 9.35e-12 ***
+I(log(school))   6.0431     0.9040   6.685 1.88e-09 ***
+civlib          -0.1843     0.3084  -0.598   0.5517    
+wartime         -0.2174     3.6894  -0.059   0.9531    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.627 on 90 degrees of freedom
+Multiple R-squared:  0.8889,	Adjusted R-squared:  0.8839 
+F-statistic:   180 on 4 and 90 DF,  p-value: &lt; 2.2e-16
+</pre>
+
+<ul class="org-ul">
+<li>再观察残差图</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(fit$fitted.values,fit$residuals, main=<span style="color: #2d9574;">"life expectancy against fitted Y"</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="16.png" alt="16.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与公民自由度的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$civlib,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="17.png" alt="17.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与战时比例的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$wartime,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="18.png" alt="18.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与教育的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$school,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="19.png" alt="19.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>残差与GDP的关系</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">plot(life$gdpcap,fit$residuals)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="20.png" alt="20.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>观察残差图，可以看出相关模式已经消失了，但是还有异方差的可能（喇叭形）</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org157aea2" class="outline-3">
+<h3 id="org157aea2"><span class="section-number-3">4.10</span> 比较稳健性标准误</h3>
+<div class="outline-text-3" id="text-4-10">
+<p>
+
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">row.names</th>
+<th scope="col" class="org-right">est</th>
+<th scope="col" class="org-right">se</th>
+<th scope="col" class="org-right">robust_se</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">(Intercept)</td>
+<td class="org-right">13.19</td>
+<td class="org-right">5.44</td>
+<td class="org-right">5.23</td>
+</tr>
+
+<tr>
+<td class="org-left">I(log(gdpcap))</td>
+<td class="org-right">5.37</td>
+<td class="org-right">0.69</td>
+<td class="org-right">0.65</td>
+</tr>
+
+<tr>
+<td class="org-left">I(log(school))</td>
+<td class="org-right">6.04</td>
+<td class="org-right">0.9</td>
+<td class="org-right">0.81</td>
+</tr>
+
+<tr>
+<td class="org-left">civlib</td>
+<td class="org-right">-0.18</td>
+<td class="org-right">0.31</td>
+<td class="org-right">0.28</td>
+</tr>
+
+<tr>
+<td class="org-left">wartime</td>
+<td class="org-right">-0.22</td>
+<td class="org-right">3.69</td>
+<td class="org-right">3.43</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgd2a09ad" class="outline-3">
+<h3 id="orgd2a09ad"><span class="section-number-3">4.11</span> 模型的拟合优度</h3>
+<div class="outline-text-3" id="text-4-11">
+<ul class="org-ul">
+<li>模型解释力的评价
+<ul class="org-ul">
+<li>R方</li>
+<li>回归标准误</li>
+<li>样本外检验</li>
+<li>交叉验证</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org0443db6" class="outline-3">
+<h3 id="org0443db6"><span class="section-number-3">4.12</span> 关于\(R^2\) from Gary King (<a href="https://gking.harvard.edu/files/abs/mist-abs.shtml">"How not to lie with statistics"</a>)</h3>
+<div class="outline-text-3" id="text-4-12">
+<ul class="org-ul">
+<li>\(R^2\)展示与一个没有协变量的空模型相比，模型协变量所能解释的变异比例。</li>
+<li>\(R^2\)间接报告了观测点在回归线附近的散布情况（\(\hat \sigma^2\)直接报告）</li>
+<li>\(R^2\)只能在具有相同观测和响应变量的模型间进行比较。</li>
+<li>不应追求最大化 \(R^2\) ，只要增加协变量，一定会变大。</li>
+<li>最有用的模型很少是 \(R^2\) 最大的那个。</li>
+<li>\(R^2\) 不是估计量，不存在显著或不显著的问题。</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org7cb76b8" class="outline-3">
+<h3 id="org7cb76b8"><span class="section-number-3">4.13</span> 回归标准误</h3>
+<div class="outline-text-3" id="text-4-13">
+<ul class="org-ul">
+<li>\(\hat \sigma^2\)反映拟合值与真实值之间的平均差距，并且它与y的单位尺度是相同的，非常容易解释。</li>
+<li>\(\hat \sigma^2\)越小，说明预测效果越好，\(\hat y\)越接近真实值。</li>
+</ul>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">协变量</th>
+<th scope="col" class="org-right">\(R^2\)</th>
+<th scope="col" class="org-right">\(\hat{\sigma}\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">GDP, School, Civlib, Wartime</td>
+<td class="org-right">0.75</td>
+<td class="org-right">5.43</td>
+</tr>
+
+<tr>
+<td class="org-left">log(GDP), log(School), Civlib, Wartime</td>
+<td class="org-right">0.88</td>
+<td class="org-right">3.63</td>
+</tr>
+</tbody>
+</table>
+<ul class="org-ul">
+<li>相同的数据，相同的响应变量</li>
+<li>每个值是什么含义？哪个模型好一些？</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfd4c73c" class="outline-3">
+<h3 id="orgfd4c73c"><span class="section-number-3">4.14</span> 样本外拟合优度</h3>
+<div class="outline-text-3" id="text-4-14">
+<ul class="org-ul">
+<li>假设我们用CGSS2010的数据建立了某个模型，那么我们可能想知道这个模型来预测CGSS2015的数据效果如何？</li>
+<li>如果我们用模型拟合样本外数据和训练样本同样好，那么我们更有信心相信我们找到了真实的模型。</li>
+<li>样本外检验步骤：
+<ol class="org-ol">
+<li>采用训练样本拟合模型，获取回归系数 \(\hat \beta_{training}\)</li>
+<li>用测试样本的数据计算拟合值 \(\hat y_{test}\)</li>
+<li>比较训练样本的拟合度（例如，\(\hat \sigma_{training}\)）与测试样本的拟合度 \(std dev(y_{test} - \hat{y}_{test}) \) ，如果两者相等则说明模型预测能力高。</li>
+</ol></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org847f6a2" class="outline-3">
+<h3 id="org847f6a2"><span class="section-number-3">4.15</span> 交叉验证</h3>
+<div class="outline-text-3" id="text-4-15">
+<ul class="org-ul">
+<li>如果我们样本量有限，并且很难找到其他的合格样本，可以采取交叉验证。</li>
+<li>交叉验证的步骤：
+<ol class="org-ol">
+<li>将数据分成k等分，留下一份作为测试集，k-1份作为训练集。特别是Leave-one-out cross validataion (LOOCV) 留一法是比较常用的技术，即将样本量为n的样本分成n等分，只留1个观测作为测试集。</li>
+<li>采用训练集来进行回归，获取回归系数。</li>
+<li>利用测试集和回归系数来后去测试集预测值</li>
+<li>比较测试集预测值与真实值，计算平均预测误差，即由预测值与真实值获取的标准差。</li>
+<li>重复1-4步 k 次，计算平均预测误差平方的均值，再取平方根，即得到了 k重交叉验证的预测误差。</li>
+</ol></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">library</span>(boot)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#27880;&#24847;&#35201;&#37319;&#29992;&#24191;&#20041;&#32447;&#24615;&#22238;&#24402;&#20989;&#25968;</span>
+fitglm <span style="color: #ce537a; font-weight: bold;">&lt;-</span> glm(lifeexp~gdpcap+school+civlib+wartime, data=life)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">5&#37325;&#20132;&#21449;&#39564;&#35777;</span>
+cv.err <span style="color: #ce537a; font-weight: bold;">&lt;-</span> cv.glm(life,fitglm,K=5)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#25253;&#21578;&#20132;&#21449;&#39564;&#35777;&#30340;&#39044;&#27979;&#35823;&#24046;&#65306;&#31532;1&#20010;&#26159;&#21407;&#22987;&#20540;&#65292;&#31532;2&#20010;&#26159;&#35843;&#25972;&#20540;&#65288;&#19982;&#30041;&#19968;&#27861;&#27604;&#36739;&#65289;</span>
+cv.err$delta
+</pre>
+</div>
+
+<pre class="example">
+
+[1] 31.23953 30.86326
+
+</pre>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">协变量</th>
+<th scope="col" class="org-right">\(R^2\)</th>
+<th scope="col" class="org-right">\(\hat{\sigma}\)</th>
+<th scope="col" class="org-right">5重交叉验证误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">GDP, School, Civlib, Wartime</td>
+<td class="org-right">0.75</td>
+<td class="org-right">5.43</td>
+<td class="org-right">32.3</td>
+</tr>
+
+<tr>
+<td class="org-left">log(GDP), log(School), Civlib, Wartime</td>
+<td class="org-right">0.88</td>
+<td class="org-right">3.63</td>
+<td class="org-right">13.8</td>
+</tr>
+</tbody>
+</table>
+<ul class="org-ul">
+<li>CV预测误差一般比回归标准误要高，为什么？</li>
+<li>模型设定正确与否远比正确预测更重要，为什么？失去32年的预期寿命 vs. 失去14年预期寿命哪个更严重？</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc92043f" class="outline-3">
+<h3 id="orgc92043f"><span class="section-number-3">4.16</span> 进一步改进模型</h3>
+<div class="outline-text-3" id="text-4-16">
+<div class="org-src-container">
+<pre class="src src-R">fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(formula = lifeexp ~ I(log(gdpcap)) + I(log(school)) + I(log(civlib)) + wartime + I(wartime^2), data=life)
+summary(fit)
+fitglm <span style="color: #ce537a; font-weight: bold;">&lt;-</span> glm(lifeexp~ I(log(gdpcap)) + I(log(school)) + I(log(civlib)) + wartime + I(wartime^2), data=life)
+cv.err <span style="color: #ce537a; font-weight: bold;">&lt;-</span> cv.glm(life,fitglm,K=5)
+cv.err$delta
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = lifeexp ~ I(log(gdpcap))
+I(log(school))
+I(log(civlib))
+
+    wartime
+I(wartime^2), data = life)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-10.7938  -1.7693   0.0006   2.0123  10.5086 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)       8.0854     5.4620   1.480  0.14233    
+I(log(gdpcap))    5.8587     0.6872   8.525 3.60e-13 ***
+I(log(school))    6.0283     0.8606   7.005 4.53e-10 ***
+I(log(civlib))    0.1266     0.8955   0.141  0.88790    
+wartime          36.3329    12.8663   2.824  0.00585 ** 
+I(wartime^2)   -110.8191    36.8656  -3.006  0.00344 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.482 on 89 degrees of freedom
+Multiple R-squared:  0.8987,	Adjusted R-squared:  0.8931 
+F-statistic:   158 on 5 and 89 DF,  p-value: &lt; 2.2e-16
+
+[1] 12.62793 12.48241
+</pre>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">协变量</th>
+<th scope="col" class="org-right">\(R^2\)</th>
+<th scope="col" class="org-right">\(\hat{\sigma}\)</th>
+<th scope="col" class="org-right">5重交叉验证误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">GDP, School, Civlib, Wartime</td>
+<td class="org-right">0.75</td>
+<td class="org-right">5.43</td>
+<td class="org-right">32.3</td>
+</tr>
+
+<tr>
+<td class="org-left">log(GDP), log(School), Civlib, Wartime</td>
+<td class="org-right">0.88</td>
+<td class="org-right">3.63</td>
+<td class="org-right">13.8</td>
+</tr>
+
+<tr>
+<td class="org-left">log(GDP), log(School),log(Civlib), Wartime, \(Wartime^2\)</td>
+<td class="org-right">0.90</td>
+<td class="org-right">3.48</td>
+<td class="org-right">12.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-orga464e2d" class="outline-2">
+<h2 id="orga464e2d"><span class="section-number-2">5</span> 离群值的检验原理</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org73eefad" class="outline-3">
+<h3 id="org73eefad"><span class="section-number-3">5.1</span> 离群值</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>先看一个假想的例子，我们从真实模型 \(y_i=x_i+\epsilon_i \quad \epsilon \sim N(0,1)\)中抽取10个观测，进行回归，然后添加一个离群点（10, 0）后再回归，观察离群点对回归线的影响。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">set.seed(1234)
+x <span style="color: #ce537a; font-weight: bold;">&lt;-</span> runif(10,1,8)
+y <span style="color: #ce537a; font-weight: bold;">&lt;-</span> x + rnorm(10)
+plot(x,y)
+fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(y~x)
+summary(fit)
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">&#28155;&#21152;&#19968;&#20010;&#31163;&#32676;&#20540;</span>
+xot <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(x,10)
+yot <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(y,0)
+fitot <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(yot~xot)
+summary(fitot)
+plot(x,y,xlim = c(0,11))
+abline(a=coef(fit)[1],b=coef(fit)[2])
+abline(a=coef(fitot)[1],b=coef(fitot)[2],col=<span style="color: #2d9574;">"red"</span>)
+points(x=10,y=0,col=<span style="color: #2d9574;">"red"</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="outlier1.png" alt="outlier1.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>我们可以看到在离群值存在的情况下，不仅回归系数会变小，而且显著性水平也会下降。</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org67a0678" class="outline-3">
+<h3 id="org67a0678"><span class="section-number-3">5.2</span> 离群值的来源</h3>
+<div class="outline-text-3" id="text-5-2">
+<ul class="org-ul">
+<li>离群值是来自于其他分布的观测</li>
+<li>编码错误，数据输入错误</li>
+<li>可能是遗留控制变量造成的</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">z <span style="color: #ce537a; font-weight: bold;">&lt;-</span> c(rep(0,10),1)
+fitaddz <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(yot~xot+z)
+summary(fitaddz)
+</pre>
+</div>
+
+<pre class="example">
+
+Call:
+lm(formula = yot ~ xot
+z)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.7372 -0.3546 -0.1997  0.2097  1.2928 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  -0.2395     0.5598  -0.428     0.68    
+xot           0.9796     0.1170   8.376 3.13e-05 ***
+z            -9.5564     0.9626  -9.928 8.96e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6751 on 8 degrees of freedom
+Multiple R-squared:  0.9283,	Adjusted R-squared:  0.9104 
+F-statistic:  51.8 on 2 and 8 DF,  p-value: 2.641e-05
+</pre>
+
+<ul class="org-ul">
+<li>可能是一个正常的异乎寻常的事件（黑天鹅）</li>
+<li>在多元统计分析中，很难确定是否为离群值</li>
+<li>可以通过杠杆值（leverage）和残差差异（discrepancy）来衡量一个观测对回归线的影响（influence）</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org18ba522" class="outline-3">
+<h3 id="org18ba522"><span class="section-number-3">5.3</span> 杠杆值</h3>
+<div class="outline-text-3" id="text-5-3">
+<ul class="org-ul">
+<li>二维情形，自变量\(X_i\)越极端，则杠杆值越大。</li>
+<li>多维情形，采用帽子矩阵衡量\(X_i\)与\(\bar X_i\)的距离。</li>
+</ul>
+\begin{array}
+\hat \beta &= &(X^{'}X)^{-1}X^{'}y \\
+\hat y &= &X(X^{'}X)^{-1}X^{'}y \\
+\hat y &= & Hy \\
+H &= &X(X^{'}X)^{-1}X^{'}
+\end{array}
+<ul class="org-ul">
+<li>帽子矩阵是因为它能将\(y\)变成\(\hat y\)，其对角线元素\(h_i\)与\(X_i\)和\(\bar X_i\)的距离成正比。</li>
+<li>一般将\(h_i\)除以其平均值，以方便解释，即每个观测的杠杆值比平均值高多少倍。</li>
+<li>经验上如果标准化后的\(h_i\)大于2或3，那么就是比较高的杠杆值。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">hatvalues(fitot)/mean(hatvalues(fitot))
+</pre>
+</div>
+
+<pre class="example">
+        1         2         3         4         5         6         7         8 
+1.3780746 0.5161059 0.5099325 0.5166845 0.8919832 0.5270892 1.8341525 0.9739390 
+        9        10        11 
+0.5477442 0.5098256 2.7944688
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8437227" class="outline-3">
+<h3 id="org8437227"><span class="section-number-3">5.4</span> 残差差异</h3>
+<div class="outline-text-3" id="text-5-4">
+<ul class="org-ul">
+<li>残差能够揭示每个观测的离群程度，但是具有高影响力的观测能够降低它的残差，为什么？</li>
+<li>首先需要纠正杠杆的影响，通过用帽子矩阵标准化残差</li>
+</ul>
+<p>
+\[\hat \epsilon^{standard}_i = \frac{\hat \epsilon_i}{\sqrt{\Sigma_i \hat \epsilon^2_i / (n-k-1)}\sqrt{1-h_i}}\]
+</p>
+<ul class="org-ul">
+<li>现在标准化残差是以标准差为单位来衡量的，如果大于2，即为5%的可能性出现（小概率事件）。</li>
+<li>其次需要纠正离群值本身对残差差异的影响，可以将这个离群值排除出去，再进行回归，然后计算其标准化残差，即学生化残差。</li>
+</ul>
+<p>
+\[\hat \epsilon^{studentized}_i = \frac{\hat \epsilon_i}{\sqrt{\Sigma_{~i} \hat \epsilon^2_{~i} / (n-k-1)}\sqrt{1-h_i}}\]
+</p>
+<div class="org-src-container">
+<pre class="src src-R">rstudent(fitot)
+</pre>
+</div>
+
+<pre class="example">
+         1          2          3          4          5          6          7 
+-0.3857657  0.4210466  0.4007924  0.4282968  0.9387351  0.5100726 -1.6821783 
+         8          9         10         11 
+-0.6549856  0.8306049  0.8452248 -9.9276950
+
+</pre>
+
+<ul class="org-ul">
+<li>绘制离群值影响图</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">par</span>(mfrow=c(1,2))
+hatstd <span style="color: #ce537a; font-weight: bold;">&lt;-</span> hatvalues(fitot)/mean(hatvalues(fitot))
+rstd <span style="color: #ce537a; font-weight: bold;">&lt;-</span> rstudent(fitot)
+plot(hatstd, rstd, xlab=<span style="color: #2d9574;">"standardized hat values"</span>,ylab=<span style="color: #2d9574;">"studentized residuals"</span> )
+<span style="color: #4f97d7;">library</span>(car)
+influencePlot(fitot)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="outlier2.png" alt="outlier2.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>对于离群值应该尽量寻求用模型去解释，谨慎考虑剔除。</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orge44a130" class="outline-2">
+<h2 id="orge44a130"><span class="section-number-2">6</span> 回归模型诊断的常用方法</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org65d219f" class="outline-3">
+<h3 id="org65d219f"><span class="section-number-3">6.1</span> plot函数自动绘制诊断图</h3>
+<div class="outline-text-3" id="text-6-1">
+<ul class="org-ul">
+<li>一般有4张诊断图
+<ol class="org-ol">
+<li>线性假定：残差与拟合值没有系统关联</li>
+<li>正态性：正态Q-Q图是与理论正态分布相比，标准化残差的概率图，应落在呈45度角的直线上</li>
+<li>同方差性：位置尺度图水平线周围的点应该随机分布</li>
+<li>离群点、高杠杆点和强影响点：残差杠杆图采用cook距离来识别对模型参数的估计产生过大影响（高杠杆值）的观测点，一般Cook距离大于 $4/(n-k-1)$，则表明是强影响点</li>
+</ol></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit1 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(weight ~ height, data=women)
+<span style="color: #4f97d7;">par</span>(mfrow=c(2,2))
+plot(fit1)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="check1.png" alt="check1.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>剔除离群值</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit2 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(weight ~ height + I(height^2), data = women[-c(15),])
+<span style="color: #4f97d7;">par</span>(mfrow=c(2,2))
+plot(fit2)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="check2.png" alt="check2.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9ecdb33" class="outline-3">
+<h3 id="org9ecdb33"><span class="section-number-3">6.2</span> 回归模型诊断的其他常用方法</h3>
+<div class="outline-text-3" id="text-6-2">
+<ul class="org-ul">
+<li>线性：成分残差图 \(\epsilon_i+(\hat \beta_0+\hat \beta_1X_{1i}+\cdots+\hat \beta_k X_{ki}) \ vs.\ X_i\)</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #4f97d7;">library</span>(car)
+states <span style="color: #ce537a; font-weight: bold;">&lt;-</span> as.data.frame(state.x77[,c(<span style="color: #2d9574;">"Murder"</span>, <span style="color: #2d9574;">"Population"</span>, <span style="color: #2d9574;">"Illiteracy"</span>, <span style="color: #2d9574;">"Income"</span>, <span style="color: #2d9574;">"Frost"</span>)])
+fit <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+crPlots(fit)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="check3.png" alt="check3.png" />
+</p>
+</div>
+
+<p>
+如果成分残差图存在非线性，需要添加二次项，对变量进行变换，或者采用其他非线性回归模型
+</p>
+<ul class="org-ul">
+<li>正态性：学生化残差的Q-Q图</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">qqPlot(fit)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="check4.png" alt="check4.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>同方差性：计分检验与分布水平图
+计分检验原假设为误差方差不变，若检验显著则存在异方差</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">ncvTest(fit)
+spreadLevelPlot(fit)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="check5.png" alt="check5.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>误差的独立性：Durbin-Watson检验</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">durbinWatsonTest(fit)
+</pre>
+</div>
+
+<pre class="example">
+lag Autocorrelation D-W Statistic p-value
+  1      -0.2006929      2.317691   0.288
+Alternative hypothesis: rho != 0
+
+</pre>
+
+<ul class="org-ul">
+<li>多重共线性：如果多个自变量之间相关性较强，系数方差会过大；联合检验显著，而单个自变量系数不显著。可以用统计量VIF（variance inflation factor）方差膨胀因子进行检测。一般 \(\sqrt{vif} >2\) 就表示存在多重共线性问题</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">vif(fit)
+sqrt(vif(fit)) &gt; 2
+</pre>
+</div>
+
+<pre class="example">
+Population Illiteracy     Income      Frost 
+  1.245282   2.165848   1.345822   2.082547
+
+Population Illiteracy     Income      Frost 
+     FALSE      FALSE      FALSE      FALSE
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org70dcc8e" class="outline-3">
+<h3 id="org70dcc8e"><span class="section-number-3">6.3</span> 预测性回归模型的构建原理</h3>
+<div class="outline-text-3" id="text-6-3">
+<ol class="org-ol">
+<li>纳入所有重要的预测变量</li>
+<li>必要时可对变量进行变换或者对多个变量进行综合生成单个预测变量</li>
+<li>如果变量的主效应较大，考虑添加交互项</li>
+<li>根据回归系数的显著性和预期符号对预测变量进行取舍
+<ul class="org-ul">
+<li>统计不显著，与预期符号相同，一般保留在模型中</li>
+<li>统计不显著，与预期符号相反，考虑删除</li>
+<li>统计显著，与预期符号相反，琢磨是否有这种可能性，收集潜在变量的数据，并纳入模型</li>
+<li>统计显著，与预期符号相同，保留</li>
+</ul></li>
+</ol>
+<p>
+解释性回归模型在构建中要更重视研究问题的本质和变量在理论上的重要性，采用手动选择变量构建模型，较少自动选择变量（逐步回归等）。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1021fd0" class="outline-3">
+<h3 id="org1021fd0"><span class="section-number-3">6.4</span> 模型比较</h3>
+<div class="outline-text-3" id="text-6-4">
+<ul class="org-ul">
+<li>嵌套模型的比较:</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">fit1 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+fit2 <span style="color: #ce537a; font-weight: bold;">&lt;-</span> lm(Murder ~ Population + Illiteracy, data=states)
+anova(fit1, fit2)
+</pre>
+</div>
+
+<pre class="example">
+
+Analysis of Variance Table
+
+Model 1: Murder ~ Population
+Illiteracy
+Income
+Frost
+Model 2: Murder ~ Population
+Illiteracy
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1     45 289.17                           
+2     47 289.25 -2 -0.078505 0.0061 0.9939
+</pre>
+
+<ul class="org-ul">
+<li>更一般的模型比较：
+<ul class="org-ul">
+<li>AIC（Akaike Information Criterion, 赤池信息准则）：来自信息论， \(AIC = -2 ( ln ( likelihood )) + 2 K\) ，其中likelihood为给定模型的条件下数据的概率，k为参数个数。</li>
+<li>一般优先选择AIC值较小的模型，即用较少的参数获得足够拟合度。</li>
+</ul></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-R">AIC(fit1,fit2)
+</pre>
+</div>
+
+<pre class="example">
+     df      AIC
+fit1  6 241.6429
+fit2  4 237.6565
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: 厦门大学公共事务学院</p>
+<p class="date">Created: 2019-07-04 四 17:25</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

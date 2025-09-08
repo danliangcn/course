@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2025-09-08">
+
+<title>回归模型 – course</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8610558a007458a9b978551a034f4d85.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">course</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#多元线性回归" id="toc-多元线性回归" class="nav-link active" data-scroll-target="#多元线性回归">多元线性回归</a>
+  <ul class="collapse">
+  <li><a href="#多元线性回归的假定" id="toc-多元线性回归的假定" class="nav-link" data-scroll-target="#多元线性回归的假定">多元线性回归的假定</a></li>
+  <li><a href="#探索性分析" id="toc-探索性分析" class="nav-link" data-scroll-target="#探索性分析">探索性分析</a></li>
+  <li><a href="#多元线性回归模型" id="toc-多元线性回归模型" class="nav-link" data-scroll-target="#多元线性回归模型">多元线性回归模型</a></li>
+  </ul></li>
+  <li><a href="#最大似然估计" id="toc-最大似然估计" class="nav-link" data-scroll-target="#最大似然估计">最大似然估计</a>
+  <ul class="collapse">
+  <li><a href="#引例" id="toc-引例" class="nav-link" data-scroll-target="#引例">引例</a></li>
+  <li><a href="#最大似然推断" id="toc-最大似然推断" class="nav-link" data-scroll-target="#最大似然推断">最大似然推断</a></li>
+  <li><a href="#异方差数据的最大似然估计" id="toc-异方差数据的最大似然估计" class="nav-link" data-scroll-target="#异方差数据的最大似然估计">异方差数据的最大似然估计</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">回归模型</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 8, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="多元线性回归" class="level2">
+<h2 class="anchored" data-anchor-id="多元线性回归">多元线性回归</h2>
+<p>本部分的重点包括：<br>
+- 线性回归的假定<br>
+- 探索性数据分析图和汇总统计数据<br>
+- 使用残差诊断回归假设<br>
+- 解释多元线性回归的参数和相关检验和区间<br>
+- 自助法置信区间的原理</p>
+<section id="多元线性回归的假定" class="level3">
+<h3 class="anchored" data-anchor-id="多元线性回归的假定">多元线性回归的假定</h3>
+<section id="多元线性回归的表达式" class="level4">
+<h4 class="anchored" data-anchor-id="多元线性回归的表达式">多元线性回归的表达式</h4>
+<p><span class="math display">\[\begin{aligned}
+  y_i &amp; =  X_i \beta+\epsilon_i \\
+      &amp; =  \beta_1 X_{i1}+\cdots + \beta_k X_{ik} + \epsilon_i
+\end{aligned},\qquad for \quad i=1,\cdots , n\]</span></p>
+<p>其中， <span class="math inline">\(\epsilon_i\)</span> 相互独立，服从均值为0，标准差为 <span class="math inline">\(\sigma\)</span> 正态分布<br>
+或者</p>
+<p><span class="math display">\[y_i \sim N(X_i \beta, \sigma^2),\qquad for \quad i=1,\cdots , n\]</span></p>
+<p>其中， <span class="math inline">\(X\)</span> 是 <span class="math inline">\(n\times k\)</span> 的预测变量矩阵，第 <span class="math inline">\(i\)</span> 行为 (X_{i})， <span class="math inline">\(\beta\)</span> 是长度为 <span class="math inline">\(k\)</span> 的列向量</p>
+</section>
+<section id="多元线性回归的假定-1" class="level4">
+<h4 class="anchored" data-anchor-id="多元线性回归的假定-1">多元线性回归的假定</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 37%">
+<col style="width: 22%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>假定</th>
+<th>表达式</th>
+<th>假设不成立</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1 无完全共线性</td>
+<td><span class="math inline">\(rank(X)=k,k&lt;n\)</span></td>
+<td>无法识别回归系数</td>
+<td>减少变量或增加样本</td>
+</tr>
+<tr class="even">
+<td>2 X外生</td>
+<td><span class="math inline">\(E(X\epsilon )=0\)</span></td>
+<td>有偏，且不随N增加而改善</td>
+<td>改变研究设计，因果推断技术</td>
+</tr>
+<tr class="odd">
+<td>3 误差项零均值</td>
+<td><span class="math inline">\(E(\epsilon)=0\)</span></td>
+<td>有偏，且不随N增加而改善</td>
+<td>改变模型设定</td>
+</tr>
+<tr class="even">
+<td>4 线性关系</td>
+<td><span class="math inline">\(y=\beta_{1}x_{1}+\beta_{2} x_{2}+\cdots+\epsilon\)</span></td>
+<td>模型设定错误</td>
+<td>改变模型设定</td>
+</tr>
+<tr class="odd">
+<td>5 误差项不相关（观测独立）</td>
+<td><span class="math inline">\(E(\epsilon_{i} \epsilon_{j})=0, i\neq j\)</span></td>
+<td>无偏但无效，标准误不正确</td>
+<td>多层线性模型</td>
+</tr>
+<tr class="even">
+<td>6 同方差</td>
+<td><span class="math inline">\(E(\epsilon^{'}\epsilon)=\sigma^{2}\boldsymbol{I}\)</span></td>
+<td>无偏但无效，标准误不正确</td>
+<td>广义线性模型或稳健性标准误</td>
+</tr>
+<tr class="odd">
+<td>7 误差项服从正态分布</td>
+<td><span class="math inline">\(\epsilon\sim N(0,\sigma^{2})\)</span></td>
+<td>标准误不正确，但随N增加而改善</td>
+<td>广义线性模型</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>如果假定1-6都成立，则最小二乘法的估计量是最优线性无偏估计量（best linear unbiased estimator, BLUE）</li>
+<li>如果假定7也成立，则最小二乘法得到参数估计为最小方差无偏的，即在所有线性和非线性估计量中方差最小。</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/OLSassumptions-1.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>线性回归最小二乘法的假定</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>哪些研究设计可能导致违背回归假定？</p>
+<ul>
+<li>随机选择驾驶员，改变车内音乐的音量，测试驾驶员在同一路段的反应时间<br>
+</li>
+<li>随机选择学生，通过学习时间预测考试能否通过<br>
+</li>
+<li>随机选择家庭，通过家庭收入预测家庭生育子女的数量<br>
+</li>
+<li>通过父亲的身高，预测他长子的身高</li>
+<li>随机选择稻田，通过降雨量预测水稻产量<br>
+</li>
+<li>随机选择大学生，通过性别、每周锻炼时间预测体重<br>
+</li>
+<li>在10家有多名外科手术医生的医院选择接受某项外科手术的患者，通过患者的年龄预测手术的治疗效果，治疗效果采用1-10分记录。</li>
+</ul>
+<p>如果违背正态性假定，那么需要广义线性模型；如果违背独立性假定，那么需要采用分层线性模型。</p>
+</section>
+</section>
+<section id="探索性分析" class="level3">
+<h3 class="anchored" data-anchor-id="探索性分析">探索性分析</h3>
+<p>示例：母亲教育与子女认知能力<a href="./kidiq.dta">数据集</a></p>
+<section id="数据结构" class="level4">
+<h4 class="anchored" data-anchor-id="数据结构">数据结构</h4>
+<div class="cell" data-ewarning="false">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"foreign"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"kableExtra"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>kidiq <span class="ot">&lt;-</span> <span class="fu">read.dta</span>(<span class="st">"kidiq.dta"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>kidiq <span class="ot">&lt;-</span> kidiq <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">hsfactor =</span> <span class="fu">ifelse</span>(mom_hs<span class="sc">==</span><span class="dv">1</span>, <span class="st">"高中及以上"</span>, <span class="st">"高中以下"</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> kidiq <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">&lt;</span> <span class="dv">6</span> <span class="sc">|</span> <span class="fu">row_number</span>() <span class="sc">&gt;</span> <span class="dv">428</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(table1, <span class="at">booktabs=</span>T,<span class="at">caption=</span><span class="st">"示例数据概览"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="st">"scale_down"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>示例数据概览</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">kid_score</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mom_hs</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mom_iq</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mom_work</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mom_age</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">hsfactor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">121.11753</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">89.36188</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">115.44316</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">99.44964</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: right;">115</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">92.74571</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">429</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">74.86073</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">高中以下 |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">430</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">84.87741</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">高中以下 |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">431</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">92.99039</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">432</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">94.85971</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">高中以下 |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">433</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">96.85662</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">434</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">91.25334</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">高中及以上 |</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>有哪些变量类型？</p>
+</section>
+<section id="单变量描述" class="level4">
+<h4 class="anchored" data-anchor-id="单变量描述">单变量描述</h4>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/twohist-1.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>示例中尺度变量的直方图</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>这些变量的分布有什么特征？</p>
+</section>
+<section id="双变量描述" class="level4">
+<h4 class="anchored" data-anchor-id="双变量描述">双变量描述</h4>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>gg <span class="ot">&lt;-</span> <span class="fu">ggpairs</span>(<span class="at">data =</span> kidiq, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"hsfactor"</span>, <span class="st">"kid_score"</span>, <span class="st">"mom_iq"</span>, <span class="st">"mom_age"</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a> gg[<span class="dv">4</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> gg[<span class="dv">4</span>,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">geom_histogram</span>( <span class="at">binwidth =</span> <span class="dv">5</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a> gg[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> gg[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">geom_histogram</span>( <span class="at">binwidth =</span> <span class="dv">10</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a> gg[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> gg[<span class="dv">3</span>,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">geom_histogram</span>( <span class="at">binwidth =</span> <span class="dv">5</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>gg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/bivariate-1.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>探索变量间的关系</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>对角线上为单变量的分布，箱线图和直方图为按是否上过高中分类的其他尺度变量的分布，散点图为两个尺度变量的相关性，对角线上方为相关系数。<br>
+变量之间的关系是怎样的？</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coded scatterplot</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(kidiq, <span class="fu">aes</span>(<span class="at">x =</span> mom_iq, <span class="at">y =</span> kid_score, <span class="at">colour =</span> hsfactor)) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape =</span> hsfactor)) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype =</span> hsfactor), <span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/codeds-1.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>子女测试分数的线性趋势</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>通过探索性分析，可以尝试问这样的问题：</p>
+<ul>
+<li>子女测试分数是线性增加的吗？<br>
+</li>
+<li>测试分数增长的快慢受到母亲是否上过高中影响吗？<br>
+</li>
+<li>上过高中的母亲其子女测试分数一定更高吗？<br>
+</li>
+<li>这些关系在统计上是显著的吗？<br>
+</li>
+<li>预测子女测试分数的效果如何？</li>
+</ul>
+</section>
+</section>
+<section id="多元线性回归模型" class="level3">
+<h3 class="anchored" data-anchor-id="多元线性回归模型">多元线性回归模型</h3>
+<section id="连续型自变量的简单回归" class="level4">
+<h4 class="anchored" data-anchor-id="连续型自变量的简单回归">连续型自变量的简单回归</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">lm</span> (kid_score <span class="sc">~</span> mom_iq, <span class="at">data =</span> kidiq)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_iq, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-56.753 -12.074   2.217  11.710  47.691 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 25.79978    5.91741    4.36 1.63e-05 ***
+mom_iq       0.60997    0.05852   10.42  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 18.27 on 432 degrees of freedom
+Multiple R-squared:  0.201, Adjusted R-squared:  0.1991 
+F-statistic: 108.6 on 1 and 432 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>系数的解释：保持其他变量不变，预测变量单位变动相应的响应变量变动大小。</li>
+</ul>
+<p>但是注意：有时候在保持其他变量不变的情况下是不可能变动某个变量的，例如回归中同时包括IQ和 (IQ^{2})，或者有交互项 mom_hs*mom_i q.</p>
+<ul>
+<li><p>回归模型诊断的常用方法，plot函数会自动绘制4张诊断图</p>
+<ol type="1">
+<li>线性假定：残差与拟合值没有系统关联<br>
+</li>
+<li>正态性：正态Q-Q图是与理论正态分布相比，标准化残差的概率图，应落在呈45度角的直线上<br>
+</li>
+<li>同方差性：位置尺度图水平线周围的点应该随机分布<br>
+</li>
+<li>离群点、高杠杆点和强影响点：残差杠杆图采用cook距离来识别对模型参数的估计产生过大影响（高杠杆值）的观测点，一般Cook距离大于 <span class="math inline">\(4/(n-k-1)\)</span>，则表明是强影响点</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>比较线性和2次曲线拟合</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitted models for Model 2 and Model 2Q</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(kidiq, <span class="fu">aes</span>(<span class="at">x =</span> mom_iq, <span class="at">y =</span> kid_score)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x, </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x <span class="sc">+</span> <span class="fu">I</span>(x<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linetype =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/models2and2q-1.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>比较线性和2次曲线拟合</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>修正模型后的诊断</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>kidiq <span class="ot">&lt;-</span> kidiq <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mom_iq2 =</span> mom_iq<span class="sc">*</span>mom_iq)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">lm</span> (kid_score <span class="sc">~</span> mom_iq <span class="sc">+</span> mom_iq2, <span class="at">data =</span> kidiq)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_iq + mom_iq2, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-54.824 -11.640   2.883  11.372  50.813 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -99.033675  37.301385  -2.655 0.008226 ** 
+mom_iq        3.076800   0.730291   4.213 3.07e-05 ***
+mom_iq2      -0.011917   0.003517  -3.389 0.000767 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 18.05 on 431 degrees of freedom
+Multiple R-squared:  0.2217,    Adjusted R-squared:  0.2181 
+F-statistic: 61.38 on 2 and 431 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="二值型自变量的简单回归" class="level4">
+<h4 class="anchored" data-anchor-id="二值型自变量的简单回归">二值型自变量的简单回归</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(kid_score <span class="sc">~</span> mom_hs, <span class="at">data =</span> kidiq)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_hs, data = kidiq)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-57.55 -13.32   2.68  14.68  58.45 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   77.548      2.059  37.670  &lt; 2e-16 ***
+mom_hs        11.771      2.322   5.069 5.96e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 19.85 on 432 degrees of freedom
+Multiple R-squared:  0.05613,   Adjusted R-squared:  0.05394 
+F-statistic: 25.69 on 1 and 432 DF,  p-value: 5.957e-07</code></pre>
+</div>
+</div>
+<p>此种情况下，回归系统和截距很容易解释。这个回归和两个独立样本t检验一致吗？需要满足等方差的假设吗？</p>
+</section>
+<section id="两个自变量的多元回归" class="level4">
+<h4 class="anchored" data-anchor-id="两个自变量的多元回归">两个自变量的多元回归</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(kid_score <span class="sc">~</span> mom_hs<span class="sc">+</span> mom_iq, <span class="at">data =</span> kidiq)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_hs + mom_iq, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-52.873 -12.663   2.404  11.356  49.545 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 25.73154    5.87521   4.380 1.49e-05 ***
+mom_hs       5.95012    2.21181   2.690  0.00742 ** 
+mom_iq       0.56391    0.06057   9.309  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 18.14 on 431 degrees of freedom
+Multiple R-squared:  0.2141,    Adjusted R-squared:  0.2105 
+F-statistic: 58.72 on 2 and 431 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>相对于模型3，估计在考虑母亲智商影响的情况下，是否上过高中对子女测试分数的影响差异。平均而言，上过高中的母亲其子女测试分数高5.95分。上面模型的11.77分是高估了高中对分数的影响。<br>
+</li>
+<li>类似的，在考虑母亲高中的影响的情况下，母亲智商对子女测试分数的影响平均而言是0.56，也小于第1个模型的系数0.61。<br>
+</li>
+<li>模型的拟合优度R方为0.21，远高于只用高中变量的模型拟合优度0.05。</li>
+</ul>
+</section>
+<section id="基于正态性理论的多元回归推断" class="level4">
+<h4 class="anchored" data-anchor-id="基于正态性理论的多元回归推断">基于正态性理论的多元回归推断</h4>
+<p>除了了解效应的显著性，还需要采用置信区间量化效应量的不确定性和量化模型预测值的不确定性。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 2.5 %     97.5 %
+(Intercept) 14.1839148 37.2791615
+mom_hs       1.6028370 10.2973969
+mom_iq       0.4448487  0.6829634</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>new.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">mom_iq=</span><span class="dv">190</span>, <span class="at">mom_hs =</span> <span class="dv">0</span>) </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fit4, <span class="at">new =</span> new.data, <span class="at">interval =</span> <span class="st">"prediction"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       fit      lwr      upr
+1 132.8737 95.18156 170.5658</code></pre>
+</div>
+</div>
+<ul>
+<li>95%的信心，母亲是否上过高中造成子女测试分数的差异在1.6分到10.3分之间。<br>
+</li>
+<li>基于模型4，有95%的信心，如果母亲智商190，但是没有上过高中，则子女的测试分数在95到171之间。</li>
+</ul>
+</section>
+<section id="基于自助法的多元回归推断" class="level4">
+<h4 class="anchored" data-anchor-id="基于自助法的多元回归推断">基于自助法的多元回归推断</h4>
+<p>如果回归模型违背了假设，自助法是一种更稳健的统计推断方法。其原理是原始数据样本能够代表总体，所以可以通过从原始样本数据中再抽样，获得多个子样本，从子样本的统计特征了解估计参数的不确定性。</p>
+<p>自助法的步骤如下：</p>
+<ul>
+<li>在原始数据中进行重抽样<br>
+</li>
+<li>用新的子样本重新拟合原来的回归模型得到新的回归系数、截距<br>
+</li>
+<li>重复上面的两个步骤足够多的次数（比如1000次）<br>
+</li>
+<li>采用1000次重抽样回归模型的估计量绘制参数自助法分布<br>
+</li>
+<li>通过2.5%和97.5%的百分位数获得每个参数自助法分布的置信区间</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">666</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>bootreg <span class="ot">&lt;-</span> kidiq <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bootstraps</span>(<span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(splits) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(df) <span class="fu">lm</span>(kid_score <span class="sc">~</span> mom_iq <span class="sc">+</span> mom_hs, <span class="at">data =</span> df) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(mod) <span class="fu">as.data.frame</span>(<span class="fu">t</span>(<span class="fu">as.matrix</span>(<span class="fu">coef</span>(mod))))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"variable"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>bootregresult <span class="ot">&lt;-</span> bootreg <span class="sc">%&gt;%</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(<span class="fu">across</span>( <span class="fu">where</span>(is.numeric),  </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>          <span class="fu">list</span>(<span class="at">low =</span> <span class="sc">~</span><span class="fu">quantile</span>(., <span class="at">probs =</span> <span class="fl">0.025</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),  </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">high =</span> <span class="sc">~</span><span class="fu">quantile</span>(., <span class="at">probs =</span> <span class="fl">0.975</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))) </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>bootregresult</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  variable    value_low value_high
+  &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;
+1 (Intercept)    14.1       37.5  
+2 mom_hs          1.51      10.5  
+3 mom_iq          0.439      0.681</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bootreg, <span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, <span class="at">scales =</span> <span class="st">"free"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/boot4-1.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>回归系数的自助法分布</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>结果与正态分布理论假定下的结果相似。此外，还有多种其他计算自助法置信区间的方法，但是百分位法是应用最广泛的。</p>
+</section>
+<section id="具有交互项的多元回归" class="level4">
+<h4 class="anchored" data-anchor-id="具有交互项的多元回归">具有交互项的多元回归</h4>
+<ul>
+<li>没有截距的模型（常数项）</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span> (kid_score <span class="sc">~</span> mom_hs <span class="sc">+</span> mom_iq <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data =</span> kidiq)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_hs + mom_iq - 1, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-55.348 -10.796   2.187  12.789  50.838 
+
+Coefficients:
+       Estimate Std. Error t value Pr(&gt;|t|)    
+mom_hs  5.99194    2.25786   2.654  0.00825 ** 
+mom_iq  0.81524    0.01979  41.189  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 18.51 on 432 degrees of freedom
+Multiple R-squared:  0.9571,    Adjusted R-squared:  0.9569 
+F-statistic:  4817 on 2 and 432 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>添加交互项 增加一个交互项以允许IQ的回归系数随高中完成情况不同而变动</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fit6 <span class="ot">&lt;-</span> <span class="fu">lm</span> (kid_score <span class="sc">~</span> mom_hs <span class="sc">+</span> mom_iq <span class="sc">+</span> mom_hs<span class="sc">:</span>mom_iq, <span class="at">data =</span> kidiq)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_hs + mom_iq + mom_hs:mom_iq, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-52.092 -11.332   2.066  11.663  43.880 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   -11.4820    13.7580  -0.835 0.404422    
+mom_hs         51.2682    15.3376   3.343 0.000902 ***
+mom_iq          0.9689     0.1483   6.531 1.84e-10 ***
+mom_hs:mom_iq  -0.4843     0.1622  -2.985 0.002994 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 17.97 on 430 degrees of freedom
+Multiple R-squared:  0.2301,    Adjusted R-squared:  0.2247 
+F-statistic: 42.84 on 3 and 430 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>解释系数和截距
+<ul>
+<li>截距： <span class="math inline">\(IQ=0 \quad hs=0\)</span>（无意义）<br>
+</li>
+<li>mom_hs的系数： IQ=0时，是否完成高中相应的孩子得分差异<br>
+</li>
+<li>mom_iq的系数： 未完成高中母亲中，IQ增加所相应的孩子得分差异，红线斜率<br>
+</li>
+<li>交互项的系数：母亲是否完成高中两组之间在IQ斜率上的差别</li>
+</ul></li>
+</ul>
+<p>回到图4，交互项体现了图中的什么关系？</p>
+<ul>
+<li>快速添加交互项</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fit6 <span class="ot">&lt;-</span> <span class="fu">lm</span> (kid_score <span class="sc">~</span> mom_hs <span class="sc">*</span> mom_iq, <span class="at">data =</span> kidiq)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_hs * mom_iq, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-52.092 -11.332   2.066  11.663  43.880 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   -11.4820    13.7580  -0.835 0.404422    
+mom_hs         51.2682    15.3376   3.343 0.000902 ***
+mom_iq          0.9689     0.1483   6.531 1.84e-10 ***
+mom_hs:mom_iq  -0.4843     0.1622  -2.985 0.002994 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 17.97 on 430 degrees of freedom
+Multiple R-squared:  0.2301,    Adjusted R-squared:  0.2247 
+F-statistic: 42.84 on 3 and 430 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="建立最终模型" class="level4">
+<h4 class="anchored" data-anchor-id="建立最终模型">建立最终模型</h4>
+<p>最终多元线性回归模型的典型特征包括：</p>
+<ul>
+<li>解释变量能够针对主要的研究问题<br>
+</li>
+<li>解释变量控制了重要的协变量<br>
+</li>
+<li>调查了潜在交互作用<br>
+</li>
+<li>中心化变量方便解释<br>
+</li>
+<li>剔除了不必要的变量<br>
+</li>
+<li>使用残差图检验了回归假定和影响点<br>
+</li>
+<li>模型以简洁地方式讲述了一个有说服力的故事</li>
+</ul>
+<p>虽然在报告研究结果时，一般要求选择一个合理的最终模型，但是值得注意：<br>
+1 研究者在得出结论时通常会检查并考虑一系列相关的模型<br>
+2 不同的研究者有时会针对同一组数据选择不同的模型作为“最终模型”。“最终模型”的选择取决于许多因素，例如主要研究问题、建模目的、简约性和拟合模型质量之间的权衡、基本假设等。建模决策不应自动化或完全基于统计检验；学科领域知识应始终在建模过程中发挥作用。要能够捍卫所选择的任何最终模型，但不应该感到有压力要找到唯一的“正确模型”，尽管大多数好的模型都会得出类似的结论。</p>
+<p>在比较不同的模型构建时，可以使用的检验方法：</p>
+<ul>
+<li>R方能够测量模型解释的响应变量的变异程度。但是会随着增加自变量而增大，即使自变量增加的信息很少。<br>
+</li>
+<li>调整后R方，可以增加模型复杂度的惩罚。<br>
+</li>
+<li>AIC（Akaike Information Criterion, 赤池信息准则）来自信息论， <span class="math inline">\(AIC = -2 ( ln ( likelihood )) + 2 K\)</span> ，其中likelihood为给定模型的条件下数据的概率，k为参数个数。同样是为了平衡模型性能和模型复杂度，无论模型大小，AIC值越小越好。BIC（贝叶斯信息准则）与 AIC 类似，但对附加模型项的惩罚更大。<br>
+</li>
+<li>平方和 F 检验。是对单个模型系数 t 检验的推广，可用于对嵌套模型进行显著性检验，即其中一个模型是另一个模型的简化版本。</li>
+</ul>
+<p>一个可能的最终模型如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit7 <span class="ot">&lt;-</span> <span class="fu">lm</span> (kid_score <span class="sc">~</span> mom_hs <span class="sc">+</span> mom_iq <span class="sc">+</span> mom_iq2, <span class="at">data =</span> kidiq)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit7)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kid_score ~ mom_hs + mom_iq + mom_iq2, data = kidiq)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-54.553 -10.940   2.502  11.095  48.710 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -88.541848  37.390233  -2.368 0.018324 *  
+mom_hs        5.107323   2.207015   2.314 0.021131 *  
+mom_iq        2.828771   0.734492   3.851 0.000135 ***
+mom_iq2      -0.010910   0.003526  -3.094 0.002104 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 17.96 on 430 degrees of freedom
+Multiple R-squared:  0.2313,    Adjusted R-squared:  0.2259 
+F-statistic: 43.12 on 3 and 430 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>模型的比较</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit7, fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: kid_score ~ mom_hs + mom_iq + mom_iq2
+Model 2: kid_score ~ mom_hs + mom_iq
+  Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)   
+1    430 138670                                
+2    431 141757 -1     -3087 9.5723 0.002104 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="线性回归模型设定示例" class="level4">
+<h4 class="anchored" data-anchor-id="线性回归模型设定示例">线性回归模型设定示例</h4>
+<p>预期寿命的影响因素</p>
+<ul>
+<li>数据来源：罗伯特·J.巴罗，夏威尔·萨拉-伊-马丁《经济增长》所引用的<a href="http://www.columbia.edu/~xs23/data/barrlee.htm">Barro-Lee数据集</a>（我们只使用<a href="./life.csv">整理后85年数据</a>)</li>
+<li>135个国家的人均GDP（gdpcap）、25岁以上平均受教育年限（school）、公民自由度（civlib，由低到高1-7分）、近期战争时间比例（wartime）。<br>
+</li>
+<li>先来一个简单的回归，只有教育系数显著，是否符合你的预期？会不会模型设定错误？</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>life <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"./life.csv"</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>life <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(life)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeexp <span class="sc">~</span> gdpcap <span class="sc">+</span> school <span class="sc">+</span> civlib <span class="sc">+</span> wartime,<span class="at">data =</span> life)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = lifeexp ~ gdpcap + school + civlib + wartime, data = life)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-13.2871  -3.0705  -0.0368   4.6629  12.1285 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 52.9671697  3.0379356  17.435  &lt; 2e-16 ***
+gdpcap       0.0003216  0.0002551   1.260    0.211    
+school       2.3866392  0.4102266   5.818 9.01e-08 ***
+civlib      -0.7522863  0.4861266  -1.548    0.125    
+wartime      1.0936902  5.5354286   0.198    0.844    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.43 on 90 degrees of freedom
+Multiple R-squared:  0.7509,    Adjusted R-squared:  0.7399 
+F-statistic: 67.84 on 4 and 90 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>我们所看到的效应关系是真实的吗？三个途径去验证
+<ul>
+<li>标准误和相关检验：t检验和F检验（见回归输出结果）<br>
+</li>
+<li>残差的模式</li>
+</ul></li>
+</ul>
+<p>残差的理想模式：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">1000</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>x <span class="sc">+</span>error</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>fit0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x=</span>x,<span class="at">y=</span>fit0<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>存在异方差时的模式：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">1000</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="dv">1</span><span class="sc">*</span>x)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>x <span class="sc">+</span>error</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>fit0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x=</span>x,<span class="at">y=</span>fit0<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>存在离群值</li>
+<li>加权最小二乘法
+<ul>
+<li>存在异方差，则具有较高误差方差的观测含有较少的信息，而具有较低误差方差的观测含有较多的信息。<br>
+</li>
+<li>如果我们能在估计中给予低误差方差观察较高权重，那么能得到更有效的估计。那么相应的最小化误差平方和也变为最小化 <em>加权误差平方和</em> 。<br>
+[<sup>{n}<em>{i=1} w_i </em>{i}</sup>{2}=]<br>
+</li>
+<li>回归系数加权最小二乘估计：<br>
+[_{WLS}=()^{-1}]<br>
+</li>
+<li>上式其中W为对角线为权重的对角阵，每个权重应该与每个y观测的标准差成反比，即<br>
+[_iN(0,^2_i )^2_i = 1/w^2_i ]<br>
+</li>
+<li>如果我们通过样本性质能够确定权重，lm()函数中可以通过weights参数设定权重。<br>
+</li>
+<li>如果不知道权重，可以利用残差估计权重（残差平方对自变量回归的拟合值的倒数），即可行广义最小二乘法。<br>
+</li>
+<li>通过该方法获取的标准误，即为怀特标准误、稳健标准误、三明治标准误、异方差一致标准误等。</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest); <span class="fu">library</span>(car)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>载入需要的程序包：zoo</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+载入程序包：'zoo'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>载入需要的程序包：carData</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+载入程序包：'car'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:purrr':
+
+    some</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    recode</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>vc <span class="ot">&lt;-</span> <span class="fu">hccm</span>(fit, <span class="at">type =</span> <span class="st">"hc1"</span>)                </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>se.corrected <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(vc))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(fit, <span class="at">vcov=</span>vc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+t test of coefficients:
+
+               Estimate  Std. Error t value  Pr(&gt;|t|)    
+(Intercept) 52.96716974  3.29289359 16.0853 &lt; 2.2e-16 ***
+gdpcap       0.00032156  0.00026753  1.2020    0.2325    
+school       2.38663924  0.42745500  5.5834 2.473e-07 ***
+civlib      -0.75228629  0.50324260 -1.4949    0.1384    
+wartime      1.09369023  5.30329592  0.2062    0.8371    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li>示例的残差图</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit<span class="sc">$</span>fitted.values,fit<span class="sc">$</span>residuals, <span class="at">main=</span><span class="st">"life expectancy against fitted Y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>有异方差问题吗？还有什么问题？<br>
+</p></li>
+<li><p>残差与拟合值相关，意味着什么？<br>
+</p></li>
+<li><p>分别检查残差与各个协变量的关系</p>
+<ul>
+<li>残差与公民自由度的关系</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>civlib,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与战时比例的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>wartime,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与教育的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>school,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与GDP的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>gdpcap,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>示例修正模型设定
+<ul>
+<li>公民自由度、战时比例与残差似乎没有明显模式，而教育和GDP和残差有明显的非线性相关关系。<br>
+</li>
+<li>残差中的模式意味着模型设定错误。<br>
+</li>
+<li>如果看到有曲线相关关系，可以考虑添加二次项或进行对话变换。<br>
+</li>
+<li>重新设定模型，将教育和GDP变换为对数项。</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeexp <span class="sc">~</span> <span class="fu">I</span>(<span class="fu">log</span>(gdpcap)) <span class="sc">+</span> <span class="fu">I</span>(<span class="fu">log</span>(school)) <span class="sc">+</span> civlib <span class="sc">+</span> wartime, <span class="at">data=</span>life)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = lifeexp ~ I(log(gdpcap)) + I(log(school)) + civlib + 
+    wartime, data = life)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-11.5038  -1.9584   0.2405   2.0338  11.0816 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     13.1893     5.4439   2.423   0.0174 *  
+I(log(gdpcap))   5.3730     0.6867   7.825 9.35e-12 ***
+I(log(school))   6.0431     0.9040   6.685 1.88e-09 ***
+civlib          -0.1843     0.3084  -0.598   0.5517    
+wartime         -0.2174     3.6894  -0.059   0.9531    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.627 on 90 degrees of freedom
+Multiple R-squared:  0.8889,    Adjusted R-squared:  0.8839 
+F-statistic:   180 on 4 and 90 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>再观察残差图</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit<span class="sc">$</span>fitted.values,fit<span class="sc">$</span>residuals, <span class="at">main=</span><span class="st">"life expectancy against fitted Y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与公民自由度的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>civlib,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与战时比例的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>wartime,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与教育的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>school,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>残差与GDP的关系</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(life<span class="sc">$</span>gdpcap,fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>观察残差图，可以看出相关模式已经消失了，但是还有异方差的可能（喇叭形）</p></li>
+<li><p>比较稳健性标准误</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(orgutils)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>fitsum <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>vc <span class="ot">&lt;-</span> <span class="fu">hccm</span>(fit, <span class="at">type =</span> <span class="st">"hc1"</span>) </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>fitout <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">est=</span>fitsum<span class="sc">$</span>coefficients[,<span class="dv">1</span>], <span class="at">se=</span>fitsum<span class="sc">$</span>coefficients[,<span class="dv">2</span>], <span class="at">robust_se=</span><span class="fu">sqrt</span>(<span class="fu">diag</span>(vc)))</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="fu">toOrg</span>(<span class="fu">round</span>(fitout,<span class="at">digits=</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>| row.names      |   est |   se | robust_se |
+|----------------+-------+------+-----------|
+| (Intercept)    | 13.19 | 5.44 |      5.23 |
+| I(log(gdpcap)) |  5.37 | 0.69 |      0.65 |
+| I(log(school)) |  6.04 |  0.9 |      0.81 |
+| civlib         | -0.18 | 0.31 |      0.28 |
+| wartime        | -0.22 | 3.69 |      3.43 |</code></pre>
+</div>
+</div>
+<ul>
+<li>模型的拟合优度<br>
+</li>
+<li>模型解释力的评价
+<ul>
+<li>R方<br>
+</li>
+<li>回归标准误<br>
+</li>
+<li>样本外检验<br>
+</li>
+<li>交叉验证</li>
+</ul></li>
+<li>回归标准误
+<ul>
+<li>(^2)反映拟合值与真实值之间的平均差距，并且它与y的单位尺度是相同的，非常容易解释。<br>
+</li>
+<li>(^2)越小，说明预测效果越好，(y)越接近真实值。</li>
+</ul></li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>协变量</th>
+<th>(R^2)</th>
+<th>()</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GDP, School, Civlib, Wartime</td>
+<td>0.75</td>
+<td>5.43</td>
+</tr>
+<tr class="even">
+<td>log(GDP), log(School), Civlib, Wartime</td>
+<td>0.88</td>
+<td>3.63</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>相同的数据，相同的响应变量<br>
+</p></li>
+<li><p>每个值是什么含义？哪个模型好一些？</p></li>
+<li><p>样本外拟合优度</p>
+<ul>
+<li>假设我们用CGSS2010的数据建立了某个模型，那么我们可能想知道这个模型来预测CGSS2015的数据效果如何？<br>
+</li>
+<li>如果我们用模型拟合样本外数据和训练样本同样好，那么我们更有信心相信我们找到了真实的模型。<br>
+</li>
+<li>样本外检验步骤：
+<ol type="1">
+<li>采用训练样本拟合模型，获取回归系数 (_{training})<br>
+</li>
+<li>用测试样本的数据计算拟合值 (y_{test})<br>
+</li>
+<li>比较训练样本的拟合度（例如，(<em>{training})）与测试样本的拟合度 (std dev(y</em>{test} - _{test}) ) ，如果两者相等则说明模型预测能力高。</li>
+</ol></li>
+</ul></li>
+<li><p>交叉验证</p>
+<ul>
+<li>如果我们样本量有限，并且很难找到其他的合格样本，可以采取交叉验证。<br>
+</li>
+<li>交叉验证的步骤：
+<ol type="1">
+<li>将数据分成k等分，留下一份作为测试集，k-1份作为训练集。特别是Leave-one-out cross validataion (LOOCV) 留一法是比较常用的技术，即将样本量为n的样本分成n等分，只留1个观测作为测试集。<br>
+</li>
+<li>采用训练集来进行回归，获取回归系数。<br>
+</li>
+<li>利用测试集和回归系数来后去测试集预测值<br>
+</li>
+<li>比较测试集预测值与真实值，计算平均预测误差，即由预测值与真实值获取的标准差。<br>
+</li>
+<li>重复1-4步 k 次，计算平均预测误差平方的均值，再取平方根，即得到了 k重交叉验证的预测误差。</li>
+</ol></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+载入程序包：'boot'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:car':
+
+    logit</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 注意要采用广义线性回归函数</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>fitglm <span class="ot">&lt;-</span> <span class="fu">glm</span>(lifeexp<span class="sc">~</span>gdpcap<span class="sc">+</span>school<span class="sc">+</span>civlib<span class="sc">+</span>wartime, <span class="at">data=</span>life)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 5重交叉验证</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>cv.err <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(life,fitglm,<span class="at">K=</span><span class="dv">5</span>)</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 报告交叉验证的预测误差：第1个是原始值，第2个是调整值（与留一法比较）</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>cv.err<span class="sc">$</span>delta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31.6745 31.2306</code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 51%">
+<col style="width: 7%">
+<col style="width: 18%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>协变量</th>
+<th>(R^2)</th>
+<th>()</th>
+<th>5重交叉验证误差</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GDP, School, Civlib, Wartime</td>
+<td>0.75</td>
+<td>5.43</td>
+<td>32.3</td>
+</tr>
+<tr class="even">
+<td>log(GDP), log(School), Civlib, Wartime</td>
+<td>0.88</td>
+<td>3.63</td>
+<td>13.8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>CV预测误差一般比回归标准误要高，为什么？<br>
+</p></li>
+<li><p>模型设定正确与否远比正确预测更重要，为什么？失去32年的预期寿命 vs.&nbsp;失去14年预期寿命哪个更严重？</p></li>
+<li><p>进一步改进模型</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeexp <span class="sc">~</span> <span class="fu">I</span>(<span class="fu">log</span>(gdpcap)) <span class="sc">+</span> <span class="fu">I</span>(<span class="fu">log</span>(school)) <span class="sc">+</span> <span class="fu">I</span>(<span class="fu">log</span>(civlib)) <span class="sc">+</span> wartime <span class="sc">+</span> <span class="fu">I</span>(wartime<span class="sc">^</span><span class="dv">2</span>), <span class="at">data=</span>life)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = lifeexp ~ I(log(gdpcap)) + I(log(school)) + I(log(civlib)) + 
+    wartime + I(wartime^2), data = life)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-10.7938  -1.7693   0.0006   2.0123  10.5086 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)       8.0854     5.4620   1.480  0.14233    
+I(log(gdpcap))    5.8587     0.6872   8.525 3.60e-13 ***
+I(log(school))    6.0283     0.8606   7.005 4.53e-10 ***
+I(log(civlib))    0.1266     0.8955   0.141  0.88790    
+wartime          36.3329    12.8663   2.824  0.00585 ** 
+I(wartime^2)   -110.8191    36.8656  -3.006  0.00344 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.482 on 89 degrees of freedom
+Multiple R-squared:  0.8987,    Adjusted R-squared:  0.8931 
+F-statistic:   158 on 5 and 89 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>fitglm <span class="ot">&lt;-</span> <span class="fu">glm</span>(lifeexp<span class="sc">~</span> <span class="fu">I</span>(<span class="fu">log</span>(gdpcap)) <span class="sc">+</span> <span class="fu">I</span>(<span class="fu">log</span>(school)) <span class="sc">+</span> <span class="fu">I</span>(<span class="fu">log</span>(civlib)) <span class="sc">+</span> wartime <span class="sc">+</span> <span class="fu">I</span>(wartime<span class="sc">^</span><span class="dv">2</span>), <span class="at">data=</span>life)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>cv.err <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(life,fitglm,<span class="at">K=</span><span class="dv">5</span>)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>cv.err<span class="sc">$</span>delta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12.95672 12.77216</code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 57%">
+<col style="width: 8%">
+<col style="width: 17%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>协变量</th>
+<th>(R^2)</th>
+<th>()</th>
+<th>5重交叉验证误差</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GDP, School, Civlib, Wartime</td>
+<td>0.75</td>
+<td>5.43</td>
+<td>32.3</td>
+</tr>
+<tr class="even">
+<td>log(GDP), log(School), Civlib, Wartime</td>
+<td>0.88</td>
+<td>3.63</td>
+<td>13.8</td>
+</tr>
+<tr class="odd">
+<td>log(GDP), log(School),log(Civlib), Wartime, (Wartime^2)</td>
+<td>0.90</td>
+<td>3.48</td>
+<td>12.6</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="最大似然估计" class="level2">
+<h2 class="anchored" data-anchor-id="最大似然估计">最大似然估计</h2>
+<p>本部分知识重点：</p>
+<ul>
+<li>能够描述什么是似然<br>
+</li>
+<li>了解和针对简单的例子应用最大似然原理<br>
+</li>
+<li>了解获取或估算最大似然估计的三种方法<br>
+</li>
+<li>使用似然值比较模型<br>
+</li>
+<li>为简单模型构建似然计算公式</li>
+</ul>
+<section id="引例" class="level3">
+<h3 class="anchored" data-anchor-id="引例">引例</h3>
+<p>投三次硬币决定来上课还是在宿舍睡觉，每出现一次正面代表上课多一票，每出现一次反面代表睡觉多一票。结果是前两次为正面、最后一次为反面。你可能会怀疑硬币是不是有问题，正面出现的概率真是1/2吗？可以计算正面的概率不同取值时，该事件的概率。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 34%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>()</th>
+<th>()</th>
+<th>(^{1s} (1-)^{0s})</th>
+<th>(f_B ( ))</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>({1,1,0})</td>
+<td>( 0.00)</td>
+<td>( 0.00<sup>2(1-0.00)</sup>1)</td>
+<td>( 0.000)</td>
+</tr>
+<tr class="even">
+<td>({1,1,0})</td>
+<td>( 0.10)</td>
+<td>( 0.10<sup>2(1-0.10)</sup>1)</td>
+<td>( 0.009)</td>
+</tr>
+<tr class="odd">
+<td>({1,1,0})</td>
+<td>( 0.20)</td>
+<td>( 0.20<sup>2(1-0.20)</sup>1)</td>
+<td>( 0.032)</td>
+</tr>
+<tr class="even">
+<td>({1,1,0})</td>
+<td>( 0.30)</td>
+<td>( 0.30<sup>2(1-0.30)</sup>1)</td>
+<td>( 0.063)</td>
+</tr>
+<tr class="odd">
+<td>({1,1,0})</td>
+<td>( 0.40)</td>
+<td>( 0.40<sup>2(1-0.40)</sup>1)</td>
+<td>( 0.096)</td>
+</tr>
+<tr class="even">
+<td>({1,1,0})</td>
+<td>( 0.50)</td>
+<td>( 0.50<sup>2(1-0.50)</sup>1)</td>
+<td>( 0.125)</td>
+</tr>
+<tr class="odd">
+<td>({1,1,0})</td>
+<td>( 0.60)</td>
+<td>( 0.60<sup>2(1-0.60)</sup>1)</td>
+<td>( 0.144)</td>
+</tr>
+<tr class="even">
+<td>({1,1,0})</td>
+<td>( 0.67)</td>
+<td>( 0.67<sup>2(1-0.67)</sup>1)</td>
+<td>( 0.148)</td>
+</tr>
+<tr class="odd">
+<td>({1,1,0})</td>
+<td>( 0.70)</td>
+<td>( 0.70<sup>2(1-0.70)</sup>1)</td>
+<td>( 0.147)</td>
+</tr>
+<tr class="even">
+<td>({1,1,0})</td>
+<td>( 0.80)</td>
+<td>( 0.80<sup>2(1-0.80)</sup>1)</td>
+<td>( 0.128)</td>
+</tr>
+<tr class="odd">
+<td>({1,1,0})</td>
+<td>( 0.90)</td>
+<td>( 0.90<sup>2(1-0.90)</sup>1)</td>
+<td>( 0.081)</td>
+</tr>
+<tr class="even">
+<td>({1,1,0})</td>
+<td>( 1.00)</td>
+<td>( 1.00<sup>2(1-1.00)</sup>1)</td>
+<td>( 0.000)</td>
+</tr>
+</tbody>
+</table>
+<p>我们将以分布参数的函数来描述观察数据的联合分布概率称之为似然函数（likelihood function），表示为(L(;))。 [L=<sup>2(1-)</sup>1] [log L=2log+ 1log(1-)] [=-=0] [/3] 最大化似然函数的()值是最大似然估计（maximum likelihood estimate, MLE）</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="最大似然推断" class="level3">
+<h3 class="anchored" data-anchor-id="最大似然推断">最大似然推断</h3>
+<p>最大似然推断并不是将数据视为随机的、参数视为固定的，而是将数据视为固定的，寻找什么样的参数最有可能生成这个数据，即将数据的联合分布视作某个分布密度或概率分布函数的参数的函数。</p>
+<ul>
+<li>线性回归系数的最大似然推断</li>
+</ul>
+<p>2012年189个国家的二氧化碳排放量与人均GDP（购买力平价），如果构建简单模型：(Y=_0+_1 X +)，其中Y为二氧化碳排放量的对数，X为人均GDP的对数。</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ol type="1">
+<li>首先假定每个观测(Y_i)独立同分布，服从正态分布(f_{N}(y_i ;_i ,^2 ))<br>
+</li>
+<li>根据线性模型，等同于(<em>i f</em>{N}(_i ;0,^2 ))<br>
+[f_N (_i ) =exp[] =exp[] ]<br>
+</li>
+<li>似然函数是样本数据的联合分布概率，每个样本观测都是独立的，其联合分布概率等于每个观测边缘分布概率的乘积 [L(<em>0 ,<em>1 ,)|{y_1,,y_n},{x_1,,x_n}) = (2<sup>2)</sup>{(-n/2)}</em>{i=1}^{n}exp[] = (2<sup>2)</sup>{(-n/2)}exp[_{i=1}^{n}]] 取对数进行简化： [ log L = log{(2<sup>2)</sup>{(-n/2)}exp[_{i=1}^{n}]} ] [ = -log(2^2)-</em>{i=1}^{n}(y_i-_0 - <em>1 x_i)^2 ] [ = -log(2) - nlog- ] 剔除与被估计参数无关的项： [logL -nlog- ] 计算机优化程序更擅长计算最小值，采用(-2logL)，并且采用固定或已知的 简化： [-2logL </em>{i=1}^{n}(y_i-_0 - _1 x_i)^2 ] 上式显示最大似然估计与最小二乘法的参数结果是一致的。但是如果我们只是得到了一个与最小二乘法一样的结果，那么最大似然估计的意义在哪里？</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ProfileLikelihood)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>wdi<span class="sc">$</span>lgdppc<span class="ot">&lt;-</span><span class="fu">log</span>(wdi<span class="sc">$</span>gdp.pc.ppp)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">profilelike.lm</span>(<span class="at">formula =</span> <span class="fu">log</span>(co2.kt)<span class="sc">~</span><span class="dv">1</span>, <span class="at">data=</span>wdi, <span class="at">profile.theta=</span><span class="st">"lgdppc"</span>,</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="at">lo.theta=</span><span class="fl">0.84</span>, <span class="at">hi.theta=</span><span class="fl">1.15</span>, <span class="at">length=</span><span class="dv">500</span>)</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(xx, </span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(theta,profile.lik,<span class="at">las=</span><span class="dv">1</span>,<span class="at">lty=</span><span class="dv">1</span>,<span class="at">lwd=</span><span class="dv">3</span>,</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">type=</span><span class="st">"l"</span>,<span class="at">pch=</span><span class="dv">19</span>,<span class="at">xlab=</span><span class="fu">substitute</span>(beta[<span class="dv">1</span>]),</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab=</span><span class="st">"likelihood"</span>,<span class="at">yaxt=</span><span class="st">"n"</span>,<span class="at">bty=</span><span class="st">"l"</span>,<span class="at">main=</span><span class="st">"Least Squares as MLE"</span>,</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlim=</span><span class="fu">c</span>(<span class="fl">0.85</span>,<span class="fl">1.1</span>))</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="fu">coef</span>(out)[<span class="dv">2</span>],<span class="at">col=</span><span class="st">"gray50"</span>,<span class="at">lwd=</span><span class="dv">3</span>)</span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="fu">max</span>(xx<span class="sc">$</span>profile.lik),<span class="at">col=</span><span class="st">"gray50"</span>,<span class="at">lwd=</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>利用R最大化似然函数</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 建立自变量（含常数项）与因变量矩阵</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>,<span class="fu">as.matrix</span>(<span class="fu">log</span>(wdi<span class="sc">$</span>gdp.pc.ppp)))    <span class="co"># 增加1列含1的常数项</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">log</span>(wdi<span class="sc">$</span>co2.kt))</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="fu">ncol</span>(x); n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(x)                      <span class="co"># 观测数n和变量数K</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义似然函数，可以选择多种参数化方式，此处采用logL的完整形式</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>loglik.my <span class="ot">&lt;-</span> <span class="cf">function</span>(par,X,Y) {               </span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(y)</span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(x)</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>  xbeta <span class="ot">&lt;-</span> X<span class="sc">%*%</span>par[<span class="dv">1</span><span class="sc">:</span>K]</span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(((X[,<span class="dv">2</span>]<span class="sc">-</span><span class="fu">mean</span>(X[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(n<span class="sc">-</span>K))) <span class="co"># 假定标准误已知，有多种设定形式</span></span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi)<span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">*</span><span class="fu">log</span>(sigma<span class="sc">^</span><span class="dv">2</span>)<span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>sigma<span class="sc">^</span><span class="dv">2</span>))<span class="sc">*</span>(y<span class="sc">-</span>xbeta)<span class="sc">^</span><span class="dv">2</span>) <span class="co"># 对数似然函数，加负号变为最小化</span></span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 将似然函数传递给最优化函数，提供初始值，选择算法，设定迭代次数等</span></span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>mle.fit <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>),loglik.my, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">control =</span> </span>
+<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(<span class="at">trace=</span><span class="cn">TRUE</span>,<span class="at">maxit=</span><span class="dv">10000</span>,<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>),<span class="at">hessian =</span> <span class="cn">TRUE</span>)    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>initial  value 150490.736339 
+final  value 375.927547 
+converged</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(mle.fit<span class="sc">$</span>convergence<span class="sc">!=</span><span class="dv">0</span>) </span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"MDW WARNING: Convergence Problems; Try again!"</span>)</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 计算标准诊断量</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>stderrors<span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(<span class="sc">-</span><span class="fu">solve</span>(mle.fit<span class="sc">$</span>hessian)))</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>z<span class="ot">&lt;-</span>mle.fit<span class="sc">$</span>par<span class="sc">/</span>stderrors</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>p.z <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="fu">abs</span>(z)))</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>out.table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Est=</span>mle.fit<span class="sc">$</span>par, <span class="at">SE=</span>stderrors, <span class="at">Z=</span>z, <span class="at">pval=</span>p.z)</span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(out.table, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Est   SE    Z pval
+1 2.69 0.67 4.02 0.00
+2 0.18 0.07 2.48 0.01</code></pre>
+</div>
+</div>
+</section>
+<section id="异方差数据的最大似然估计" class="level3">
+<h3 class="anchored" data-anchor-id="异方差数据的最大似然估计">异方差数据的最大似然估计</h3>
+<ul>
+<li><p>线性回归模型假定同方差，即对于所有的观测都有 (y_i N(_i , ^2 ) )，但是如果误差项是异方差的，即 (y_i N(_i , _i^2 ) )，则会导致(se())是有偏的，()的估计是无效的。<br>
+</p></li>
+<li><p>一般采用稳健性标准误来替代“有问题”的标准误，但是，异方差被看做是数据存在的一个“问题”，仅仅是因为我们假定它不应该在“正常”的数据中存在。真实的可能是我们的线性回归假定框定了我们解决问题的范围。类比一下，为什么我们不会说“异均值”是一个问题，是因为线性回归的框架中允许了因变量均值随自变量变动（这也正是我们建模的基础），那如果我们能把(_i^2 ) 也纳入到模型中，即对因变量方差建模，也就能更好的利用自变量解释解释因变量的均值和方差两方面的变化。<br>
+</p></li>
+<li><p>异方差暗含了自变量与因变量方差的关系，这可能正是我们想研究的内容。</p>
+<ul>
+<li>实力相当的两个人才会打架，所以实力相当使得是否打架的变异程度更大<br>
+</li>
+<li>公立医院民营化可能不会降低平均的社会健康水平，但是会由于覆盖风险增加社会健康水平的变异程度<br>
+</li>
+</ul></li>
+<li><p>异方差正态模型的最大似然估计</p>
+<ul>
+<li>随机部分：<br>
+[y_i f_N (_i , _i^2 )]</li>
+<li>系统部分：<br>
+[_i = X_i ] [_i^2 = exp(Z_i ) ]</li>
+</ul></li>
+<li><p>异方差最大似然估计的推导：</p>
+<ol type="1">
+<li>首先假定每个观测(Y_i)独立同分布，服从正态分布: [f_{N}(y_i ;_i ,_i^2 )]<br>
+</li>
+<li>样本数据的联合分布：[P(y|,<em>2 ) = </em>{i=1}^{n}f_{N}(y_i ;_i ,_i^2 ) ]<br>
+</li>
+<li>根据正态分布密度函数：[P(y|,<em>2 ) = </em>{i=1}^{n}(2_i^2 )^(-1/2)exp[] ]<br>
+</li>
+<li>对数似然函数：[logL(,^2 |y) -_{i=1}<sup>{n}log<em>i^2 - </em>{i=1}</sup>{n} ]<br>
+</li>
+<li>代入系统参数：[logL(,|y) -<em>{i=1}^{n}z_i - </em>{i=1}^{n}) ]<br>
+</li>
+</ol></li>
+<li><p>假想样本量为2000的异方差数据来自真实模型：<br>
+[y_i N (_i , _i^2 )] [_i = 5 + 10x_i ] [_i^2 = exp(1+3x_i ) ]</p></li>
+<li><p>分别采用线性回归与异方差的最大似然估计去拟合</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(obs)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="dv">5</span><span class="sc">+</span><span class="dv">10</span><span class="sc">*</span>x</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">3</span><span class="sc">*</span>x)</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(obs, mu, <span class="fu">sqrt</span>(sigma2))</span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 线性回归拟合</span></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>lm.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x)</span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-21.0880  -2.2792   0.0612   2.2686  19.9045 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   5.0546     0.1839   27.49   &lt;2e-16 ***
+x            10.0479     0.3206   31.34   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.108 on 1998 degrees of freedom
+Multiple R-squared:  0.3296,    Adjusted R-squared:  0.3292 
+F-statistic: 982.2 on 1 and 1998 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 最大似然法拟合</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 建立两个系统部分的自变量</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>xcovariates <span class="ot">&lt;-</span> x</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>zcovariates <span class="ot">&lt;-</span> x</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置参数初始值beta0,beta1,gamma0,gamma1</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>stval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 设定似然函数</span></span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>llk.hetnormlin <span class="ot">&lt;-</span> <span class="cf">function</span>(param,y,x,z) {</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(x)</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(z)</span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>,x)</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>,z)</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> param[ <span class="dv">1</span> <span class="sc">:</span> <span class="fu">ncol</span>(x) ]</span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> param[ (<span class="fu">ncol</span>(x)<span class="sc">+</span><span class="dv">1</span>) <span class="sc">:</span> (<span class="fu">ncol</span>(x) <span class="sc">+</span> <span class="fu">ncol</span>(z)) ]</span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>  xb <span class="ot">&lt;-</span> x<span class="sc">%*%</span>b</span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>  s2 <span class="ot">&lt;-</span> <span class="fu">exp</span>(z<span class="sc">%*%</span>g)</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fl">0.5</span><span class="sc">*</span>(<span class="fu">log</span>(s2)<span class="sc">+</span>(y<span class="sc">-</span>xb)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s2))  <span class="co"># optim是最小化函数，所以公式要乘以-1</span></span>
+<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 运行优化函数得到拟合结果</span></span>
+<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a>mle.fit <span class="ot">&lt;-</span> <span class="fu">optim</span>(stval,llk.hetnormlin,<span class="at">method=</span><span class="st">"BFGS"</span>,<span class="at">hessian=</span>T,<span class="at">y=</span>y,<span class="at">x=</span>xcovariates,<span class="at">z=</span>zcovariates)</span>
+<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 提取估计值</span></span>
+<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a>pe <span class="ot">&lt;-</span> mle.fit<span class="sc">$</span>par   <span class="co"># 参数的点估计</span></span>
+<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a>vc <span class="ot">&lt;-</span> <span class="fu">solve</span>(mle.fit<span class="sc">$</span>hessian)  <span class="co"># 协方差矩阵</span></span>
+<span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(vc))    <span class="co"># 标准误</span></span>
+<span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> mle.fit<span class="sc">$</span>par<span class="sc">/</span>se  <span class="co"># z值</span></span>
+<span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a>p.z <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="fu">abs</span>(z))) <span class="co"># p值</span></span>
+<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a>out.table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Coefs=</span><span class="fu">c</span>(<span class="st">"beta0"</span>,<span class="st">"beta1"</span>,<span class="st">"gamma0"</span>,<span class="st">"gamma1"</span>), <span class="at">Est=</span>mle.fit<span class="sc">$</span>par, <span class="at">SE=</span>se, <span class="at">Z=</span>z, <span class="at">pval=</span>p.z)</span>
+<span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(out.table, <span class="at">digits=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Coefs   Est    SE  Z pval
+1  beta0  5.05 0.102 50    0
+2  beta1 10.05 0.278 36    0
+3 gamma0  0.99 0.064 15    0
+4 gamma1  3.01 0.112 27    0</code></pre>
+</div>
+</div>
+<ul>
+<li>哪个模型更好？可以比较95%的预测区间</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>
+载入程序包：'MASS'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    select</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="regmodels_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

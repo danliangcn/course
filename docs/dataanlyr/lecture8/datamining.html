@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2025-09-08">
+
+<title>数据挖掘 – course</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8610558a007458a9b978551a034f4d85.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">course</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#数据挖掘与机器学习" id="toc-数据挖掘与机器学习" class="nav-link active" data-scroll-target="#数据挖掘与机器学习">数据挖掘与机器学习</a>
+  <ul class="collapse">
+  <li><a href="#为什么要挖掘数据" id="toc-为什么要挖掘数据" class="nav-link" data-scroll-target="#为什么要挖掘数据">为什么要挖掘数据？</a></li>
+  <li><a href="#什么是数据挖掘" id="toc-什么是数据挖掘" class="nav-link" data-scroll-target="#什么是数据挖掘">什么是数据挖掘？</a></li>
+  <li><a href="#数据挖掘的起源" id="toc-数据挖掘的起源" class="nav-link" data-scroll-target="#数据挖掘的起源">数据挖掘的起源</a></li>
+  <li><a href="#数据挖掘的任务" id="toc-数据挖掘的任务" class="nav-link" data-scroll-target="#数据挖掘的任务">数据挖掘的任务</a></li>
+  <li><a href="#分类" id="toc-分类" class="nav-link" data-scroll-target="#分类">分类</a></li>
+  <li><a href="#分类的应用太空探索分类" id="toc-分类的应用太空探索分类" class="nav-link" data-scroll-target="#分类的应用太空探索分类">分类的应用：太空探索分类</a></li>
+  <li><a href="#聚类" id="toc-聚类" class="nav-link" data-scroll-target="#聚类">聚类</a></li>
+  <li><a href="#关联规则发现" id="toc-关联规则发现" class="nav-link" data-scroll-target="#关联规则发现">关联规则发现</a></li>
+  <li><a href="#回归" id="toc-回归" class="nav-link" data-scroll-target="#回归">回归</a></li>
+  <li><a href="#背离异常检测" id="toc-背离异常检测" class="nav-link" data-scroll-target="#背离异常检测">背离/异常检测</a></li>
+  <li><a href="#数据挖掘面临的挑战" id="toc-数据挖掘面临的挑战" class="nav-link" data-scroll-target="#数据挖掘面临的挑战">数据挖掘面临的挑战</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">数据挖掘</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 8, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="数据挖掘与机器学习" class="level2">
+<h2 class="anchored" data-anchor-id="数据挖掘与机器学习">数据挖掘与机器学习</h2>
+<section id="为什么要挖掘数据" class="level3">
+<h3 class="anchored" data-anchor-id="为什么要挖掘数据">为什么要挖掘数据？</h3>
+<section id="商业角度" class="level4">
+<h4 class="anchored" data-anchor-id="商业角度">商业角度</h4>
+<ul>
+<li>大量数据被收集和存储
+<ul>
+<li>网站数据、电子商务<br>
+</li>
+<li>超市和商店的购物信息<br>
+</li>
+<li>银行账户和信用卡的交易<br>
+</li>
+</ul></li>
+<li>计算机变得越来越便宜，越来越高效<br>
+</li>
+<li>竞争压力越来越大
+<ul>
+<li>为客户提供更优质的定制化服务（客户关系管理）</li>
+</ul></li>
+</ul>
+</section>
+<section id="科学角度" class="level4">
+<h4 class="anchored" data-anchor-id="科学角度">科学角度</h4>
+<ul>
+<li>收集存储的数据急剧增长(每秒1.7兆字节)
+<ul>
+<li>遥感卫星<br>
+</li>
+<li>天文望远镜<br>
+</li>
+<li>基因数据<br>
+</li>
+<li>科学模拟数据<br>
+</li>
+</ul></li>
+<li>传统技术无法处理<br>
+</li>
+<li>数据挖掘能够帮助科学家
+<ul>
+<li>进行数据分类和分段</li>
+<li>建构假设<br>
+</li>
+<li>2024年诺贝尔物理学奖获得者约翰·霍普菲尔德和杰弗里·欣顿是两名机器学习领域的元老级人物。 他们使用物理学工具，设计了人工神经网络，为当今强大的机器学习技术奠定了基础。</li>
+<li>2024年诺贝尔化学奖授予戴维·贝克、德米斯·哈萨比斯和约翰·江珀。他们采用人工智能在“计算蛋白质设计”和“蛋白质结构预测”方面成就斐然。这也是继物理学奖之后，诺贝尔奖再次被授予人工智能（AI）的相关成果及科学家。</li>
+</ul></li>
+</ul>
+</section>
+<section id="发掘大数据的动机" class="level4">
+<h4 class="anchored" data-anchor-id="发掘大数据的动机">发掘大数据的动机</h4>
+<ul>
+<li>数据中经常有一些“隐藏”的信息，很难一目了然的发现<br>
+</li>
+<li>手工分析可能需要好几个星期的时间去发现有用的信息<br>
+</li>
+<li>很多数据根本没有用于分析</li>
+</ul>
+</section>
+</section>
+<section id="什么是数据挖掘" class="level3">
+<h3 class="anchored" data-anchor-id="什么是数据挖掘">什么是数据挖掘？</h3>
+<ul>
+<li>从数据中提取隐含的、未知的和潜在有用的信息<br>
+</li>
+<li>通过自动或半自动的探索和分析方法在大型数据中发现有意义的模式</li>
+</ul>
+<p>什么不是数据挖掘？</p>
+<ul>
+<li>服务数据中查找用户的电话号码<br>
+</li>
+<li>用百度搜索“京东快递”的信息</li>
+</ul>
+<p>什么是数据挖掘？</p>
+<ul>
+<li>某些姓名在某些地区可能更普遍<br>
+</li>
+<li>依据具体情形对搜索引擎返回的信息进行分组（对京东快递服务的正面和负面评价）</li>
+</ul>
+</section>
+<section id="数据挖掘的起源" class="level3">
+<h3 class="anchored" data-anchor-id="数据挖掘的起源">数据挖掘的起源</h3>
+<ul>
+<li>来自机器学习、人工智能、模式识别、统计学和数据库方面的思想<br>
+</li>
+<li>传统的技术无能为力
+<ul>
+<li>数据量太大<br>
+</li>
+<li>高维度数据<br>
+</li>
+<li>异种数据和复杂数据</li>
+</ul></li>
+</ul>
+</section>
+<section id="数据挖掘的任务" class="level3">
+<h3 class="anchored" data-anchor-id="数据挖掘的任务">数据挖掘的任务</h3>
+<ul>
+<li>分类 [预测]<br>
+</li>
+<li>聚类 [描述]<br>
+</li>
+<li>关联规则发现 [描述]<br>
+</li>
+<li>序列模式发现 [描述]<br>
+</li>
+<li>回归 [预测]<br>
+</li>
+<li>背离检测 [预测]</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining1.png" class="img-fluid figure-img" width="174"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="分类" class="level3">
+<h3 class="anchored" data-anchor-id="分类">分类</h3>
+<section id="定义" class="level4">
+<h4 class="anchored" data-anchor-id="定义">定义</h4>
+<ul>
+<li>给定一组记录 (训练集)
+<ul>
+<li>每条记录包含一组属性，其中一个属性称之为类别.<br>
+</li>
+</ul></li>
+<li>构建一个模型使类别属性成为其他属性值的函数.<br>
+</li>
+<li>目标：尽可能将未见过的记录精确归类.
+<ul>
+<li>测试集用于决定模型的精度. 一般将数据分成训练集和测试集，采用训练集构建模型，用测试集去验证。</li>
+</ul></li>
+</ul>
+<p>分类的例子：退税、婚姻、收入？逃税</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining2.png" class="img-fluid figure-img" width="366"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="分类的应用直销" class="level4">
+<h4 class="anchored" data-anchor-id="分类的应用直销">分类的应用：直销</h4>
+<ul>
+<li>目的： 锁定可能购买新产品的消费者减少邮寄成本<br>
+</li>
+<li>方法:
+<ul>
+<li>采用已有相似产品的数据.<br>
+</li>
+<li>已知哪些客户决定买，哪些客户决定不买. 购买的决定就是类别属性.<br>
+</li>
+<li>收集这些客户的人口学特征、生活方式等信息.<br>
+</li>
+<li>工作性质、生活区域、收入情况等.<br>
+</li>
+<li>采用这些信息作用输入属性来训练分类器模型.</li>
+</ul></li>
+</ul>
+</section>
+<section id="分类的应用信用卡欺诈检测" class="level4">
+<h4 class="anchored" data-anchor-id="分类的应用信用卡欺诈检测">分类的应用：信用卡欺诈检测</h4>
+<ul>
+<li>目的：预测信用卡交易中的欺诈.<br>
+</li>
+<li>方法：
+<ul>
+<li>采用信用卡持有人的交易信息作用属性.<br>
+</li>
+<li>持卡人什么时候买、买什么、购买频率等<br>
+</li>
+<li>过去的交易是否是欺诈或正常交易，这便是分类属性.<br>
+</li>
+<li>训练交易分类模型.<br>
+</li>
+<li>用模型对某个账户的信用卡交易进行分析检测是否存在欺诈.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="分类的应用太空探索分类" class="level3">
+<h3 class="anchored" data-anchor-id="分类的应用太空探索分类">分类的应用：太空探索分类</h3>
+<ul>
+<li>目的：预测天体的类别（恒星或星系），特别是针对那些在望远镜上看起来不清楚.
+<ul>
+<li>3000 images with 23,040 x 23,040 pixels per image.<br>
+</li>
+</ul></li>
+<li>方法:
+<ul>
+<li>图像分段.<br>
+</li>
+<li>测量图像的属性，每个天体有四十个属性.<br>
+</li>
+<li>基于属性构建分类模型.<br>
+</li>
+<li>成功找到16个新的高红移类星体, 难以发现的最远天体!</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining3.png" class="img-fluid figure-img" width="370"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="聚类" class="level3">
+<h3 class="anchored" data-anchor-id="聚类">聚类</h3>
+<section id="定义-1" class="level4">
+<h4 class="anchored" data-anchor-id="定义-1">定义</h4>
+<ul>
+<li>有一组数据点，每个点有一组采用相似测量方式的属性，实现如下分类（分簇、分堆）
+<ul>
+<li>簇内数据点比其他簇的数据点更相似.<br>
+</li>
+<li>簇间数据点的差别要尽可能大.<br>
+</li>
+</ul></li>
+<li>相似性的测量:
+<ul>
+<li>欧氏距离用于连续型属性.<br>
+</li>
+<li>其他基于具体问题的度量方式.</li>
+</ul></li>
+</ul>
+<p>聚类示意</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining4.png" class="img-fluid figure-img" width="316"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="聚类应用市场划分" class="level4">
+<h4 class="anchored" data-anchor-id="聚类应用市场划分">聚类应用：市场划分</h4>
+<ul>
+<li>目的：对市场客户进行划分，利于采用不同的营销策略针对不同的客户群体.<br>
+</li>
+<li>方法:
+<ul>
+<li>基于客户的地理位置和生活习惯收集不同的信息属性.<br>
+</li>
+<li>发现相似客户的组群.<br>
+</li>
+<li>通过对比簇内客户和簇间客户的购买模式检验聚类的质量.</li>
+</ul></li>
+</ul>
+</section>
+<section id="聚类应用文档聚类" class="level4">
+<h4 class="anchored" data-anchor-id="聚类应用文档聚类">聚类应用：文档聚类</h4>
+<ul>
+<li>目的: 根据文档中的主题词的出现情况对文档进行分组.<br>
+</li>
+<li>方法：识别每个文档中频繁出现的主题词.利用不同主题词出现的频率测量文档的相似性，并对其聚类.<br>
+</li>
+<li>应用：信息检索能够利用聚类的信息将新文档或检索词与聚类后文档联系起来.</li>
+</ul>
+<p>文本聚类示例<br>
+- 聚类点：洛杉矶时报的3204篇文章.<br>
+- 相似性测量：文档中有多少相同的词.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining5.png" class="img-fluid figure-img" width="192"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>股市数据聚类</p>
+<ul>
+<li>观察每天的股票动态.<br>
+</li>
+<li>聚类点：股票-{涨/跌}<br>
+</li>
+<li>相似性测量：如果同一天相同的涨跌频繁发生那么两点越相似.<br>
+</li>
+<li>用关联性法则量化相关性.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining6.png" class="img-fluid figure-img" width="246"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="关联规则发现" class="level3">
+<h3 class="anchored" data-anchor-id="关联规则发现">关联规则发现</h3>
+<section id="定义-2" class="level4">
+<h4 class="anchored" data-anchor-id="定义-2">定义</h4>
+<ul>
+<li>给定一组记录，每条记录包含给定集合中的某些项目；
+<ul>
+<li>发现能够根据其他项目出现来预测某个项目出现的依赖规则.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="datamining7.png" class="img-fluid figure-img" width="325"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="关联规则应用市场营销" class="level4">
+<h4 class="anchored" data-anchor-id="关联规则应用市场营销">关联规则应用：市场营销</h4>
+<ul>
+<li>假设发现了如下规则 {可乐, … } –&gt; {薯片}<br>
+</li>
+<li>薯片是后发生 =&gt; 能够用于决定如何提升其销量.<br>
+</li>
+<li>可乐是先发生 =&gt; 能够用于了解如果可乐出现断货，会影响哪一类产品的销量.<br>
+</li>
+<li>可乐先发生和薯片后发生 =&gt; 能够用于了解什么产品应该与可乐一起销售以提高薯片的销量！</li>
+</ul>
+</section>
+<section id="关联规则应用超市货架管理" class="level4">
+<h4 class="anchored" data-anchor-id="关联规则应用超市货架管理">关联规则应用：超市货架管理</h4>
+<ul>
+<li>目标：通过顾客的购买行为了解会被同时购买的商品.<br>
+</li>
+<li>目的：处理扫码后的销售数据发现商品之间的依赖关系.<br>
+</li>
+<li>一条规则 –
+<ul>
+<li>如果一位顾客买了尿布和牛奶，他很有可能会买啤酒.<br>
+</li>
+<li>所以超市在尿布货架旁布置啤酒！</li>
+</ul></li>
+</ul>
+</section>
+<section id="关联规则应用清单管理" class="level4">
+<h4 class="anchored" data-anchor-id="关联规则应用清单管理">关联规则应用：清单管理</h4>
+<ul>
+<li>目的：电器维修公司想预测维修消费者电器需要的原配件，那么可以事先带上，以减少往返和上门的次数.<br>
+</li>
+<li>方法：对不同区域消费者之前维修所用原配件和工具的数据进行处理，发现共同出现的模式.</li>
+</ul>
+</section>
+</section>
+<section id="回归" class="level3">
+<h3 class="anchored" data-anchor-id="回归">回归</h3>
+<ul>
+<li>在假定线性或非线性依赖关系的前提下，根据其他变量预测给定连续型变量的值.<br>
+</li>
+<li>在统计学和神经网络领域应用最多.<br>
+</li>
+<li>例子：
+<ul>
+<li>基于广告费用预测新产品的销售量.<br>
+</li>
+<li>利用温度、湿度和气压等构建函数预测风速.<br>
+</li>
+<li>对股市指标进行时间序列预测.</li>
+</ul></li>
+</ul>
+</section>
+<section id="背离异常检测" class="level3">
+<h3 class="anchored" data-anchor-id="背离异常检测">背离/异常检测</h3>
+<ul>
+<li>从正常行为中检测显著的异常<br>
+</li>
+<li>应用：
+<ul>
+<li>信用卡欺诈检测<br>
+</li>
+<li>网络入侵检测：一般大学每日网络访问量多达1亿个连接</li>
+</ul></li>
+</ul>
+</section>
+<section id="数据挖掘面临的挑战" class="level3">
+<h3 class="anchored" data-anchor-id="数据挖掘面临的挑战">数据挖掘面临的挑战</h3>
+<ul>
+<li>尺度扩展性<br>
+</li>
+<li>高维度<br>
+</li>
+<li>异种数据和复杂数据<br>
+</li>
+<li>数据质量<br>
+</li>
+<li>数据所有权和分布<br>
+</li>
+<li>隐私保护<br>
+</li>
+<li>实时动态数据流</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
