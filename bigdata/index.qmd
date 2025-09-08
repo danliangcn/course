@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### [无监督学习：聚类](.)  
 ### [文本分析与自然语言处理](.)  
 ### [空间数据分析基础](./spatial/spatialdata.html)
-### [空间数据分析模型](./spatial/spatialmodels.html)
+### [空间数据分析模型](.)
 ### [因果推断与政策评估](.)
 ### [期末项目展示与总结](.)
   

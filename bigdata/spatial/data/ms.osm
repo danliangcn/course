@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<osm version="0.6" generator="Overpass API 0.7.62.7 375dc00a">
+<osm version="0.6" generator="Overpass API 0.7.62.8 e802775f">
 <note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>
-<meta osm_base="2025-08-07T23:41:10Z"/>
+<meta osm_base="2025-09-08T09:02:15Z"/>
 
   <bounds minlat="51.9690000" minlon="7.5950000" maxlat="51.9700000" maxlon="7.5980000"/>
 
@@ -3967,8 +3967,8 @@
     <tag k="segregated" v="yes"/>
     <tag k="surface" v="paving_stones"/>
   </way>
-  <relation id="2439174" version="75" timestamp="2024-12-04T15:23:46Z" changeset="159923395" uid="680876" user="Sonja Emilie">
-    <member type="node" ref="84174708" role="stop"/>
+  <relation id="2439174" version="76" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
+    <member type="node" ref="1936071209" role="stop"/>
     <member type="node" ref="673396175" role="platform"/>
     <member type="node" ref="1549964854" role="stop"/>
     <member type="node" ref="956999494" role="platform"/>
@@ -4008,6 +4008,7 @@
     <member type="node" ref="1140935375" role="platform"/>
     <member type="node" ref="4581634069" role="stop"/>
     <member type="node" ref="1140934539" role="platform"/>
+    <member type="way" ref="183237257" role=""/>
     <member type="way" ref="1230854698" role=""/>
     <member type="way" ref="198335804" role=""/>
     <member type="way" ref="8068248" role=""/>
@@ -4136,7 +4137,7 @@
     <tag k="route_master" v="bus"/>
     <tag k="type" v="route_master"/>
   </relation>
-  <relation id="2444169" version="137" timestamp="2025-08-04T11:37:20Z" changeset="169950382" uid="251543" user="ChrissW-R1">
+  <relation id="2444169" version="140" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="2460474729" role="stop"/>
     <member type="node" ref="268310279" role="platform"/>
     <member type="node" ref="4502646840" role="stop"/>
@@ -4176,7 +4177,7 @@
     <member type="node" ref="2950057748" role="stop"/>
     <member type="node" ref="700347331" role="platform"/>
     <member type="node" ref="789367384" role="stop"/>
-    <member type="node" ref="1932959973" role="platform"/>
+    <member type="node" ref="1743981642" role="platform"/>
     <member type="node" ref="4500792237" role="stop"/>
     <member type="node" ref="359270646" role="platform"/>
     <member type="node" ref="100757423" role="stop"/>
@@ -4332,6 +4333,7 @@
     <member type="way" ref="5029805" role=""/>
     <member type="way" ref="686444752" role=""/>
     <member type="way" ref="304193537" role=""/>
+    <member type="way" ref="1422453062" role=""/>
     <member type="way" ref="1017858243" role=""/>
     <member type="way" ref="1017858240" role=""/>
     <member type="way" ref="155984836" role=""/>
@@ -4372,9 +4374,8 @@
     <member type="way" ref="182896160" role=""/>
     <member type="way" ref="1167958253" role=""/>
     <member type="way" ref="764223234" role=""/>
-    <member type="way" ref="975425454" role=""/>
-    <member type="way" ref="5182802" role=""/>
-    <member type="way" ref="318974901" role=""/>
+    <member type="way" ref="386899212" role=""/>
+    <member type="way" ref="386899151" role=""/>
     <member type="way" ref="1297034862" role=""/>
     <member type="way" ref="973231445" role=""/>
     <member type="way" ref="1297034863" role=""/>
@@ -4433,7 +4434,7 @@
     <tag k="to" v="Handorf, Kaserne"/>
     <tag k="type" v="route"/>
   </relation>
-  <relation id="2444192" version="149" timestamp="2025-08-04T11:37:20Z" changeset="169950382" uid="251543" user="ChrissW-R1">
+  <relation id="2444192" version="152" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="1937981551" role="stop"/>
     <member type="node" ref="771145613" role="platform"/>
     <member type="node" ref="260570373" role="stop"/>
@@ -4480,7 +4481,7 @@
     <member type="node" ref="956999572" role="platform"/>
     <member type="node" ref="4500792236" role="stop"/>
     <member type="node" ref="359270651" role="platform"/>
-    <member type="node" ref="2084778364" role="stop"/>
+    <member type="node" ref="1504411740" role="stop"/>
     <member type="node" ref="1743981639" role="platform"/>
     <member type="node" ref="1396336066" role="stop"/>
     <member type="node" ref="1805562260" role="platform"/>
@@ -4567,8 +4568,12 @@
     <member type="way" ref="1297034863" role=""/>
     <member type="way" ref="973231445" role=""/>
     <member type="way" ref="1297034862" role=""/>
-    <member type="way" ref="1296787203" role=""/>
+    <member type="way" ref="386899151" role=""/>
+    <member type="way" ref="1425254440" role=""/>
+    <member type="way" ref="386899144" role=""/>
+    <member type="way" ref="1297148180" role=""/>
     <member type="way" ref="386899140" role=""/>
+    <member type="way" ref="1425254441" role=""/>
     <member type="way" ref="386899131" role=""/>
     <member type="way" ref="1326488205" role=""/>
     <member type="way" ref="386899124" role=""/>
@@ -4626,6 +4631,7 @@
     <member type="way" ref="155984836" role=""/>
     <member type="way" ref="1017858240" role=""/>
     <member type="way" ref="1017858243" role=""/>
+    <member type="way" ref="1422453062" role=""/>
     <member type="way" ref="304193537" role=""/>
     <member type="way" ref="686444752" role=""/>
     <member type="way" ref="5029805" role=""/>
@@ -4643,7 +4649,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -4756,7 +4762,7 @@
     <tag k="to" v="Gievenbeck, Alte Sternwarte"/>
     <tag k="type" v="route"/>
   </relation>
-  <relation id="2444225" version="89" timestamp="2025-08-04T11:37:20Z" changeset="169950382" uid="251543" user="ChrissW-R1">
+  <relation id="2444225" version="91" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="2460474729" role="stop"/>
     <member type="node" ref="268310279" role="platform"/>
     <member type="node" ref="4502646840" role="stop"/>
@@ -4796,7 +4802,7 @@
     <member type="node" ref="2950057748" role="stop"/>
     <member type="node" ref="700347331" role="platform"/>
     <member type="node" ref="789367384" role="stop"/>
-    <member type="node" ref="1932959973" role="platform"/>
+    <member type="node" ref="1743981642" role="platform"/>
     <member type="node" ref="4500792237" role="stop"/>
     <member type="node" ref="359270646" role="platform"/>
     <member type="node" ref="100757423" role="stop"/>
@@ -4922,6 +4928,7 @@
     <member type="way" ref="5029805" role=""/>
     <member type="way" ref="686444752" role=""/>
     <member type="way" ref="304193537" role=""/>
+    <member type="way" ref="1422453062" role=""/>
     <member type="way" ref="1017858243" role=""/>
     <member type="way" ref="1017858240" role=""/>
     <member type="way" ref="155984836" role=""/>
@@ -4953,7 +4960,7 @@
     <tag k="to" v="Sankt Mauritz, Mauritz-Mitte"/>
     <tag k="type" v="route"/>
   </relation>
-  <relation id="2444235" version="100" timestamp="2025-08-04T11:37:20Z" changeset="169950382" uid="251543" user="ChrissW-R1">
+  <relation id="2444235" version="102" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="166869108" role="stop"/>
     <member type="node" ref="4502646824" role="platform"/>
     <member type="node" ref="3710112140" role="stop"/>
@@ -4968,7 +4975,7 @@
     <member type="node" ref="956999572" role="platform"/>
     <member type="node" ref="4500792236" role="stop"/>
     <member type="node" ref="359270651" role="platform"/>
-    <member type="node" ref="2084778364" role="stop"/>
+    <member type="node" ref="1504411740" role="stop"/>
     <member type="node" ref="1743981639" role="platform"/>
     <member type="node" ref="1396336066" role="stop"/>
     <member type="node" ref="1805562260" role="platform"/>
@@ -5036,6 +5043,7 @@
     <member type="way" ref="155984836" role=""/>
     <member type="way" ref="1017858240" role=""/>
     <member type="way" ref="1017858243" role=""/>
+    <member type="way" ref="1422453062" role=""/>
     <member type="way" ref="304193537" role=""/>
     <member type="way" ref="686444752" role=""/>
     <member type="way" ref="5029805" role=""/>
@@ -5053,7 +5061,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -5183,7 +5191,7 @@
     <tag k="route_master" v="bus"/>
     <tag k="type" v="route_master"/>
   </relation>
-  <relation id="2669462" version="161" timestamp="2025-05-07T11:59:19Z" changeset="165935386" uid="3172019" user="nurdafur">
+  <relation id="2669462" version="162" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="1935936399" role="stop"/>
     <member type="node" ref="271793765" role="platform"/>
     <member type="node" ref="2657916374" role="stop"/>
@@ -5466,7 +5474,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -5628,7 +5636,7 @@
     <tag k="type" v="route"/>
     <tag k="via" v="Angelmodde, Waldsiedlung"/>
   </relation>
-  <relation id="2669821" version="154" timestamp="2025-05-13T21:02:35Z" changeset="166224083" uid="251543" user="ChrissW-R1">
+  <relation id="2669821" version="155" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="283094893" role="stop"/>
     <member type="node" ref="1099343145" role="platform"/>
     <member type="node" ref="6150230779" role="stop"/>
@@ -5685,7 +5693,7 @@
     <member type="node" ref="541997123" role="platform"/>
     <member type="node" ref="4562707091" role="stop"/>
     <member type="node" ref="694706810" role="platform"/>
-    <member type="node" ref="84174708" role="stop"/>
+    <member type="node" ref="1936071209" role="stop"/>
     <member type="node" ref="673396175" role="platform"/>
     <member type="node" ref="4500792237" role="stop"/>
     <member type="node" ref="359270646" role="platform"/>
@@ -6174,7 +6182,7 @@
     <tag k="route" v="road"/>
     <tag k="type" v="route"/>
   </relation>
-  <relation id="3394558" version="58" timestamp="2025-01-14T13:31:04Z" changeset="161345396" uid="5747492" user="der_eumel">
+  <relation id="3394558" version="59" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="4581634069" role="stop"/>
     <member type="node" ref="1140934539" role="platform"/>
     <member type="node" ref="3430833487" role="stop"/>
@@ -6213,7 +6221,7 @@
     <member type="node" ref="956999529" role="platform"/>
     <member type="node" ref="2950057748" role="stop"/>
     <member type="node" ref="700347331" role="platform"/>
-    <member type="node" ref="84174708" role="stop"/>
+    <member type="node" ref="1936071209" role="stop"/>
     <member type="node" ref="673396175" role="platform"/>
     <member type="way" ref="467656569" role=""/>
     <member type="way" ref="253132339" role=""/>
@@ -6330,7 +6338,6 @@
     <member type="way" ref="1351206850" role=""/>
     <member type="way" ref="31451670" role=""/>
     <member type="way" ref="724874483" role=""/>
-    <member type="way" ref="183237257" role=""/>
     <tag k="colour" v="#499e3a"/>
     <tag k="from" v="Sentruper Höhe, Technologiepark"/>
     <tag k="name" v="StadtBus 13: Sentruper Höhe, Technologiepark =&gt; Münster, Hauptbahnhof"/>
@@ -8140,7 +8147,7 @@
     <tag k="route_master" v="inline_skates"/>
     <tag k="type" v="route_master"/>
   </relation>
-  <relation id="6929846" version="93" timestamp="2025-05-13T21:02:35Z" changeset="166224083" uid="251543" user="ChrissW-R1">
+  <relation id="6929846" version="94" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="1935936399" role="stop"/>
     <member type="node" ref="271793765" role="platform"/>
     <member type="node" ref="2657916374" role="stop"/>
@@ -8423,7 +8430,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -8582,7 +8589,7 @@
     <tag k="type" v="route"/>
     <tag k="via" v="Angelmodde, Dorf"/>
   </relation>
-  <relation id="6929847" version="87" timestamp="2025-05-13T21:02:35Z" changeset="166224083" uid="251543" user="ChrissW-R1">
+  <relation id="6929847" version="88" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="1935936399" role="stop"/>
     <member type="node" ref="271793765" role="platform"/>
     <member type="node" ref="2657916374" role="stop"/>
@@ -8855,7 +8862,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -8989,7 +8996,7 @@
     <tag k="type" v="route"/>
     <tag k="via" v="Angelmodde, Dorf"/>
   </relation>
-  <relation id="6929848" version="77" timestamp="2025-03-27T23:08:52Z" changeset="164186725" uid="251543" user="ChrissW-R1">
+  <relation id="6929848" version="78" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="1935936399" role="stop"/>
     <member type="node" ref="271793765" role="platform"/>
     <member type="node" ref="2657916374" role="stop"/>
@@ -9264,7 +9271,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -9397,7 +9404,7 @@
     <tag k="type" v="route"/>
     <tag k="via" v="Angelmodde, Waldsiedlung"/>
   </relation>
-  <relation id="6929849" version="51" timestamp="2025-03-27T23:08:52Z" changeset="164186725" uid="251543" user="ChrissW-R1">
+  <relation id="6929849" version="52" timestamp="2025-09-07T19:27:14Z" changeset="171601886" uid="423913" user="alan1209">
     <member type="node" ref="845140269" role="stop"/>
     <member type="node" ref="563768364" role="platform"/>
     <member type="node" ref="3394675176" role="stop"/>
@@ -9555,7 +9562,7 @@
     <member type="way" ref="907302336" role=""/>
     <member type="way" ref="34668432" role=""/>
     <member type="way" ref="724874486" role=""/>
-    <member type="way" ref="341819434" role=""/>
+    <member type="way" ref="1427751232" role=""/>
     <member type="way" ref="198847773" role=""/>
     <member type="way" ref="36903588" role=""/>
     <member type="way" ref="198335739" role=""/>
@@ -9599,7 +9606,7 @@
     <tag k="to" v="Münster, MCC Halle Münsterland"/>
     <tag k="type" v="route"/>
   </relation>
-  <relation id="6929850" version="84" timestamp="2025-03-27T23:08:52Z" changeset="164186725" uid="251543" user="ChrissW-R1">
+  <relation id="6929850" version="85" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="6150387696" role="stop"/>
     <member type="node" ref="1796920822" role="platform"/>
     <member type="node" ref="319055070" role="stop"/>
@@ -9650,7 +9657,7 @@
     <member type="node" ref="541997123" role="platform"/>
     <member type="node" ref="4562707091" role="stop"/>
     <member type="node" ref="694706810" role="platform"/>
-    <member type="node" ref="84174708" role="stop"/>
+    <member type="node" ref="1936071209" role="stop"/>
     <member type="node" ref="673396175" role="platform"/>
     <member type="node" ref="4500792237" role="stop"/>
     <member type="node" ref="359270646" role="platform"/>
@@ -10008,7 +10015,7 @@
     <tag k="type" v="route"/>
     <tag k="via" v="Angelmodde, Waldsiedlung"/>
   </relation>
-  <relation id="6929851" version="81" timestamp="2025-05-13T21:02:35Z" changeset="166224083" uid="251543" user="ChrissW-R1">
+  <relation id="6929851" version="82" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="262213413" role="stop"/>
     <member type="node" ref="2018387581" role="platform"/>
     <member type="node" ref="262213405" role="stop"/>
@@ -10053,7 +10060,7 @@
     <member type="node" ref="541997123" role="platform"/>
     <member type="node" ref="4562707091" role="stop"/>
     <member type="node" ref="694706810" role="platform"/>
-    <member type="node" ref="84174708" role="stop"/>
+    <member type="node" ref="1936071209" role="stop"/>
     <member type="node" ref="673396175" role="platform"/>
     <member type="node" ref="4500792237" role="stop"/>
     <member type="node" ref="359270646" role="platform"/>
@@ -10409,7 +10416,7 @@
     <tag k="type" v="route"/>
     <tag k="via" v="Angelmodde, Dorf"/>
   </relation>
-  <relation id="6929853" version="63" timestamp="2025-03-27T23:08:52Z" changeset="164186725" uid="251543" user="ChrissW-R1">
+  <relation id="6929853" version="64" timestamp="2025-09-07T18:47:27Z" changeset="171600351" uid="423913" user="alan1209">
     <member type="node" ref="279499257" role="stop"/>
     <member type="node" ref="489881143" role="platform"/>
     <member type="node" ref="56179097" role="stop"/>
@@ -10418,7 +10425,7 @@
     <member type="node" ref="541997123" role="platform"/>
     <member type="node" ref="4562707091" role="stop"/>
     <member type="node" ref="694706810" role="platform"/>
-    <member type="node" ref="84174708" role="stop"/>
+    <member type="node" ref="1936071209" role="stop"/>
     <member type="node" ref="673396175" role="platform"/>
     <member type="node" ref="4500792237" role="stop"/>
     <member type="node" ref="359270646" role="platform"/>
