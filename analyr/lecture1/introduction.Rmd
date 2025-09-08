@@ -1,6 +1,6 @@
 ---
 title: "定量研究方法课程介绍"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:

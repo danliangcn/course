@@ -1,6 +1,6 @@
 ---
 title: "数据分析与R语言应用课程介绍"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:

@@ -1,6 +1,6 @@
 ---
 title: "调节效应、中介效应和结构方程"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:

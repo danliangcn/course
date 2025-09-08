@@ -1,6 +1,6 @@
 ---
 title: "网页爬取与机器学习"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:
@@ -77,7 +77,7 @@ web %>% html_nodes("div.gl_list2 ul li a") |> html_text()
 
 动态页面可以先通过会话请求页面，在爬取数据后，可以模拟点击下一页，此时会话会指向下一页，便可以爬取下一页的数据，依此直到爬取结束。  
 
-```{r dynwebscrape}
+```{r dynwebscrape, eval=FALSE}
 library(chromote)
 
 sess <- read_html_live(myurl) # 请求动态页面
@@ -111,7 +111,7 @@ R语言能够对已获取的文本数据进行挖掘探索，对文本进行分�
 
 R语言需要Java支持才能使用文本挖掘相关软件包，首先要根据操作系统下载jdk程序进行安装，然后在rstudio中安装rjava包和Rwordseg包（install.packages("Rwordseg", repos="http://R-Forge.R-project.org")），中间可能还需要手动安装一些依赖的包。  
 
-```{r textminsetting, message=F, warning=FALSE}
+```{r textminsetting, eval=FALSE,message=F, warning=FALSE}
 library(rJava)
 library(Rwordseg)
 ```
@@ -120,7 +120,7 @@ library(Rwordseg)
 
 分词是文本分析的基础，可以在分词前给出文本中常见的小地名防止错误分割词汇，还可先剔除掉数字以减少干扰。在文本预处理之后，便可以采用segmentCN函数对数据进行分词，分词器采用“jiebaR”的效果比较好。分词后可以通过设定stopwords将一些没有含义的连词、语气词等剔除。  
 
-```{r textminseg}
+```{r textminseg,eval=FALSE}
 insertWords(c("思明","湖里","同安","翔安","海沧","集美","杏林","厦门","新垵"))
 consulttemp <- gsub("[0-9０１２３４５６７８９ < > ~]","",consultdata$consult)
 
@@ -136,7 +136,7 @@ consulttemp <-lapply(consulttemp,removeStopWords,stopwords)
 
 ### 词条排序与词云  
 
-```{r textminwordcloud}
+```{r textminwordcloud,eval=FALSE}
 words <- lapply(consulttemp, strsplit, " ")
 wordsNum <- table(unlist(words))
 wordsNum <- sort(wordsNum, decreasing = T) #排序

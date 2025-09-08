@@ -1,6 +1,6 @@
 ---
 title: "数据挖掘"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:

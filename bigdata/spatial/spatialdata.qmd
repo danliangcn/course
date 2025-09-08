@@ -1,0 +1,1643 @@
+---
+title: "空间数据分析基础"
+author: ""
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc-depth: 5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(showtext)
+library(sysfonts)
+
+# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
+font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
+
+# 启用 showtext 自动渲染
+showtext_auto()
+```
+
+本部分概述空间数据类型、R语言中的空间数据对象、空间数据的处理、地理数据可视化、空间大数据处理和开放空间数据下载等内容，解释空间分析的基础理论概念。
+
+# 学习目标
+
+-   了解空间数据的类型和区别\
+-   了解空间数据的处理，理解相关基础概念
+-   掌握常用的空间数据处理方法\
+-   掌握地理数据可视化与结果解读\
+-   了解空间大数据的处理策略和方法\
+-   了解开放空间数据的下载方法\
+-   实践操作获取、处理、呈现各类空间地理数据\
+
+# 1 空间数据类型
+
+空间数据被广泛应用于环境、公共卫生、生态学、农业、城市规划、经济和社会等多个领域，以支持决策制定。这些数据来源于各种渠道，并以多种格式存在（Moraga and Baker 2022）。
+
+-   绕地球运行的卫星、飞机、无人机等可以获取遥感数据、航拍影像，反映土地使用和生态环境状况。\
+-   固定地点的监测站可以提供各种环境和气候信息，如温度、降雨和空气污染等。\
+-   社会调查被用来收集有关不同社会、经济和健康相关主题的数据。\
+-   手机定位信息和社交媒体可以提供有关个人位置和活动的信息。
+
+空间数据可以分为三类，即区域（或网格）数据（Areal data ）、地统计数据（geostatistical data）和点模式（point patterns）。
+
+## 1.1 区域数据
+
+区域数据是一个固定的集合，由规则或不规则的区域单元组成，在这些单元中观测各类变量。例如，某个区域的温度、降水、植被指数、空气污染浓度、流行病发病率等。
+
+1974 年美国北卡罗来纳州各县的婴儿猝死综合症数量，数据来自 sf 包。
+
+```{r}
+library(sf)
+library(mapview)
+d <- st_read(system.file("shape/nc.shp", package = "sf"),
+             quiet = TRUE)
+mapview(d, zcol = "SID74")
+```
+
+1980 年俄亥俄州哥伦布市各社区的家庭收入（以千美元为单位），数据来自 spData 包（Bivand, Nowosad, and Lovelace 2022）。
+
+```{r}
+library(spData)
+library(ggplot2)
+data <- st_read(system.file("shapes/columbus.gpkg",
+                         package = "spData"), quiet = TRUE)
+st_crs(data) <- 4326
+ggplot(data) + geom_sf(aes(fill = INC))
+```
+
+卢森堡栅格单元的高程数据，来自 terra 包（Hijmans 2022）。
+
+```{r}
+library(terra)
+d <- rast(system.file("ex/elev.tif", package = "terra"))
+plot(d)
+```
+
+## 1.2 地统计数据
+
+地统计数据是一个连续的固定子集，空间索引在空间中连续改变位置，因此数据可以在任何地方被观测。地统计通常采用在已知空间位置观测到的数据来预测未采样位置的数值。例如，使用多个监测站的空气污染测量数据，结合空间自相关和其他已知预测结果的因素，来预测其他位置的空气污染。地统计的目的包括估计未采样点的数值、量化空间自相关性、预测空间变量的分布。
+
+荷兰斯特因附近默兹河洪泛区采样点处的表层土壤铅浓度（每千克土壤的毫克数），数据来自 sp 包。
+
+```{r}
+library(sp)
+library(sf)
+library(mapview)
+
+data(meuse)
+meuse <- st_as_sf(meuse, coords = c("x", "y"), crs = 28992)
+mapview(meuse, zcol = "lead",  map.types = "CartoDB.Voyager")
+```
+
+2017 年希腊雅典公寓单位面积价格（欧元/平方米），数据来自 spData 包。
+
+```{r}
+library(spData)
+mapview(properties, zcol = "prpsqm")
+```
+
+津巴布韦特定地点的疟疾流行率，数据来自 malariaAtlas 包。流行率计算为每个地点疟疾阳性个体数除以检查个体数。
+
+```{r}
+library(malariaAtlas)
+d <- getPR(country = "Zimbabwe", species = "BOTH")
+ggplot2::autoplot(d)
+```
+
+## 1.3 点模式
+
+在点模式中，位置索引集给出了空间点模式所代表随机事件的位置，可能等于 1，表示事件发生，或者是能提供额外信息的随机数值。
+
+点模式分析的目的包括研究点的空间分布模式（聚集、随机、均匀）、检验点事件是否受环境影响、识别热点区域或空间聚类。例如，点模式分析包括森林中的火灾位置（González and Moraga 2022）或病患的居住地（Moraga and Montes 2011）产生的潜在空间过程，并评估这种模式是否表现出随机性、聚集或某种规律性。
+
+1998 年至 2007 年间西班牙卡斯蒂利亚-拉曼恰的火灾，包含在 spatstat 包的 clmfires 数据中。数据 clmfires 是一个标记点模式，包含每个火灾的信息。
+
+```{r}
+library(spatstat)
+plot(clmfires, use.marks = FALSE, pch = ".")
+```
+
+1987 年至 1994 年间英格兰东北部收集的 761 例原发胆汁性肝硬化病例和 30210 名对照者的空间位置，代表了风险人群，数据来自 sparr 包的 pbc 数据。
+
+```{r, eval=T}
+library(sparr)
+data(pbc)
+plot(unmark(pbc[which(pbc$marks == "case"), ]), main = "cases")
+axis(1)
+axis(2)
+title(xlab = "east", ylab = "north")
+plot(unmark(pbc[which(pbc$marks == "control"), ]),
+     pch = 3, main = "controls")
+axis(1)
+axis(2)
+title(xlab = "east", ylab = "north")
+```
+
+## 1.4 时空数据和数据立方体
+
+当数据同时具有空间和时间信息则为时空数据，可以看做是时间上的聚合信息或者是时空过程中的时间快照。
+
+```{r, echo=FALSE}
+# (C) 2019, Edzer Pebesma, CC-BY-SA
+set.seed(1331)
+library(stars) |> suppressPackageStartupMessages()
+library(colorspace)
+tif <- system.file("tif/L7_ETMs.tif", package = "stars")
+r <- read_stars(tif)
+
+nrow <- 5
+ncol <- 8
+m <- r[[1]][1:nrow,1:ncol,1]
+dim(m) <- c(x = nrow, y = ncol) # named dim
+s <- st_as_stars(m)
+# s
+attr(s, "dimensions")[[1]]$delta = 3
+attr(s, "dimensions")[[2]]$delta = -.5
+attr(attr(s, "dimensions"), "raster")$affine = c(-1.2, 0.0)
+
+plt <- function(x, yoffset = 0, add, li = TRUE) {
+    attr(x, "dimensions")[[2]]$offset = attr(x, "dimensions")[[2]]$offset + yoffset
+    l <- st_as_sf(x, as_points = FALSE)
+    pal <- sf.colors(10)
+    if (li)
+        pal <- lighten(pal, 0.3 + rnorm(1, 0, 0.1))
+    if (! add)
+        plot(l, axes = FALSE, breaks = "equal", pal = pal, reset = FALSE, border = grey(.75), key.pos = NULL, main = NULL, xlab = "time")
+    else
+        plot(l, axes = TRUE, breaks = "equal", pal = pal, add = TRUE, border = grey(.75))
+    u <- st_union(l)
+    # print(u)
+    plot(st_geometry(u), add = TRUE, col = NA, border = 'black', lwd = 2.5)
+}
+
+pl <- function(s, x, y, add = TRUE, randomize = FALSE) {
+  attr(s, "dimensions")[[1]]$offset = x
+  attr(s, "dimensions")[[2]]$offset = y
+  m <- r[[1]][y + 1:nrow,x + 1:ncol,1]
+  if (randomize)
+    m <- m[sample(y + 1:nrow),x + 1:ncol]
+  dim(m) = c(x = nrow, y = ncol) # named dim
+  s[[1]] = m
+  plt(s, 0, add)
+  plt(s, 1, TRUE)
+  plt(s, 2, TRUE)
+  plt(s, 3, TRUE)
+  plt(s, 4, TRUE)
+  plt(s, 5, TRUE)
+  plt(s, 6, TRUE)
+  plt(s, 7, TRUE)
+  plt(s, 8, TRUE, FALSE)
+}
+
+plot.new()
+par(mar = rep(0.5,4))
+plot.window(xlim = c(-12,15), ylim = c(-5,10), asp=1)
+pl(s, 0, 0)
+# box()
+text(-10, 0, "时间", srt = -90, col = 'black')
+text(-5,  6.5, "纬度", srt = 25, col = 'black')
+text( 5,  8.5, "经度", srt = 0, col = 'black')
+```
+
+如果栅格数据是带有不同光谱波段的三维数据，加上时间维度就成为了四维的数据立方体。
+
+```{r, echo=FALSE}
+# (C) 2021, Jonathan Bahlmann, CC-BY-SA
+# https://github.com/Open-EO/openeo.org/tree/master/documentation/1.0/datacubes/.scripts
+# based on work by Edzer Pebesma, 2019, here: https://gist.github.com/edzer/5f1b0faa3e93073784e01d5a4bb60eca
+
+# plotting runs via a dummy stars object with x, y dimensions (no bands)
+# to not be overly dependent on an input image, time steps and bands
+# are displayed by replacing the matrix contained in the dummy stars object
+# every time something is plotted
+
+# packages, read input ----
+set.seed(1331)
+library(stars)
+library(colorspace) |> suppressPackageStartupMessages()
+library(scales) |> suppressPackageStartupMessages()
+
+# make color palettes ----
+blues <- sequential_hcl(n = 20, h1 = 211, c1 = 80, l1 = 40, l2 = 100, p1 = 2)
+greens <- sequential_hcl(n = 20, h1 = 134, c1 = 80, l1 = 40, l2 = 100, p1 = 2)
+reds <- sequential_hcl(n = 20, h1 = 360, c1 = 80, l1 = 40, l2 = 100, p1 = 2)
+purples <- sequential_hcl(n = 20, h1 = 299, c1 = 80, l1 = 40, l2 = 100, p1 = 2)
+greys <- sequential_hcl(n = 20, h1 = 0, c1 = 0, l1 = 40, l2 = 100, p1 = 2)
+
+# matrices from raster ----
+# make input matrices from an actual raster image
+tif <- system.file("tif/L7_ETMs.tif", package = "stars")
+input <- read_stars(tif) # this raster needs approx 6x7 format
+# if the input raster is changed, every image where a pixel value is written as text needs to be checked and corrected accordingly
+input <- input[,,,1:4]
+warped <- st_warp(input, crs = st_crs(input), cellsize = 200) # warp to approx. 6x7 pixel
+
+# these are only needed for resampling
+warped_highres <- st_warp(warped, crs = st_crs(warped), cellsize = 100) # with different input, cellsize must be adapted
+# this is a bit of a trick, because 3:4 is different format than 6:7
+# when downsampling, the raster of origin isn't so important anyway
+warped_lowres <- st_warp(warped_highres[,1:11,,], crs = st_crs(warped), cellsize = 390)
+# plot(warped_lowres)
+# image(warped[,,,1], text_values = TRUE)
+
+t1 <- floor(matrix(runif(42, -30, 150), ncol = 7)) # create timesteps 2 and 3 randomly
+t2 <- floor(matrix(runif(42, -250, 50), ncol = 7))
+
+# create dummy stars object ----
+make_dummy_stars <- function(x, y, d1, d2, aff) {
+  m = warped_highres[[1]][1:x,1:y,1] # underlying raster doesn't matter because it's just dummy construct
+  dim(m) = c(x = x, y = y) # named dim
+  dummy = st_as_stars(m)
+  attr(dummy, "dimensions")[[1]]$delta = d1
+  attr(dummy, "dimensions")[[2]]$delta = d2
+  attr(attr(dummy, "dimensions"), "raster")$affine = c(aff, 0.0)
+  return(dummy)
+}
+
+s <- make_dummy_stars(6, 7, 2.5, -.5714286, -1.14) # mainly used, perspective
+f <- make_dummy_stars(6, 7, 1, 1, 0) # flat
+highres <- make_dummy_stars(12, 14, 1.25, -.2857143, -.57) # for resampling
+lowres <- make_dummy_stars(3, 4, 5, -1, -2) # for resampling
+
+# matrices from image ----
+make_matrix <- function(image, band, n = 42, ncol = 7, t = 0) {
+  # this is based on an input image with >= 4 input bands
+  # n is meant to cut off NAs, ncol is y, t is random matrix for time difference
+  return(matrix(image[,,,band][[1]][1:n], ncol = ncol) - t)
+  # before: b3 <- matrix(warped[,,,1][[1]][1:42], ncol = 7) - t2
+}
+
+# now use function: 
+b1 <- make_matrix(warped, 1)
+b2 <- make_matrix(warped, 1, t = t1)
+b3 <- make_matrix(warped, 1, t = t2)
+g1 <- make_matrix(warped, 2)
+g2 <- make_matrix(warped, 2, t = t1)
+g3 <- make_matrix(warped, 2, t = t2)
+r1 <- make_matrix(warped, 3)
+r2 <- make_matrix(warped, 3, t = t1)
+r3 <- make_matrix(warped, 3, t = t2)
+n1 <- make_matrix(warped, 4)
+n2 <- make_matrix(warped, 4, t = t1)
+n3 <- make_matrix(warped, 4, t = t2)
+
+# plot functions ----
+plt <- function(x, yoffset = 0, add, li = TRUE, pal, print_geom = TRUE, border = .75, breaks = "equal") {
+  # pal is color palette
+  attr(x, "dimensions")[[2]]$offset = attr(x, "dimensions")[[2]]$offset + yoffset 
+  l = st_as_sf(x, as_points = FALSE)
+  if (li)
+    pal <- lighten(pal, 0.2) # + rnorm(1, 0, 0.1))
+  if (! add)
+    plot(l, axes = FALSE, breaks = breaks, pal = pal, reset = FALSE, border = grey(border), key.pos = NULL, main = NULL, xlab = "time")
+  else
+    plot(l, axes = TRUE, breaks = breaks, pal = pal, add = TRUE, border = grey(border))
+  u <- st_union(l)
+  # print(u)
+  if(print_geom) {
+    plot(st_geometry(u), add = TRUE, col = NA, border = 'black', lwd = 2.5)
+  } else {
+    # not print geometry
+  }
+}
+
+pl_stack <- function(s, x, y, add = TRUE, nrM, imgY = 7, inner = 1) {
+  # nrM is the timestep {1, 2, 3}, cause this function
+  # prints all 4 bands at once
+  attr(s, "dimensions")[[1]]$offset = x
+  attr(s, "dimensions")[[2]]$offset = y
+  # m <- r[[1]][y + 1:nrow,x + 1:ncol,1]
+  m <- eval(parse(text=paste0("n", nrM)))
+  s[[1]] <- m[,c(imgY:1)] # turn around to have same orientation as flat plot
+  plt(s, 0, TRUE,  pal = purples)
+  m <- eval(parse(text=paste0("r", nrM)))
+  s[[1]] <- m[,c(imgY:1)]
+  plt(s, 1*inner, TRUE,  pal = reds)
+  m <- eval(parse(text=paste0("g", nrM)))
+  s[[1]] <- m[,c(imgY:1)]
+  plt(s, 2*inner, TRUE,  pal = greens)
+  m <- eval(parse(text=paste0("b", nrM)))
+  s[[1]] <- m[,c(imgY:1)]
+  plt(s, 3*inner, TRUE, pal = blues) # li FALSE deleted
+}
+
+# flat plot function
+# prints any dummy stars with any single matrix to position
+pl <- function(s, x, y, add = TRUE, randomize = FALSE, pal, m, print_geom = TRUE, border = .75, breaks = "equal") {
+  # m is matrix to replace image with
+  # m <- t(m)
+  attr(s, "dimensions")[[1]]$offset = x
+  attr(s, "dimensions")[[2]]$offset = y
+  # print(m)
+  s[[1]] <- m
+  plt(s, 0, add = TRUE, pal = pal, print_geom = print_geom, border = border, breaks = breaks)
+  #plot(s, text_values = TRUE)
+}
+
+print_segments <- function(x, y, seg, by = 1, lwd = 4, col = "black") {
+  seg <- seg * by
+  seg[,1] <- seg[,1] + x
+  seg[,3] <- seg[,3] + x
+  seg[,2] <- seg[,2] + y
+  seg[,4] <- seg[,4] + y
+  segments(seg[,1], seg[,2], seg[,3], seg[,4], lwd = lwd, col = col)
+}
+
+# time series ----
+
+# from: cube1_ts_6x7_bigger.png
+offset = 26
+plot.new()
+#par(mar = c(3, 2, 7, 2))
+par(mar = c(0, 0, 0, 0))
+#plot.window(xlim = c(10, 50), ylim = c(-3, 10), asp = 1)
+plot.window(xlim = c(-15, 75), ylim = c(-3, 10), asp = 1)
+pl_stack(s, 0, 0, nrM = 3)
+pl_stack(s, offset, 0, nrM = 2)
+pl_stack(s, 2 * offset, 0, nrM = 1)
+# po <- matrix(c(0,-8,7,0,15,3.5,  0,1,1,5,5,14), ncol = 2)
+heads <- matrix(c(3.5, 3.5 + offset, 3.5 + 2*offset, 14,14,14), ncol = 2)
+points(heads, pch = 16) # 4 or 16
+segments(c(-8, 7, 0, 15), c(-1,-1,3,3), 3.5, 14) # first stack pyramid
+segments(c(-8, 7, 0, 15) + offset, c(-1,-1,3,3), 3.5 + offset, 14) # second stack pyramid
+segments(c(-8, 7, 0, 15) + 2*offset, c(-1,-1,3,3), 3.5 + 2*offset, 14) # third stack pyramid
+arrows(-13, 14, 72, 14, angle = 20, lwd = 2)  # timeline
+text(7.5, 3.8, "x", col = "black")
+text(-10, -2.5, "多波段", srt = 90, col = "black")
+text(-4.5, 1.8, "y", srt = 27.5, col = "black")
+y <- 15.8
+text(69, y, "时间", col = "black")
+text(3.5, y, "2024-10-01", col = "black")
+text(3.5 + offset, y, "2024-10-13", col = "black")
+text(3.5 + 2*offset, y, "2024-10-25", col = "black")
+```
+
+## 1.5 空间函数数据
+
+空间数据类型（区域、地统计和点模式）与随机函数结合便为空间函数数据（Spatial Functional Data），它是空间统计与函数型数据分析（Functional Data Analysis, FDA）交叉领域的研究对象，其核心特点是同时具备空间依赖性和函数型特征。例如气象站记录的每日温度曲线是一个关于时间的函数，并且邻近气象站的温度曲线变化模式可能高度相关。
+
+来自 geoFourierFDA 包（Sassi 2021）的函数地统计数据，表示在 35 个加拿大气象站平均 30 年的每日温度，${\boldsymbol{\chi_{s_i}}: i =1,\ldots,35 }$。
+
+```{r}
+# install.packages("devtools") # 无法正常安装包，从源文件安装
+# devtools::install_github("ropensci/rnaturalearthhires")
+library(sf)
+library(geoFourierFDA)
+library(rnaturalearth)
+
+# 绘制加拿大地图
+map <- rnaturalearth::ne_states("Canada", returnclass = "sf")
+
+# 气象站坐标
+d <- data.frame(canada$m_coord)
+d$location <- attr(canada$m_coord, "dimnames")[[1]]
+d <- st_as_sf(d, coords = c("W.longitude", "N.latitude"))
+st_crs(d) <- 4326
+
+# 绘制加拿大地图和气象站位置
+ggplot(map) + geom_sf() + geom_sf(data = d, size = 6) +
+  geom_sf_label(data = d, aes(label = location), nudge_y = 2)
+
+# 各气象站随时间变化的温度
+d <- data.frame(canada$m_data)
+d$time <- 1:nrow(d)
+
+# 将数据 d 从宽格式转换为长格式
+# cols：需要转换为长格式的列
+# names_to：新列的名称，包含原始数据的列名
+# values_to：新列的名称，包含原始数据的值
+df <- tidyr::pivot_longer(data = d,
+cols = names(d)[-which(names(d) == "time")],
+names_to = "variable", values_to = "value")
+
+# 绘制各气象站随时间变化的温度
+ggplot(df, aes(x = time, y = value)) +
+  geom_line(aes(color = variable))
+```
+
+## 1.6 流动数据
+
+除了三种经典的空间数据类型（即区域、地统计和点模式）外，还有包含个体或其他对象在空间移动的流动数据（Mahmood et al. 2022）。
+
+来自 epiflows 包（Piatkowski et al. 2018; Moraga et al. 2019）的流动数据Brazil_epiflows，包含巴西各州与其他地点之间的旅行者数量。可以根据地理位置之间的流动预测和可视化传染病的传播。
+
+```{r}
+library("epiflows")
+data("Brazil_epiflows")
+
+loc <- merge(x = YF_locations, y = YF_coordinates,
+by.x = "location_code", by.y = "id", sort = FALSE)
+
+ef <- make_epiflows(flows = YF_flows, locations = loc,
+                    coordinates = c("lon", "lat"),
+                    pop_size = "location_population",
+                    duration_stay = "length_of_stay",
+                    num_cases = "num_cases_time_window",
+                    first_date = "first_date_cases",
+                    last_date = "last_date_cases")
+vis_epiflows(ef)
+map_epiflows(ef)
+```
+
+# 2 R中的空间数据对象
+
+空间数据可以使用向量数据和栅格数据来表示。向量数据用于显示点、线和多边形，以及它们的相关信息。例如，监测站的位置、道路网络或国家的行政区划。栅格数据是具有相同大小单元格的规则网格，用于存储空间连续现象的值，例如海拔、温度或空气污染值。
+
+`sf`、`terra`、`stars` 包是 R 中用于操作和分析空间数据的主要包。
+
+## 2.1 向量数据
+
+`sf` 包处理向量数据，用于表示点、线和多边形。向量数据可以用点来表示公共服务部门（医院或学校）的位置，用线来表示道路或河流，用多边形表示省份和市域行政区划的边界。同时，这些向量数据可以关联信息，例如学校的在校学生人数或行政区划内的人口数量。
+
+向量数据通常使用shapefile的存储格式。需要注意的是，Shape文件不是单个文件，而是一组相关文件的集合。Shape文件包含三个必备文件，即：`.shp` 文件包含几何数据，`.shx` 文件是几何数据的位置索引，允许在 `.shp` 文件中进行查找，`.dbf` 文件存储每个形状的属性。其他可能包含的文件有：`.prj` 文件是描述投影的纯文本文件，`.sbn` 和 `.sbx` 文件是几何数据的空间索引，`.shp.xml` 文件包含 XML 格式的空间元数据。因此，在使用shape文件时，需获取所有的组成文件集合，而不仅仅是包含几何数据的 `.shp` 文件。
+
+`sf` 包的 `st_read()` 函数可用于读取shape文件。下面读取 `sf` 包中自带的美国北卡州各郡的shape文件。
+
+```{r}
+library(sf)
+# 获取自带文件的路径
+pathshp <- system.file("shape/nc.shp", package = "sf")
+# 读取shape文件，但不显示文件详细信息
+map <- st_read(pathshp, quiet = TRUE)
+# 检查shape数据类型与数据结构
+class(map)
+head(map)
+# 地图展示数据的第一个属性值
+plot(map[1]) 
+```
+
+## 2.2 栅格数据
+
+栅格数据（也称为网格数据）是一种空间数据结构，将研究区域划分为大小相同的矩形单元格（称为单元或像素），并可以为每个单元格存储一个或多个值。栅格数据用于表示空间连续现象，例如海拔、温度或空气污染值。
+
+栅格数据通常以 GeoTIFF 格式存储，文件扩展名为 .tif。可使用 terra::rast() 函数读取 terra 包中的 elev.tif 文件，展示卢森堡的海拔。
+
+```{r}
+library(terra)
+pathraster <- system.file("ex/elev.tif", package = "terra")
+r <- terra::rast(pathraster)
+r
+plot(r)
+```
+
+## 2.3 坐标参考系统
+
+空间数据的坐标参考系统（CRS）指定了空间坐标的原点和测量单位。CRS 对于空间数据的操作、分析和可视化非常重要，允许通过将多个数据转换为相同的 CRS 来处理它们。地球上的位置可以使用未投影（也称为地理）或投影的 CRS 进行参照。未投影或地理 CRS 使用纬度和经度值表示地球三维椭球表面上的位置（例如厦门市大致位于东经118度，北纬24.5度）。
+
+投影 CRS 使用笛卡尔坐标在二维平面上展示地球上的位置。所有的投影坐标参考系都会以某种方式扭曲地球表面，无法同时保留面积、方向、形状和距离的所有属性。
+
+最常见的 CRS 可以通过提供 EPSG（欧洲石油勘探集团）代码或 Proj4 字符串来指定。常见的空间投影可以在 https://spatialreference.org/ref/ 找到。例如，EPSG 代码 4326 指的是 WGS84 经纬度坐标系（适用于GPS，有时被称为等经纬度投影，实际是未投影坐标系，但是绘制地图时，会自动应用简单投影或将经纬度假设为平面坐标）。而Proj4 字符串则通过一系列+号相连的键与键值对来制定投影方式的参数（例如名称、区域、基准、距离单位等）。可以使用 sf 包的 st_crs() 函数检查给定坐标系的详细信息。
+
+```{r}
+# 坐标系的名称
+st_crs("EPSG:4326")$Name
+# 坐标系的投影字符串标识
+st_crs("EPSG:4326")$proj4string
+# 坐标系的EPSG代码
+st_crs("EPSG:4326")$epsg
+```
+
+可以使用 sf 和 terra 对坐标系进行转换。通过 st_crs(x) \<- value（如果 x 是 sf 对象）或 crs(r) \<- value（如果 r 是栅格对象）可以设置空间数据的 CRS。通过 sf::st_transform() 和 terra::project() 可以转换坐标系。
+
+```{r}
+library(sf)
+pathshp <- system.file("shape/nc.shp", package = "sf")
+map <- st_read(pathshp, quiet = TRUE)
+
+# 获取 CRS
+st_crs(map)
+# 转换 CRS
+map2 <- st_transform(map, crs = "EPSG:4326")
+# 获取新的 CRS
+st_crs(map2)
+```
+
+terra 读取并获取 CRS，转换新的 CRS类似。
+
+```{r}
+library(terra)
+pathraster <- system.file("ex/elev.tif", package = "terra")
+r <- rast(pathraster)
+
+# 获取 CRS
+crs(r)
+# 转换 CRS
+r2 <- terra::project(r, "EPSG:2169")
+# 获取 新的CRS
+crs(r2)
+```
+
+R语言发展迅速，建议尽量使用新的包，旧的包一般不再维护，安装中容易出错，调试起来也比较麻烦。在 sf 包开发之前，sp 包被用来表示和处理向量空间数据。sp 以及 rgdal、rgeos 和 maptools包已不再维护并将退出使用。
+
+# 3 空间数据的处理
+
+## 3.1 sf 包
+
+### sf对象
+
+sf 对象是一个 data.frame，包含简单特征（simple feature）（行）和属性（attribute）（列），加上一个包含每个要素（具体空间对象）几何形状信息的列表列（list-column）。
+
+sf 对象中包含 sf、sfc 和 sfg 等类别的对象： - sf（simple feature，简单特征）：data.frame 的每一行是一个简单特征（在GIS，尤其在ArcGIS中，称作简单要素），由属性和几何形状信息组成。\
+- sfc（简单特征几何体列表列）：data.frame 的 geometry 列是一个类为 sfc 的列表列，包含每个简单特征的几何体信息（区域对应多边形的信息）。\
+- sfg（simple feature geometry，简单特征几何体）：sfc 列表列的每一行对应于单个简单特征的简单特征几何体信息（sfg），例如区域对应多边形的每个点的位置。
+
+### 简单特征几何体
+
+简单特征几何体是用几何形状描述特征的一种方式。其主要应用是在二维空间通过点、线、多边形描绘几何形状。
+
+| 类型                 | 描述             |
+|----------------------|------------------|
+| `POINT`              | 单个点几何体     |
+| `MULTIPOINT`         | 点集             |
+| `LINESTRING`         | 单一折线         |
+| `MULTILINESTRING`    | 折线集           |
+| `POLYGON`            | 多边形           |
+| `MULTIPOLYGON`       | 多边形集         |
+| `GEOMETRYCOLLECTION` | 以上几何体的集合 |
+
+```{r fig-sfgeometries}
+
+library(sf) 
+par(mfrow = c(2,4))
+par(mar = c(1,1,1.2,1))
+
+# 1
+p <- st_point(0:1)
+plot(p, pch = 16)
+title("点")
+box(col = 'grey')
+
+# 2
+mp <- st_multipoint(rbind(c(1,1), c(2, 2), c(4, 1), c(2, 3), c(1,4)))
+plot(mp, pch = 16)
+title("点集")
+box(col = 'grey')
+
+# 3
+ls <- st_linestring(rbind(c(1,1), c(5,5), c(5, 6), c(4, 6), c(3, 4), c(2, 3)))
+plot(ls, lwd = 2)
+title("线")
+box(col = 'grey')
+
+# 4
+mls <- st_multilinestring(list(
+  rbind(c(1,1), c(5,5), c(5, 6), c(4, 6), c(3, 4), c(2, 3)),
+  rbind(c(3,0), c(4,1), c(2,1))))
+plot(mls, lwd = 2)
+title("线集")
+box(col = 'grey')
+
+# 5 polygon
+po <- st_polygon(list(rbind(c(2,1), c(3,1), c(5,2), c(6,3), c(5,3), c(4,4), c(3,4), c(1,3), c(2,1)),
+	rbind(c(2,2), c(3,3), c(4,3), c(4,2), c(2,2))))
+plot(po, border = 'black', col = '#ff8888', lwd = 2)
+title("多边形")
+box(col = 'grey')
+
+# 6 multipolygon
+mpo <- st_multipolygon(list(
+	list(rbind(c(2,1), c(3,1), c(5,2), c(6,3), c(5,3), c(4,4), c(3,4), c(1,3), c(2,1)),
+		rbind(c(2,2), c(3,3), c(4,3), c(4,2), c(2,2))),
+	list(rbind(c(3,7), c(4,7), c(5,8), c(3,9), c(2,8), c(3,7)))))
+plot(mpo, border = 'black', col = '#ff8888', lwd = 2)
+title("多边形集")
+box(col = 'grey')
+
+# 7 geometrycollection
+gc <- st_geometrycollection(list(po, ls + c(0,5), st_point(c(2,5)), st_point(c(5,4))))
+plot(gc, border = 'black', col = '#ff6666', pch = 16, lwd = 2)
+title("几何集合")
+box(col = 'grey')
+```
+
+特征几何框架中有个重要的概念是空几何体，即进行几何体操作中获得的空集。例如，点和点之间的交集是空点，不重叠的多边形的交集是空多边形。这些都是空集，仅仅是维度不同。
+
+### 几何体的操作
+
+可以根据几何体操作的输入和输出对操作进行分类。
+
+根据操作对象多少，在输入方面，可以分为：\
+
+-   一元（unary）：当它们作用于单个几何时\
+-   二元（binary）：当它们作用于成对的几何时\
+-   N元（n-ary）：当它们作用于几何集时几何体\
+
+根据操作的输出结果，可以分为：
+
+-   谓词（predicates）：对属性进行判断，返回布尔值，例如比较两个几何体，返回布尔值，如st_intersects（是否相交）、st_contains（是否包含）或st_within（是否在内部）。\
+-   度量（measures）：返回一个量，通常带有测量单位。例如，对单一几何体操作，返回单一值，如st_area（面积）、st_length（长度）或st_dimension（维度）。\
+-   变换（transformations）：新生成的几何。例如，结合两个几何体生成新几何体，如st_intersection（交集）、st_union（并集）或st_difference（差集）。\
+
+### 数据读入与选择
+
+数据集：NC（spData 或 spdep 包），来自美国北卡罗来纳州100个郡
+
+-   BIR74, BIR79：1974年和1979年的出生数\
+-   SID74, SID79：1974年和1979年的婴儿猝死数\
+-   NWBIR74, NWBIR79：1974年和1979年非白人母亲的出生数\
+-   NAME, FIPS, CNTY_ID：县标识符和名称
+
+```{r}
+nc <- st_read(pathshp, quiet=T)
+print(nc)
+```
+
+可以使用方括号符号来选择符合要求的要素，并使用 drop 参数来删除几何体列。
+
+```{r}
+nc[1, ] # 第一行
+nc[nc$NAME == "Ashe", ] # NAME 为 "Ashe" 的行
+nc[1, "NWBIR74"] # 第一行，名称为 NWBIR74 的列
+nc[1, "NWBIR74", drop = TRUE] # 删除几何体
+```
+
+st_geometry() 函数可用于检索简单特征几何体列表列（sfc）。
+
+```{r}
+# 以缩写形式打印几何体
+st_geometry(nc)
+# 通过选择一个查看完整的几何体
+st_geometry(nc)[[1]]
+```
+
+### 创建 sf 对象
+
+可以使用 st_sf() 函数创建 sf 对象，提供每个特征属性的 data.frame 和包含简单特征几何体信息的列表列 sfc。先创建简单特征几何体 sfg，并使用 st_sfc() 函数创建几何列表列 sfc。然后，使用 st_sf() 将包含属性的 data.frame 和几何体列表列 sfc 组合在一起。
+
+sfg 几何体对象可以是，POINT 类型（单个点）、MULTIPOINT 类型（点集）或 POLYGON 类型（多边形），分别可以通过 st_point()、st_multipoint() 和 st_polygon() 创建。
+
+```{r}
+# 单点（点作为一个向量）
+p1_sfg <- st_point(c(2, 2))
+p2_sfg <- st_point(c(2.5, 3))
+
+# 点集（点作为一个矩阵）
+p <- rbind(c(6, 2), c(6.1, 2.6), c(6.8, 2.5),
+           c(6.2, 1.5), c(6.8, 1.8))
+mp_sfg <- st_multipoint(p)
+
+# 多边形。由形成闭合、非自相交环的点序列组成。
+# 第一个环表示外部环，
+# 零个或多个后续环表示外部环中的孔
+p1 <- rbind(c(10, 0), c(11, 0), c(13, 2),
+            c(12, 4), c(11, 4), c(10, 0))
+p2 <- rbind(c(11, 1), c(11, 2), c(12, 2), c(11, 1))
+pol_sfg <- st_polygon(list(p1, p2))
+
+# 创建 sf 对象
+p_sfc <- st_sfc(p1_sfg, p2_sfg, mp_sfg, pol_sfg)
+df <- data.frame(v1 = c("A", "B", "C", "D"))
+p_sf <- st_sf(df, geometry = p_sfc)
+
+# 绘制单点、点集和多边形
+library(ggplot2)
+ggplot(p_sf) + geom_sf(aes(col = v1), size = 3) + theme_bw()
+```
+
+### 编辑 sf 对象
+
+可以通过选择 sf 特定的行来删除一些多边形。还可以使用 st_union() 函数并设置参数 by_feature = FALSE 将所有几何形状组合在一起。使用 st_simplify() 函数简化地图的边界。
+
+```{r}
+library(sf)
+library(ggplot2)
+library(dplyr)  # 确保管道操作 `%>%` 可用
+
+# 加载数据并检查 CRS
+pathshp <- system.file("shape/nc.shp", package = "sf")
+map <- st_read(pathshp, quiet = TRUE) %>% 
+  st_transform(4326)  # 确保使用 WGS84 (EPSG:4326)
+
+# 检查 CRS
+print(st_crs(map))  # 应为 EPSG:4326
+
+# 删除选择的地理单元
+map <- map[-which(map$FIPS %in% c("37125", "37051")), ]
+ggplot(map) + geom_sf(aes(fill = SID79)) + coord_sf(lims_method = "geometry_bbox") 
+
+# 组合地理单元
+ggplot(st_union(map, by_feature = FALSE) %>% st_sf()) + geom_sf() + coord_sf(lims_method = "geometry_bbox") 
+
+# 简化地图边界
+ggplot(st_simplify(map, dTolerance = 0.1)) + geom_sf() +coord_sf(lims_method = "geometry_bbox") 
+```
+
+### 将点数据转换为 sf 对象
+
+st_as_sf() 函数将外部对象转换为 sf 对象。
+
+```{r}
+library(sf)
+library(mapview)
+
+d <- data.frame(
+place = c("伦敦", "巴黎", "马德里", "罗马"),
+long = c(-0.118092, 2.349014, -3.703339, 12.496366),
+lat = c(51.509865, 48.864716, 40.416729, 41.902782),
+value = c(200, 300, 400, 500))
+class(d)
+
+dsf <- st_as_sf(d, coords = c("long", "lat"))
+st_crs(dsf) <- 4326
+class(dsf)
+
+mapview(dsf)
+```
+
+### 计算多边形内的点数
+
+st_intersects() 函数计算 sf 对象多边形内的点数。返回的对象是一个列表，包含每个多边形中相交的特征 ID。可以继续使用 lengths() 函数计算每个特征内的点数。
+
+```{r}
+library(sf)
+library(ggplot2)
+
+# 读取shape文件
+map <- read_sf(system.file("shape/nc.shp", package = "sf"))
+
+# 在地图上添加随机的样本点
+points <- st_sample(map, size = 100)
+
+# 绘制点所在的地图
+ggplot() + geom_sf(data = map) + geom_sf(data = points)
+
+# 用地图中的特征与点进行匹配（第一个参数为地图特征对象，然后是点对象）
+# 二元谓词，返回多边形表示的郡与点对象之间是否相交的布尔值矩阵
+inter <- st_intersects(map, points)
+
+# 为地图每个多边形特征（郡）添加点计数作为新的属性变量
+map$count <- lengths(inter)
+
+# 获得每个郡内样本点数量分布图
+ggplot(map) + geom_sf(aes(fill = count))
+```
+
+### 识别包含点的多边形
+
+也可以使用 st_intersects() 函数来获取每个点所属的多边形。
+
+```{r}
+library(sf)
+library(ggplot2)
+
+# 获取地图文件
+map <- read_sf(system.file("shape/nc.shp", package = "sf"))
+
+# 在地图上随机添加3个点，并转化为sf对象
+points <- st_sample(map, size = 3) %>% st_as_sf()
+
+# 用点对象与地图中的特征进行匹配（注意此时第一个参数为点，然后是单个特征）
+# 二元谓词，返回每个点对象与每个多边形之间是否相交的布尔值矩阵
+inter <- st_intersects(points, map)
+
+# 给点对象添加对应的区域名称变量 areaname
+points$areaname <- map[unlist(inter), "NAME",
+                       drop = TRUE] # 删除几何体信息
+points
+# 展示点所在郡的名称（点是随机添加的，每次结果会不同）
+ggplot(map) + geom_sf() + geom_sf(data = points) + 
+  geom_sf_label(data = points,
+                aes(label = areaname), nudge_y = 0.2)
+```
+
+### 连接地图和数据
+
+有时地图及其对应的数据是分开提供的，可以使用 dplyr 包的 left_join() 函数将地图和数据连接起来，创建带有数据属性的 sf 地图。
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(viridis)
+
+# 载入标准世界地图
+map <- st_read("shp/worldmap/world.shp")
+# 使用 wbstats 包从世界银行数据库下载空气污染数据
+library(wbstats)
+# 搜素污染指标，可以帮助查看具体的指标名称
+indicators <- wb_search(pattern = "pollution")
+# 下载2016年的PM2.5数据
+d <- wb_data(indicator = "EN.ATM.PM25.MC.M3",
+             start_date = 2016, end_date = 2016)
+# 链接地图和数据，通过参数by指定链接的变量国家的ISO3标准代码
+# 注意，地图对象在前，数据框在后
+map1 <- left_join(map, d, by = c("ISO_A3" = "iso3c"))
+# 绘制PM2.5分布图
+ggplot(map1) + geom_sf(aes(fill = EN.ATM.PM25.MC.M3)) +
+  scale_fill_viridis() + labs(fill = "PM2.5") + theme_bw()
+```
+
+### 空间连接
+
+与采用相同属性对接不同，空间连接的判断标准依靠空间谓词（例如，`contains`和 `within`,`covers`和`covered_by`，`crosses`，`disjoint`和`intersects`，`equals`，`is_within_distance`等二元谓词）。同时，空间连接时，通常每个记录有多个匹配的记录，为了简化，一般选择与目标记录几何体重叠面积最大几何体记录。
+
+```{r, eval=FALSE}
+# example of largest = TRUE:
+system.file("gpkg/nc.gpkg", package="sf") |> 
+    read_sf() |>
+    st_transform('EPSG:2264') -> nc
+gr <- st_sf(
+         label = apply(expand.grid(1:10, LETTERS[10:1])[,2:1], 1, paste0, collapse = ""),
+         geom = st_make_grid(nc))
+gr$col <- sf.colors(10, categorical = TRUE, alpha = .3)
+# cut, to verify that NA's work out:
+gr <- gr[-(1:30),]
+suppressWarnings(nc_j <- st_join(nc, gr, largest = TRUE))
+par(mfrow = c(2,1), mar = rep(0,4))
+plot(st_geometry(nc_j), border = 'grey')
+plot(st_geometry(gr), add = TRUE, col = gr$col)
+text(st_coordinates(st_centroid(st_geometry(gr))), labels = gr$label, cex = .85)
+# the joined dataset:
+plot(st_geometry(nc_j), border = 'grey', col = nc_j$col)
+text(st_coordinates(st_centroid(st_geometry(nc_j))), labels = nc_j$label, cex = .7)
+plot(st_geometry(gr), border = '#88ff88aa', add = TRUE)
+```
+
+## 3.2 terra 包
+
+`terra` 包创建、读取、操作和写入栅格和向量数据。栅格数据常用于表示空间连续现象，通过将研究区域划分为大小相等的矩形网格（称为单元格或像素）来存储感兴趣变量的值。在 `terra` 中，多层栅格数据使用 `SpatRaster` 类表示。`SpatVector` 类用于表示向量数据，如点、线和多边形及其属性。
+
+### 创建栅格数据
+
+`rast()` 函数可用于创建和读取栅格数据。`writeRaster()` 函数写入栅格数据。
+
+```{r}
+library(terra)
+# 创建栅格数据
+r <- rast(ncol = 10, nrow = 10,
+          xmin = -150, xmax = -80, ymin = 20, ymax = 60)
+r
+# 函数获取栅格的大小。
+nrow(r) # 行数
+ncol(r) # 列数
+dim(r) # 维度
+ncell(r) # 单元格数
+
+# 设置和访问栅格的值。
+values(r) <- 1:ncell(r)
+
+# 创建多层对象。
+r2 <- r * r
+s <- c(r, r2)
+
+# 选取特定的图层
+plot(s[[2]]) # 第 2 层
+
+# 通用函数可用于操作栅格
+plot(min(s))
+plot(r + r + 10)
+plot(round(r))
+plot(r == 1)
+```
+
+### 读取向量数据
+
+vect() 读取shape文件，writeVector() 写入文件。
+
+```{r}
+pathshp <- system.file("ex/lux.shp", package = "terra")
+# 读取shape文件并绘图
+v <- vect(pathshp)
+plot(v)
+
+# 设定经度和纬度值
+long <- c(-0.118092, 2.349014, -3.703339, 12.496366)
+lat <- c(51.509865, 48.864716, 40.416729, 41.902782)
+longlat <- cbind(long, lat)
+
+# 指定CRS
+crspoints <- "+proj=longlat +datum=WGS84"
+
+# 设定点的属性
+d <- data.frame(
+place = c("伦敦", "巴黎", "马德里", "罗马"),
+value = c(200, 300, 400, 500))
+
+# 构建向量 SpatVector 对象
+pts <- vect(longlat, atts = d, crs = crspoints)
+
+pts
+plot(pts)
+```
+
+### 裁剪、掩膜和聚合栅格数据
+
+```{r}
+library(terra)
+# 从 WorldClim数据库下载荷兰的月平均温度数据，分辨率为10
+r <- geodata::worldclim_country(country = "Netherlands", var = "tavg",
+                                res = 10, path = tempdir())
+plot(r)
+# 对月温度栅格数据进行平均
+r <- mean(r)
+plot(r)
+
+# 为了更好呈现荷兰本土的温度分布，从 rnaturalearth 包下载荷兰地图，并删除海外领地。
+
+library(ggplot2)
+map <- rnaturalearth::ne_states("Netherlands", returnclass = "sf")
+map <- map[-which(map$type_en != "Province"), ] # 删除非本土省份
+ggplot(map) + geom_sf()
+
+# 裁剪操作
+# 使用 terra::ext() 获取地图的空间范围，再使用 crop() 删除空间范围外的栅格数据
+sextent <- terra::ext(map)
+r <- terra::crop(r, sextent)
+plot(r)
+
+# 掩膜操作
+# 使用 mask() 函数将地图外的所有值转换为 NA
+r <- terra::mask(r, vect(map))
+plot(r)
+
+# 聚合操作
+# 聚合栅格创建分辨率较低（即单元格较大）的新栅格。参数 fact 聚合因子规定每个方向（水平和垂直）的栅格格数,参数 fun 指定用于聚合值的函数。
+r <- terra::aggregate(r, fact = 5, fun = "mean", na.rm = TRUE)
+plot(r)
+
+```
+
+### 按点位提取栅格值
+
+```{r}
+library(terra)
+# 获取栅格文件
+r <- rast(system.file("ex/elev.tif", package = "terra"))
+# 获取shape文件
+v <- vect(system.file("ex/lux.shp", package = "terra"))
+
+# 获取行政区的中心点的坐标
+points <- crds(centroids(v))
+
+plot(r)
+plot(v, add = TRUE)
+points(points)
+
+# 提取行政区中心点的高程数据
+points <- as.data.frame(points)
+valuesatpoints <- extract(r, points)
+cbind(points, valuesatpoints)
+```
+
+### 提取区域提取栅格值并汇总
+
+可以使用 extract() 获取栅格对象在多边形内的所有取值。默认情况下，提取的单元格要求其中心在多边形内。还可以设置参数 weights = TRUE 获取单元格在多边形内的面积百分比，可用于计算面积加权的平均值。参数 fun 可用于指定汇总函数（例如，mean）来汇总所有的栅格提取值。
+
+```{r}
+# 每个区域内提取的栅格单元格
+head(extract(r, v, na.rm = TRUE))
+
+# 提取栅格单元格及其在区域内的面积百分比
+head(extract(r, v, na.rm = TRUE, weights = TRUE))
+
+# 区域内的栅格平均值
+v$avg <- extract(r, v, mean, na.rm = TRUE)$elevation
+
+# 还可以计算区域内的面积加权栅格平均值（weights = TRUE）
+v$weightedavg <- extract(r, v, mean, na.rm = TRUE,
+                 weights = TRUE)$elevation
+
+library(ggplot2)
+library(tidyterra)
+
+# 绘制各区域的平均海拔高度图
+ggplot(data = v) + geom_spatvector(aes(fill = avg)) +
+  scale_fill_terrain_c()
+
+# 绘制各区域的面积加权平均海拔高度图
+ggplot(data = v) + geom_spatvector(aes(fill = weightedavg)) +
+  scale_fill_terrain_c()
+```
+
+## 3.5 stars 包
+
+尽管terra包提供了方便的函数处理栅格数据，但是其所用的栅格数据模型是二维规则栅格，或一组栅格层（“栅格堆栈”）。目前，更多大数据是动态的，以栅格或栅格堆栈的时间序列形式出现。同时，terra 包能够应付本地存储（计算机硬盘）大小的数据，大数据集（如卫星影像、气候模型或天气预报数据）往往远超本地存储的能力。
+
+stars 包，用于分析栅格和矢量数据立方。具有如下优点：
+
+-   允许表示动态（随时间变化）的栅格堆栈，\
+-   旨在可扩展，处理超出本地磁盘大小的数据，\
+-   提供与 GDAL 库中栅格函数的紧密集成，
+-   处理规则网格、旋转、剪切、折线和曲线栅格，
+-   与 sf 包紧密集成，
+-   处理具有非栅格空间维度的数组数据，即矢量数据立方，
+-   遵循 tidyverse 设计原则。
+
+### 读取和写入栅格数据
+
+```{r}
+tif <- system.file("tif/L7_ETMs.tif", package = "stars")
+library(stars)
+(r <- read_stars(tif))
+```
+
+文件为Landsat7的卫星影像数据集，巴西奥林达地区的6个30米分辨率波段（波段1-5和7），展示起始索引、结束索引、偏移（第一个像素边缘的维度取值，提供了栅格数据在真实世界中的锚点）、单元大小（负值意味着像素索引随着维度值减少而增加）、坐标参考系、单元值是否具有点支持（是否与点的大小、面积、周长等相关）、维度是否与空间栅格x或y轴相关。
+
+```{r}
+# r对象的长度
+length(r)
+# r对象包含元素的类别
+class(r[[1]])
+# r对象包含元素的维度
+dim(r[[1]])
+# r对象的空间范围
+st_bbox(r)
+# 
+```
+
+栅格数据可以保存到本地磁盘
+
+```{r, eval=FALSE}
+tf <- tempfile(fileext = ".tif")
+write_stars(r, tf)
+```
+
+### 获取数据立方的子集
+
+```{r}
+# 直接采用[符号进行选择，第一个参数是属性，此处默认全选；
+# 随后是每个维度，维度1代表的x选取的索引是从1到100
+# 维度2代表的y选取的索引是间隔为5的序列，维度3代表的波段选取为4
+r[,1:100, seq(1, 250, 5), 4] |> dim()
+
+# drop参数为TRUE，单一值的维度会被丢弃
+r[,1:100, seq(1, 250, 5), 4, drop = TRUE] |> dim()
+
+# 可以使用filter函数进行条件筛选，注意该操作选择完子集会改变数据的offset
+library(dplyr)
+filter(r, x > 289000, x < 290000)
+
+# 获取数据立方切片，波段为单一值，该维度会被丢弃
+slice(r, band, 3)
+```
+
+### 裁剪
+
+可以使用 sf、sfc 或 bbox 类的空间对象进行子集选择。
+
+```{r}
+b <- st_bbox(r) |>
+      st_as_sfc() |>
+      st_centroid() |>
+      st_buffer(units::set_units(500, m))
+# 选取子集后维度索引保持不变
+r[b]
+
+# 绘制直径为五百米的圆形选择的子集的波段1图像
+plot(r[b][,,,1], reset = FALSE)
+plot(b, border = 'brown', lwd = 2, col = NA, add = TRUE)
+
+# 也可以直接裁剪
+st_crop(r, b)
+```
+
+### 重塑和组合 stars 对象
+
+```{r}
+# 改变维度顺序
+aperm(r, c(3, 1, 2))
+
+# 将波段维度拆分到6个二维数组的属性上
+(rs <- split(r))
+
+# 重新组合波段维度
+merge(rs, name = "band") |> setNames("L7_ETMs")
+```
+
+### 提取点样本和聚合
+
+栅格数据立方分析常用操作是提取特定位置的值或计算某些几何体的聚合。
+
+```{r}
+set.seed(115517)
+# 在r对象的边界框上随机采样20个点，并提取点值
+pts <- st_bbox(r) |> st_as_sfc() |> st_sample(20)
+# 生成具有20个点6个波段的矢量数据立方
+(e <- st_extract(r, pts))
+```
+
+通过聚合提取信息
+
+```{r}
+circles <- st_sample(st_as_sfc(st_bbox(r)), 3) |>
+    st_buffer(500)
+# 用给定的3个圆形来聚合r对象的属性值，取范围内的最大值
+aggregate(r, circles, max)
+```
+
+### 预测模型
+
+如何区分海洋和陆地？
+
+```{r}
+plot(r[,,,1], reset = FALSE)
+col <- rep("yellow", 20)
+col[c(8, 14, 15, 18, 19)] = "red"
+st_as_sf(e) |> st_coordinates() |> text(labels = 1:20, col = col)
+```
+
+肉眼可以识别，8、14、15、18、19位于海洋，其他点位于陆地。可以通过线性判别分类进行海陆分类。
+
+```{r}
+# 拆分波段并转化为属性，准备预测变量
+rs <- split(r)
+# 提取点位信息
+trn <- st_extract(rs, pts)
+# 给已知点位赋值海陆，标明类别
+trn$cls <- rep("陆地", 20)
+trn$cls[c(8, 14, 15, 18, 19)] <- "海洋"
+# 建立模型，波段取值为预测变量，海陆类别为因变量，数据来自剔除几何体的数据框
+model <- MASS::lda(cls ~ ., st_drop_geometry(trn))
+# 采用LDA模型进行预测分类
+pr <- predict(rs, model)
+# 绘制分类图
+plot(pr[1], key.pos = 4, key.width = lcm(3.5), key.length = lcm(2))
+```
+
+### 栅格数据的计算和函数
+
+按维度，可以对 stars 对象的选定数组维度应用函数，类似于 apply 对数组的操作。例如，计算每个像素六个波段值的均值：
+
+```{r}
+st_apply(r, c("x", "y"), mean)
+```
+
+更常见的函数是计算 NDVI（归一化差值植被指数）。
+
+```{r}
+ndvi <- function(b1, b2, b3, b4, b5, b6) (b4 - b3)/(b4 + b3)
+st_apply(r, c("x", "y"), ndvi)
+```
+
+也可以计算整个图像每个波段的均值
+
+```{r}
+st_apply(r, c("band"), mean) |> as.data.frame()
+```
+
+# 4 地理数据可视化
+
+`ggplot2`、`leaflet`、`mapview`和 `tmap`可以用来创建静态和交互式地图， `flowmapblue` 包可以创建位置之间的流动地图。
+
+美国北卡罗来纳州各县在 1974 年和 1979 年的婴儿猝死数据用于绘制地图。
+
+### 采用ggplot2包进行绘图
+
+```{r}
+library(sf)
+library(ggplot2)
+library(viridis)
+nameshp <- system.file("shape/nc.shp", package = "sf")
+d <- st_read(nameshp, quiet = TRUE)
+
+d$vble <- d$SID74
+d$vble2 <- d$SID79
+
+# 采用ggplot2包来绘制1974年婴儿猝死分布图
+ggplot(d) + geom_sf(aes(fill = vble)) +
+  scale_fill_viridis() + theme_bw()
+```
+
+```{r}
+library(tidyverse) |> suppressPackageStartupMessages()
+# 转换坐标参考系
+nc.32119 <- st_transform(nc, 32119) 
+# 设定对比年度的标签
+year_labels <- 
+    c("SID74" = "1974 - 1978", "SID79" = "1979 - 1984")
+
+# 宽格式转化为长格式
+nc.32119 |> select(SID74, SID79) |> 
+    pivot_longer(starts_with("SID")) -> nc_longer
+
+ggplot() + geom_sf(data = nc_longer, aes(fill = value), linewidth = 0.4) + 
+  facet_wrap(~ name, ncol = 1, 
+             labeller = labeller(name = year_labels)) +
+  scale_y_continuous(breaks = 34:36) +
+  scale_fill_gradientn(colours = sf.colors(20)) +
+  theme(panel.grid.major = element_line(colour = "white"))
+```
+
+```{r}
+library(ggplot2)
+library(stars)
+r <- read_stars(system.file("tif/L7_ETMs.tif", package = "stars"))
+ggplot() + geom_stars(data = r) +
+        facet_wrap(~band) + coord_equal() +
+        theme_void() +
+        scale_x_discrete(expand = c(0,0)) + 
+        scale_y_discrete(expand = c(0,0)) +
+        scale_fill_viridis_c()
+```
+
+### 采用plotly 包创建交互式地图。
+
+```{r}
+library(plotly)
+library(sf)
+library(ggplot2)
+library(viridis)
+nameshp <- system.file("shape/nc.shp", package = "sf")
+d <- st_read(nameshp, quiet = TRUE)
+
+d$vble <- d$SID74
+d$vble2 <- d$SID79
+g <- ggplot(d) + geom_sf(aes(fill = vble))
+ggplotly(g)
+```
+
+### 采用leaflet包创建地图
+
+```{r}
+st_crs(d)$epsg
+
+# 将数据的坐标系转换为 EPSG 代码为 4326 的坐标系
+d <- st_transform(d, 4326)
+
+library(leaflet)
+# 创建调色板，指定对应的变量
+pal <- colorNumeric(palette = "YlOrRd", domain = d$vble)
+# addTiles 添加默认背景地图
+l <- leaflet(d) %>% addTiles() %>%
+# 添加郡边界
+    addPolygons(color = "white", fillColor = ~ pal(vble),
+              fillOpacity = 0.8) %>%
+# 添加图例
+    addLegend(pal = pal, values = ~vble, opacity = 0.8)
+l
+
+# 添加嵌入式小地图
+l %>% addMiniMap()
+```
+
+### 采用mapview包创建交互式地图
+
+```{r}
+library(mapview)
+mapview(d, zcol = "vble")
+
+# 也可以自定义添加图例和背景地图等元素
+library(RColorBrewer)
+pal <- colorRampPalette(brewer.pal(9, "YlOrRd"))
+mapview(d, zcol = "vble", map.types = "CartoDB.DarkMatter",
+        col.regions = pal, layer.name = "SDI")
+
+map1 <- mapview(d, zcol = "vble")
+leaflet::addMiniMap(map1@map)
+```
+
+### 采用leafsync包创建并排同步地图
+
+```{r}
+library(RColorBrewer)
+library(leafsync)
+pal <- colorRampPalette(brewer.pal(9, "YlOrRd"))
+
+# 共同图例
+at <- seq(min(c(d$vble, d$vble2)), max(c(d$vble, d$vble2)),
+          length.out = 8)
+
+m1 <- mapview(d, zcol = "vble", map.types = "CartoDB.Positron",
+              col.regions = pal, at = at)
+m2 <- mapview(d, zcol = "vble2", map.types = "CartoDB.Positron",
+              col.regions = pal, at = at)
+
+m <- leafsync::sync(m1, m2)
+m
+```
+
+### 采用tmap包创建静态和交互式地图
+
+tmap包可以提供不同风格的静态和交互式地图的绘制，有许多选项可以制作出外观高度专业的地图。
+
+```{r}
+library(tmap)
+tmap_mode("plot")
+tm_shape(d) + tm_polygons("vble")
+```
+
+### 点数据制图
+
+除了绘制区域数据外，ggplot2、leaflet、mapview 包还可以用于创建点数据地图。
+
+```{r}
+library(sf)
+library(ggplot2)
+library(maps)
+library(leaflet)
+library(mapview)
+library(viridis)
+# 读取世界城市数据
+d <- world.cities
+# 选取南非的城市数据
+d <- d[which(d$country.etc == "South Africa"), ]
+# 将数据转换为 sf 对象
+d <- st_as_sf(d, coords = c("long", "lat"))
+# 分配投影坐标系
+st_crs(d) <- 4326
+
+# 创建变量 vble 表示人口，size 对人口数字进行压缩变换，方便绘制点。
+d$vble <- d$pop
+d$size <- sqrt(d$vble)/100
+
+# 使用 ggplot2 创建的地图
+ggplot(d) + geom_sf(aes(col = vble, size = size)) +
+  scale_color_viridis()
+
+# 创建 leaflet 地图，指定点的半径和颜色
+pal <- colorNumeric(palette = "viridis", domain = d$vble)
+leaflet(d) %>% addTiles() %>%
+  addCircles(lng = st_coordinates(d)[, 1],
+             lat = st_coordinates(d)[, 2],
+             radius = ~sqrt(vble)*10,
+             color = ~pal(vble), popup = ~name) %>%
+  addLegend(pal = pal, values = ~vble, position = "bottomright")
+
+# 使用 mapview 创建点数据地图，通过 cex = "size" 设置点的大小
+d$size <- sqrt(d$vble)
+mapview(d, zcol = "vble", cex = "size")
+
+```
+
+### 栅格数据制图
+
+```{r}
+library(terra)
+# 获取卢森堡的高程数据
+filename <- system.file("ex/elev.tif", package = "terra")
+r <- rast(filename)
+
+# 将数据转换为 sf 对象
+d <- st_as_sf(as.data.frame(r, xy = TRUE), coords = c("x", "y"))
+# 分配 CRS
+st_crs(d) <- 4326
+# 绘制海拔高度图
+ggplot(d) + geom_sf() +
+  geom_raster(data = as.data.frame(r, xy = TRUE),
+              aes(x = x, y = y, fill = elevation))
+```
+
+如果要使用 leaflet 和 mapview 包套上底图，可采用raster::brick() 函数将 terra 的数据转换为 RasterLayer。
+
+```{r}
+library(raster)
+
+# 将terra数据转化为RasterLayer
+rb <- raster::brick(r)
+
+pal <- colorNumeric("YlOrRd", values(r),
+                    na.color = "transparent")
+leaflet() %>% addTiles() %>%
+  addRasterImage(rb, colors = pal, opacity = 0.8) %>%
+  addLegend(pal = pal, values = values(r), title = "elevation")
+
+mapview(rb, layer = "elevation")
+```
+
+# 5 空间大数据的处理
+
+大规模空间数据集数据量太大，无法加载到工作内存中（G），无法存储在本地硬盘上（T），甚至无法下载到本地管理的存储基础设施（P）。云原生地理空间格式是为在云基础设施上优化处理大规模空间数据而设计的格式，能够优化计算与存储成本，提升访问和处理速度。
+
+降低大规模空间数据处理成本方式包括使用压缩技术、快速访问空间子区域、以增量分辨率访问数据、 针对特定云存储或对象存储协议优化数据访问等。但是该领域没有通用的完美解决方案，为某种特定访问模式优化的存储方式可能会导致其他访问方式变慢。例如，优化空间区域访问，可能导致读取像素时间序列非常慢。压缩可以降低存储和带宽成本，但读取时要解压缩，会增加处理运算成本。
+
+## 5.1 矢量大数据
+
+### 从本地磁盘读取
+
+sf包函数 st_read 一般从本地磁盘读取矢量数据，并保存在工作内存中。如果文件过大，无法一次性加载到工作内存，可以通过设置 wkt_filter 参数，提供一个包含几何体的 WKT 文本字符串，仅返回与该几何体相交的目标文件中的几何体。
+
+```{r}
+library(sf)
+file <- system.file("gpkg/nc.gpkg", package = "sf")
+# 设定空间区域范围的文本字符串
+c(xmin = -82, ymin = 36, xmax = -80, ymax = 37) |>
+    st_bbox() |> st_as_sfc() |> st_as_text() -> bb
+# 通过空间范围读取
+read_sf(file, wkt_filter = bb) |> nrow() # 从 100 条记录中返回
+```
+
+还可以使用 st_read 的 query 参数，来选择图层中的要素或限制字段，先查询再读取。
+
+```{r}
+q <- "select BIR74,SID74,geom from 'nc.gpkg' where BIR74 > 1500"
+read_sf(file, query = q) |> nrow()
+```
+
+### 从数据库读取
+
+也可以直接使用 R 的 DBI 数据库驱动程序读写服务器上空间数据库。
+
+```{r, eval=FALSE}
+pg <- DBI::dbConnect(
+    RPostgres::Postgres(),
+    host = Sys.getenv("DB_HOST"),
+    user = Sys.getenv("DB_USERNAME"),
+    dbname = "postgis")
+read_sf(pg, query = 
+        "select BIR74,wkb_geometry from nc limit 3") |> nrow()
+```
+
+### 从在线资源或网络服务读取
+
+GDAL 驱动程序支持在 URL（以 https:// 开头）前添加 /vsicurl/ 前缀从在线资源读取数据。针对特定云服务的驱动程序包括 /vsis3/（Amazon S3）、/vsigs/（Google Cloud Storage）/vsioss/（阿里云）。 /vsicurl/ 的示例在stars部分。
+
+大多数地理空间数据网络服务可以动态生成数据，并通过 API 提供访问。查询 OpenStreetMap 数据的R包有 OpenStreetMap（以栅格瓦片形式下载数据，通常用作绘制其他要素的背景）、 osmdata（以点、线或多边形的矢量数据形式下载数据，支持 sf 或 sp 格式）、 osmar（返回矢量数据，并提供网络拓扑，包含道路连接方式，可计算最短路径）。
+
+```{r}
+# 通过overpass提供的api，按照指定经纬度的区域获取空间数据
+download.file(paste0("https://overpass-api.de/api/map?",
+       "bbox=7.595,51.969,7.598,51.970"),
+    "data/ms.osm", method = "auto")
+o <- read_sf("data/ms.osm", "lines")
+p <- read_sf("data/ms.osm", "multipolygons")
+st_bbox(c(xmin = 7.595, ymin = 51.969, 
+          xmax = 7.598, ymax = 51.970), crs = 'OGC:CRS84') |>
+    st_as_sfc() |>
+    plot(axes = TRUE, lwd = 2, lty = 2, cex.axis = .5)
+plot(o[,1], lwd = 2, add = TRUE)
+plot(st_geometry(p), border = NA, col = '#88888888', add = TRUE)
+```
+
+此外，GeoParquet 和 GeoArrow 是从 Apache 项目 Parquet 和 Arrow 衍生出的两种专为云原生分析设计的格式。两者都提供列式存储的表格数据，这意味着读取单个字段的多个记录很快。目前，这两种格式仍在积极开发中，但从 GDAL 3.5 版本开始已提供读取或创建它们的驱动程序。
+
+## 5.2 栅格大数据
+
+栅格数据集的常见挑战不仅是单个文件较大（单个 Sentinel-2 瓦片约为 1 GB），而且通常需要处理成千上万甚至数百万个文件来覆盖感兴趣的区域和时间段。基于云的地球观测处理平台（如 Google Earth Engine、Sentinel Hub 或 openEO.cloud）能够轻松处理高达Petabyte级别的数据集，并具有高度交互性。
+
+这些平台的策略是计算尽可能推迟（延迟求值）；仅计算和返回用户请求的数据，不多计算；避免存储中间结果，优先进行即时计算；快速生成并显示有用的结果地图，以支持交互式模型开发。
+
+stars包也遵循这类思路进行优化。例如，对于大型栅格的绘制，会在绘图前下采样（downsample）数组，大幅节省时间。下采样的程度由绘图区域大小和绘图分辨率（像素密度）决定。对于矢量设备（如 PDF），R 将绘图分辨率设置为 75 dpi，对应于每像素 0.3 毫米。
+
+### stars 代理对象
+
+为了处理过大而无法加载到内存的数据集，stars 提供了 stars_proxy 对象。在运行代码时， 实际上并未加载任何像素值，而是保留了对数据集的引用并填充了维度表，等到需要数据的场景，才加载像素值，例如绘制数据（plot）、写入磁盘（write_stars）、显式加载对象到内存（st_as_stars）等。
+
+如果整个对象无法加载到内存，plot 和 write_stars 会采用不同的策略来处理：
+
+-   plot 仅获取通过下采样可见的像素，而不是读取所有可用像素；\
+-   write_stars 分块读取、处理和写入数据。
+
+stars_proxy 对象的专用方法如下。
+
+```{r}
+methods(class = "stars_proxy")
+```
+
+## 5.3 超大数据立方体
+
+在某些情况下，数据集过大，无法下载；即使本地存储足够，网络带宽也会限制下载。例如，Landsat 等卫星图像档案，或 ERA5等全球大气、陆地和海洋模型再分析数据等。在这种情况下，可以通过云中的虚拟机访问数据，或者使用虚拟机和存储的系统进行计算。
+
+### 查找和处理文件
+
+在云上的虚拟机上工作时，首先要找到要处理的文件。在上百万的文件中，直接通过文件名获取信息效率很低，常用的解决方案是使用目录。STAC（时空资产目录）提供了API，可按边界框、日期、波段和云覆盖率等属性查询图像集合。R 包 rstac 提供了创建查询和管理返回信息的 R 接口。
+
+Zarr 是一种为大型多维数组提供云原生存储的格式。Zarr “文件”实际上是包含压缩数据块的子目录的目录。函数 stars::read_mdim 可以读取整个数据立方体，但也支持通过为每个维度指定偏移、像素数量和步长来读取子立方体，以较低分辨率读取维度。类似地，stars::write_mdim 可以将多维数组写入 Zarr 或 NetCDF 文件。
+
+要读取远程（基于云的）Zarr 文件，需要在 URL 前添加格式和访问协议的指示符：
+
+```{r}
+dsn = paste0('ZARR:"/vsicurl/https://ncsa.osn.xsede.org',
+       '/Pangeo/pangeo-forge/gpcp-feedstock/gpcp.zarr"')
+
+library(stars)
+# 指定边界
+bounds = c(longitude = "lon_bounds", latitude = "lat_bounds")
+# 读取远程云上的数据文件，count 中的 NA 值表示获取该维度所有可用值
+(r = read_mdim(dsn, bounds = bounds, count = c(NA, NA, 10)))
+# 数据的范围
+st_bbox(r)
+```
+
+# 6 开放的空间数据下载
+
+### 行政区划
+
+阿里云 DataV 直接提供 JSON 格式 的行政区划数据
+
+```{r}
+library(sf)
+
+# 直接读取 GeoJSON 文件
+url <- "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json"
+# 转换为sf对象
+china_sf <- st_read(url, quiet = TRUE)  # 自动转换为 sf 对象
+
+# 绘制地图
+plot(china_sf$geometry)
+```
+
+### 气候数据
+
+geodata 包可以下载包括气候、海拔、土地使用、土壤、作物、物种分布、行政边界等在内的地理数据。
+
+```{r}
+library(geodata)
+d <- worldclim_country(country = "Netherlands", var = "tmax",
+                                res = 10, path = tempdir())
+terra::plot(d)
+```
+
+### 降水量
+
+chirps 包可以从气候危害小组获取每日高分辨率降水量以及每日最高和最低温度。
+
+```{r}
+library("chirps")
+# 厦门大学本部的经纬度
+location <- data.frame(long = 118.097186, lat = 24.437717)
+d <- get_chirps(location, dates = c("2024-01-01", "2025-5-31"),
+                server = "ClimateSERV")
+ggplot(d, aes(x = date, y = chirps)) + geom_line() +
+  labs(y = "Precipitation (mm)")
+```
+
+### 海拔高度
+
+elevatr 包可以从 Amazon Web Services (AWS) Terrain Tiles 和 OpenTopography 全球数字高程模型 API 获取海拔数据。get_elev_raster() 函数可用于下载参数 locations 中指定的位置的海拔数据，并通过参数 z 指定缩放级别。参数 clip 可设置为 "tile" 以返回完整瓦片，"bbox" 以返回裁剪到位置边界框的数据，或 "locations" 以返回裁剪到 locations 中指定数据的数据。
+
+```{r}
+library(rnaturalearth)
+library(elevatr)
+library(terra)
+# 读取厦门市级geojson文件
+map <- st_read("geojson/厦门市_市.geojson")
+# locations给定位置，z指定缩放大小，与纬度共同决定分辨率
+# clip指定裁剪方式，tile为完整瓦片，bbox为边界框，locations为给定区域
+d <- get_elev_raster(locations = map, z = 9, clip = "locations")
+terra::plot(rast(d), plg = list(title = "elevation (m)"))
+```
+
+### OpenStreetMap 数据
+
+OpenStreetMap (OSM) 是由志愿者社区更新和维护的开放世界地理数据库。可以使用 osmdata 包检索 OSM 数据，包括道路、商店、火车站、医院、学校等。
+
+```{r}
+library(osmdata)
+
+# 厦门岛内坐标位置
+xiamen_bbox <- c(
+  left = 118.04,  # 最小经度
+  bottom = 24.43,  # 最小纬度
+  right = 118.18,  # 最大经度
+  top = 24.54      # 最大纬度
+)
+
+# 查询主要医院
+hospitals <- opq(bbox = xiamen_bbox) %>%
+  add_osm_feature(key = "amenity", value = "hospital") %>%  
+  osmdata_sf()  
+
+#厦门岛内医院分布情况
+library(leaflet)
+leaflet() %>%  addTiles() %>%
+  addPolygons(data = hospitals$osm_polygons,
+              label = hospitals$osm_polygons$name)
+
+```
+
+### 世界银行数据
+
+世界银行提供了数十年的全球社会经济数据，涵盖多个主题，wbstats 包可以搜索和下载世界银行 API 的数据。
+
+```{r}
+library(wbstats)
+# 检索与贫困和失业相关的指标
+indicators <- wb_search(pattern = "poverty|unemployment")
+
+# print(indicators)
+d <- wb_data(indicator = "SI.POV.GINI",
+             start_date = 2020, end_date = 2020)
+
+print(head(d))
+library(mapview)
+map <- st_read("shp/worldmap/world.shp")
+map <- dplyr::left_join(map, d, by = c("ISO_A3" = "iso3c"))
+
+mapview(map, zcol = "SI.POV.GINI")
+```
+
+### 物种分布
+
+spocc 包是多个物种分布数据源的接口，包括全球生物多样性信息设施（GBIF）、美国地质调查局的生物多样性信息服务国家（BISON）、iNaturalist、eBird、综合数字化生物收藏（iDigBio）、VertNet、海洋生物地理信息系统（OBIS）和澳大利亚生物多样性地图集（ALA）。该包提供检索和组合物种分布数据的功能。 spocc 的 occ() 函数可用于检索物种位置。这里，我们从 GBIF 数据库下载 2000 年至 2019 年间在哥斯达黎加记录的棕喉树懒数据。此函数的参数包括 query，指定物种学名（Bradypus variegatus），from，指定数据库名称（GBIF），以及 date，指定开始和结束日期（2000-01-01 至 2019-12-31）。我们还通过设置 gbifopts 为包含国家等于哥斯达黎加的 2 字母代码（CR）的命名列表，指定仅检索哥斯达黎加的分布数据。此外，我们通过设置 has_coords = TRUE 仅检索具有坐标的分布数据，并指定 limit = 1000 以检索最多 1000 个分布记录。
+
+```{r}
+library('spocc')
+df <- occ(query = "Ailuropoda melanoleuca", from = "gbif",
+          date = c("2000-01-01", "2019-12-31"),
+          gbifopts = list(country = "CN"),
+          has_coords = TRUE, limit = 1000)
+d <- occ2df(df)
+
+library(sf)
+d <- st_as_sf(d, coords = c("longitude", "latitude"))
+st_crs(d) <- 4326
+library(mapview)
+mapview(d)
+```
+
+## 参考文献
+
+-   Moraga, Paula. (2023). Spatial Statistics for Data Science: Theory and Practice with R. Chapman & Hall/CRC Data Science Series.\
+-   Pebesma, E., Bivand, R. (2023). Spatial Data Science: With Applications in R (1st ed.). Chapman and Hall/CRC, Boca Raton. https://doi.org/10.1201/9780429459016\

@@ -1,61 +1,76 @@
 ---
 title: "公共管理大数据分析课程介绍"
+author: ""
 date: "`r Sys.Date()`"
 format: 
   html:
-    toc: true
     toc-depth: 5
-    toc-expand: true
-    smooth-scroll: false
-    number-sections: true
-    mermaid: 
-      theme: default
-    css: "./css/styles.css"
-engine: knitr
 ---
 
-## 课程介绍
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
-随着数字政府、智慧城市和数据驱动治理的发展，公共管理领域面临着前所未有的数据挑战与分析需求。传统的政策分析方法已难以应对海量、多源、异构数据所承载的复杂治理问题。本课程旨在帮助研究生系统掌握大数据分析的基础理论、关键方法与实用工具，提升其在公共政策评估、社会治理优化、舆情研判、公共服务供给等方面的数据分析与实证研究能力，为其从事数据驱动的公共事务研究与实践奠定方法论基础，增强服务数字时代公共治理的能力。
+library(showtext)
+library(sysfonts)
 
-### 课程内容
+# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
+font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
+
+# 启用 showtext 自动渲染
+showtext_auto()
+```
+
+随着数字政府、智慧城市和数据驱动治理的发展，公共管理领域面临着前所未有的数据挑战与分析需求。传统的政策分析方法已难以应对海量、多源、异构数据所承载的复杂治理问题。
+
+新型的“大数据”催生了一个全新的研究领域——数据科学。该领域开发了新的数据创建和收集方式，提出了新的分析技术，并提供了新的可视化和信息呈现方式。这些变化改变了公共管理研究者的工作性质，R语言和Python变得与SPSS和Stata一样，成为了公共管理研究重要的工具包。同时，研究的数据来源也在发生变化。公共管理研究越来越多地依赖“发现”数据，而非通过调查“制造”的数据；以调查数据为基础的文章在顶级学术期刊上发表的比例正在下降。此外，随着新工具的运用，研究工作流程变得更加自动化、可复制和可重现（Yarkoni等人，2019）。
+
+本课程旨在帮助研究生系统掌握大数据分析的基础理论、关键方法与实用工具，提升其在公共政策评估、社会治理优化、舆情研判、公共服务供给等方面的数据分析与实证研究能力，为其从事数据驱动的公共事务研究与实践奠定方法论基础，增强服务数字时代公共治理的能力。
+
+
+# 1 课程介绍
 
 本课程围绕“数据赋能公共治理”的核心理念，系统讲授大数据在公共管理与公共政策分析中的应用方法与实践路径。课程内容涵盖大数据的基本概念与技术基础、描述性统计与可视化分析、回归与预测模型、分类与聚类方法、文本分析与自然语言处理、空间与网络分析、以及因果推断与政策评估等核心主题。教学采用“理论讲授+案例解析+编程实操”相结合的方式，选取公共管理领域典型场景为案例，引导学生掌握大数据分析方法背后的逻辑与应用条件，提升运用大数据分析方法和以数据驱动公共决策的能力。
 
-### 课程目标
+## 1.1 课程目的
+本课程旨在引导学生系统掌握大数据在公共管理与公共政策分析中的基本原理、方法与应用技能，提升其运用数据驱动手段解决公共事务实践问题和分析研究公共管理学术问题的能力。通过本课程的学习，学生将能够：
 
--   熟悉R语言的软件平台，了解基本操作，包括获取导入数据、绘制统计图形。\
+1.  **理解大数据的基本概念与公共管理的融合趋势**，掌握数据驱动治理的核心理念与技术基础；
+2.  **提升大数据处理与可视化能力**，熟练使用常用大数据分析工具（如Python/R等）进行数据清洗、建模与展示；
+3.  **掌握常见的大数据分析方法**（如回归分析、分类与聚类、文本分析、空间与网络分析、因果推断等）及其在公共管理中的应用场景；
+4.  **培养具备问题导向的大数据分析思维**，能够围绕公共管理和公共政策议题，通过多种渠道获取和融合数据，创造性地设计数据分析方案和构建大数据分析模型，提取和展示分析结果并进行政策建议和沟通；
+5.  **培养数据伦理与治理敏感性**，认识在数据采集、处理与分析过程中可能面临的隐私、偏见与伦理问题，提升公共责任感。
 
--   了解R语言中数据的基本管理与数据清洗操作。\
+## 1.2 课程内容
 
--   介绍一般统计方法的操作，包括多元线性回归、logistic回归、因子分析等。\
+### 课程计划
 
--   介绍高级统计方法的基本原理和操作，包括广义线性模型、多层线性模型、结构方程、因果推断等。
-
-## 课程计划
-
-1.  **课程介绍**：课程结构、大数据的定义与特点、公共管理领域中的数据来源与特征、大数据与传统数据的比较、公共管理中的大数据应用、工具介绍
-2.  **数据收集与预处理**：数据类型、结构与处理流程、数据来源、数据清洗与预处理（缺失值处理、异常值检测、数据标准化）、数据整合（多源数据融合）
-3.  **数据描述与可视化**：描述性统计、数据可视化工具与技术、地图与空间可视化、公共管理中的可视化案例
-4.  **回归分析与预测建模**：线性回归、时间序列分析、公共管理应用案例
-5.  **分类模型基础**：逻辑回归、决策树、评估分类的指标（混淆矩阵、准确率、召回率等）、公共管理应用案例
-6.  **高级分类模型**：KNN、贝叶斯分类模型、人工神经网络、支持向量机、随机森林、公共管理应用案例
-7.  **聚类分析方法**：聚类算法（K-means、层次聚类、DBSCAN）、公共管理应用案例
-8.  **文本分析与自然语言处理（NLP）**：文本预处理（分词、词频、TF-IDF）、情感分析、主题建模（LDA）、文本分类、公共管理应用案例
-9.  **网络分析**：社会网络分析基础、网络图谱、公共管理应用案例
-10. **空间数据分析**：地理信息系统基础、空间计量模型、公共管理应用案例
-11. **因果推断与政策评估**：数据质量与推断误差、偏差的来源与处理、因果推断方法（双重差分法、倾向得分匹配、工具变量、合成控制）、公共管理应用案例
-12. **期末项目展示与总结**：学生展示公共管理相关大数据分析项目、课程总结与展望
+1.  **课程介绍**：课程结构、大数据的定义与特点、公共管理领域中的数据来源与特征、公共管理中的大数据应用、工具介绍
+2.  **R语言基础**：基本设置、数据对象、函数、条件执行、循环、大数据编程的策略。
+3.  **数据收集与预处理**：数据导入与获取、数据清洗与预处理等。
+4.  **数据描述与可视化**：描述性统计和探索性分析、数据可视化工具与技术、地图与空间可视化等。
+5.  **机器学习基础**：基本概念、建模过程、特征和目标工程等。
+6.  **有监督学习：回归模型**：线性回归、逻辑回归、正则化回归、多元自适应回归样条。
+7.  **有监督学习：基于决策树的模型**：决策树、分袋、随机森林、梯度提升。
+8.  **有监督学习：其他方法**：KNN、深度学习、支持向量机、堆叠模型、可解释的机器学习。
+9.  **无监督学习：降维**：主成分分析、广义低秩模型等。
+10. **无监督学习：聚类**：K-means、层次聚类等。
+11. **文本分析与自然语言处理（NLP）**：文本预处理（分词、词频、TF-IDF）、情感分析、主题建模（LDA）、文本分类、公共管理应用案例。
+12. **空间数据分析基础**：空间数据类型、空间数据对象、空间数据的处理、空间大数据的处理
+13. **空间数据分析模型**：点模式分析、空间插值、空间自相关、空间回归、空间计量经济学模型
+14. **因果推断与政策评估**：数据质量与推断误差、偏差的来源与处理、因果推断方法（双重差分法、倾向得分匹配、工具变量、合成控制）、公共管理应用案例
+15. **期末项目展示与总结**：学生展示公共管理相关大数据分析项目、课程总结与展望
 
 Note：课程计划会根据课程进度，适度调整。
 
-## 教学方式
+### 教学方式
 
 -   理论与实践比例：约40%理论（13小时）+ 60%实践（19小时），以项目驱动和案例教学为主，强化动手能力。\
 -   理论教学：通过讲座和案例讨论，讲解大数据分析的核心方法、原理及公共管理应用场景。\
 -   实践教学：通过编程实操、数据分析项目和可视化任务，培养学生处理真实公共管理数据的技能。
 
-## 课程考核
+## 1.3 课程考核
+
+### 考核方式
 
 -   考核登记方式：百分制\
 -   成绩组成：考勤占10%；平时作业40%；期末论文：50%\
@@ -63,126 +78,546 @@ Note：课程计划会根据课程进度，适度调整。
 -   时间要求：最后一次课进行课程论文报告并同时提交课程论文。\
 -   课外学习内容：预习复习课程内容，阅读学习材料，学习相关软件的操作，完成练习，准备数据，进行数据分析，写作课程论文。
 
-## 课程论文要求
+## 1.4 课程论文要求
 
--   论文应具有实质性的研究问题，有明确的观点，观点之间有关联。\
+### 论文考察目的
 
-## 论文格式
+综合考察学生对大数据分析方法的理解与应用能力，重点在运用数据驱动的分析工具解决现实公共管理或政策问题，体现数据分析在实际治理场景中的应用价值。
 
--   中文宋体小四或英文 Times New Roman 12pt、双倍行距，无封面，左上角装订\
--   包括论文题目、姓名、学号\
--   参考文献建议按照《公共管理学报》要求\
--   中间过程或不重要的细节可以放在附录中\
--   明确写出所建立的模型\
--   用公式编辑器编辑用到的数学公式，如果会用LaTex排版更好\
--   数字保留两位小数或者保留到你认为足够简单清晰的位数
+### 选题方向
 
-## 论文图表格式
+可围绕以下方向选题，或根据兴趣自拟题目。
 
--   图表应简明扼要，展示论点，不是展示过程，不应过度使用\
--   图表应独立设定标题，图表分开标号，下方段落应有文字介绍\
--   建议挑出图表中的具体某个数字或信息进行举例，帮助理解\
--   表格采用三线表，不要每行每列都添加分隔线\
--   表格中有百分数，应在首行标注‘%’，不要每个单元都用。\
--   表格中每列数字的小数点应对齐。\
--   图表大小应合适，信息量小的图尽量小。\
--   可以用图或者表的地方，尽量用图。
+-   城市治理中的数据分析（如交通拥堵、垃圾分类、应急管理）
 
-## 最终提交文件
+-   政策效果评估（如教育公平、环保政策、社会救助）
 
--   电子版： 下列文件打包成一个zip或rar文件，文件名是学号+姓名，提交时间：最后一次课后第二天中午12点，成绩以电子版为准！\
+-   公共服务优化（如医疗资源配置、养老服务、大众交通）
 
-1.  说明文件（\*.txt, \*.docx等，对期末论文项目涉及的文件做出说明，列明所有的文件内容）\
-2.  数据文件（\*.csv, \*.dta, \*.xlsx等）\
-3.  程序脚本文件（\*.R，\*.py）\
-4.  论文（\*.docx，\*.pdf）\
+-   舆情分析与政府回应
 
--   纸版论文：最后一次课提交。
+-   空间数据与公共资源布局
 
-```{mermaid}
-flowchart LR
-    A[研究问题] --> B[数据获取] --> C[数据存储与融合] --> D[数据处理] --> E[数据探索] --> F[建模分析] --> G[结果评估] --> H[报告展示]
-    subgraph B[数据获取]
-        direction TB
-        B1[结构化数据
-        R，Python] ~~~ B2[文本文件
-        R，Python] ~~~ B3[网络爬虫
-        R（rvest）
-        Python（requests + BeautifulSoup，selenium）] ~~~ B4[API接口
-        R，Python]
-    end
+-   开放数据与政府透明度分析
 
-    subgraph C[数据存储与融合]
-        direction TB
-        C1[数据库管理系统
-        （postgres）] ~~~ C2[R，Python脚本] ~~~ C3[记录关联]
-    end
-    subgraph D[数据处理]
-        direction TB
-        D1[结构化查询语言
-        SQL] ~~~ D2[R（dplyr，tidyr）
-        Python（pandas）] 
-    end
-    subgraph E[数据探索]
-        direction TB
-        E1[SQL] ~~~ E2[R（ggplot2）
-        Python（matplotlib）] ~~~ E3[可视化] ~~~ E4[网络分析]~~~ E5[空间分析]
-    end   
-    subgraph F[建模分析]
-        direction TB
-        F1[Python（scikit-learn）
-        R（tm, Rwordseg, topicmodels）] ~~~ F2[机器学习] ~~~ F3[文本分析]
-    end
-    subgraph G[结果评估]
-        direction TB
-        G1[Python
-        （scikit-learn）] ~~~ G2[机器学习] ~~~ G3[实验设计] ~~~ G4[统计推断]
-    end
-    subgraph H[报告展示]
-        direction TB
-        H1[R（ggplot2）
-        Python（scikit-learn）] ~~~ H2[可视化] 
-    end
-    
-    classDef method fill:#ffa500;
-    classDef tool fill:#99ff99;
-    class B1,B2,B3,B4,C1,C2,D1,D2,E1,E2,F1,G1,H1 tool;
-    class C3,E3,E4,E5,F2,F3,G2,G3,G4,H2 method;
+-   利用文本分析研究政策文件或民众意见（如政府工作报告、留言数据）
+
+-   公共健康数据分析（如疫情传播、健康资源分布）
+
+### 论文结构建议
+
+1.  **引言**：说明研究背景、问题与研究意义。
+2.  **文献综述**：简要梳理相关研究成果，突出研究差异或创新点。
+3.  **研究设计**：提出研究问题与假设，说明数据来源与分析方法。
+4.  **数据分析与结果展示**：使用至少一种大数据分析方法（如分类、聚类、文本分析、网络分析等），通过图表和文字说明结果。
+5.  **讨论与政策建议**：对分析结果进行解释，回应文献，提出可行的管理或政策建议。
+6.  **结论与不足**：总结研究发现，指出研究局限与未来改进方向。
+
+### 具体要求
+
+-   字数要求：不少于 4000 字；
+
+-   数据要求：须使用真实数据（可来自政府开放平台、科研数据集、爬取的公开数据等），并附数据来源说明；
+
+-   方法要求：需至少运用一种大数据分析方法（可结合 Python、R 等工具）；
+
+-   独立完成：鼓励相互学习帮助；
+
+-   论文格式：
+
+    -   中文宋体小四或英文 Times New Roman 12pt
+    -   参考文献建议按照《公共管理学报》要求\
+    -   中间过程或不重要的细节可以放在附录中\
+    -   明确写出所建立的模型\
+    -   用公式编辑器编辑用到的数学公式，如果会用LaTex排版更好\
+    -   数字保留两位小数或者保留到你认为足够简单清晰的位数\
+    -   图表应简明扼要，展示论点，不是展示过程，不应过度使用\
+    -   图表应独立设定标题，图表分开标号，下方段落应有文字介绍\
+    -   建议挑出图表中的具体某个数字或信息进行举例，帮助理解\
+    -   表格采用三线表，不要每行每列都添加分隔线\
+    -   表格中有百分数，应在首行标注‘%’，不要每个单元都用。\
+    -   表格中每列数字的小数点应对齐。\
+    -   图表大小应合适，信息量小的图尽量小。\
+    -   可以用图或者表的地方，尽量用图。
+
+### 提交形式
+
+-   电子版材料： 包括下列4部分内容，打包成zip或rar文件，文件名是学号+姓名。
+
+  1.  说明文件（\*.txt、\*.docx或者\*.pdf等，对期末论文项目涉及的文件做出说明，列明所有的文件内容）\
+  2.  数据文件（\*.csv, \*.dta, \*.xlsx等）\
+  3.  程序脚本文件（\*.R，\*.py）\
+  4.  论文（\*.docx或者\*.pdf）\
+
+-   纸版论文：最后一次课提交，封面包括论文题目、姓名、学号，左上角装订。
+
+-   截止时间：纸版论文在最后一次课提交；电子版材料最后一次课后隔周中午12点，成绩以电子版为准！
+
+### 评估标准
+
+-   选题与问题意识（20%）
+
+-   数据处理与方法应用（30%）
+
+-   结果分析与政策建议（30%）
+
+-   写作规范与表达逻辑（10%）
+
+-   创新性与可操作性（10%）
+
+# 2 大数据的定义与特点
+
+## 2.1 什么是大数据
+
+关于大数据的定义很多。有将大数据定义为任何无法放入电脑的数据，也有将其定义为具有高容量、高速度和高多样性的数据。美国公共舆论研究协会（American Association of Public Opinion Research）的描述：“‘大数据’是一个不精确的术语，描述了一组丰富而复杂的特性、实践、技术、伦理问题和与数据相关的结果”（Japec等人，2015）。
+
+出于应用目的，可以将大数据定义为由于其规模和复杂性而难以处理和难以直接从中提取价值的数据。大数据的处理之所以困难，一方面是因为数据常常来自非传统来源，导致数据结构不佳（例如，原始文本、网页、图像等）；另一方面是因为存储和加载处理大量数据需要专门的基础设施。此外，统计计算本身也成为一个挑战。
+
+- 处理数据来源、结构和格式的复杂性与多样性使得公共管理领域的研究变得越来越具挑战性。
+
+一方面，政府信息和流程的持续数字化推动了各种经济、社会、行政数据的生成和存储，使得此类数据在分析上变得更加可用。然而，另一方面，这种行政数字化的首要关注点通常是直接与信息交互并参与这些流程的政府部门与公众，而不是稍后可能有兴趣分析这些数据的研究者。因此，用于系统性地收集此类数据的接口通常不是为分析目的而优化的（例如，政务服务平台、线上报税、在线咨询投诉平台）。此外，数据可能以半结构化格式出现，例如网页（即超文本标记语言（HTML））、原始文本，甚至图像——每种格式都需要不同的导入/加载和预处理方法。本课程会在文本分析、空间数据分析介绍复杂多样大数据的导入、处理和分析方法。
+
+- 大 P 问题
+
+数据集的变量（列）数量接近甚至超过观测值（行）数量，这使得使用传统定量技术寻找预测模型变得困难。例如，某地方政府希望预测哪些居民可能参与某项社会福利项目，以优化资源分配。他们收集了居民数据，包括年龄、收入、家庭规模、教育水平、就业状态、居住区域、医疗记录、以往福利申请历史等。此外，还包括行为数据（如是否参加过社区活动）和环境变量（如附近公共服务设施数量）。假设有 10,000 名居民（观测值，行），但变量（列）达到 15,000 个（例如，细分的职业类别、历史申请的每种类型、区域特征的多种指标）。变量数（15,000）超过观测值数（10,000），传统线性回归无法有效处理，因为模型可能过拟合（捕捉噪声而非真实模式）或估计不稳定（多重共线性）。可能导致参数估计不可靠，预测准确性差。变量过多且可能高度相关（如收入和职业），需借助机器学习方法（如 lasso、岭回归、随机森林）来降维或正则化，以构建可靠的预测模型。本课程会在机器学习部分介绍其原理和应用。
+
+- 大 N 问题
+
+数据集拥有海量的观测值（行），以至于标准数据分析技术或一般计算机无法处理。例如，一个大城市（如北京市）的公共交通系统每天处理数百万次刷卡记录（地铁、公交）。假设城市有 2,000 万日活跃用户，每人每天平均产生 4 条记录（上下班往返），包含时间、站点、票价、支付方式等 30 个变量。单日数据集有 2,000 万 × 4 = 8,000 万行，5 年数据达 8,000 万 × 365 × 5 = 1,460 亿行，占用数TB存储空间。如果要分析高峰时段客流模式以优化调度，如此庞大的行数（1,460 亿）无法加载到标准计算机内存，传统工具（如 R 或 Python ）在单机上处理时会因内存不足崩溃。即使简单计算（如按站点统计日均客流）也可能耗时数小时，复杂分析（如预测拥堵）几乎不可行。标准工具（如 Excel、SPSS）或普通计算机因内存和计算能力限制无法胜任，需借助大数据技术（如分布式计算框架 Spark、Hadoop 或云平台）来存储和分析数据。本课程会在大数据分析工具部分介绍这些技术，同时在专题分析部分介绍这些技术的应用。
+
+## 2.2 分析大数据的方法
+
+总体而言，有四种解决与分析大 N（大量观测值）和大 P（大量变量）数据中相关挑战的方法。
+
+1. 统计与机器学习
+
+为什么不直接在大数据中抽样，获取一个合理的样本，然后采用传统的统计学方法进行分析？统计推断是在收集全体数据实际上不可行或成本过高的情况下回答实证问题的有效手段。如果已经能够获取大量的数据，在预期效果较大的情况下，使用成熟的“传统”统计学方法来恰当回答实证问题可能是有意义的。如果在大数据分析中预期效果（effect size）很小，则不能简单从大型数据集抽取随机样本，只有通过足够大的样本量（large N）才能获得足够的统计功效（statistical power），从而检测出显著差异并做出可靠决策。否则，小样本可能无法区分真实效果与随机噪声，尤其当决策的影响仅在少数情况下显现时。
+
+例如，研究者评估某项公共健康干预措施（如全国性疫苗推广计划）对降低特定疾病发病率的影响。假设干预预期效果很小——例如，只降低发病率0.5%（effect size小），因为大多数人已通过其他方式获得免疫。如果从全国数亿条健康记录中随机抽取小样本（如10万条），统计功效不足，无法可靠检测出这0.5%的差异（p值可能不显著，看起来像零效果）。在少数高风险人群中，效果才显现（如老人或偏远地区居民）。因此，需要分析整个大 N 数据集（数亿行记录）来积累足够的统计功率，区分真实政策效果与噪声，从而为政府决策提供依据（如是否继续推广疫苗）。这种小效果常见于政策评估，如果抽样，可能会错失微弱但重要的信号，导致无效结论。但是，已有成熟的机器学习方法（例如分布式随机森林）可以更好地解决这些问题。机器学习方法及应用是本课程介绍的重点内容，帮助解决传统统计方法在分析大数据中面临的困境。
+
+2. 编写高效代码
+
+在处理中小规模数据集时，数据分析脚本是否高效编写可能无关紧要。然而，面对大型数据集，运行脚本可能会变得不顺畅，或者完全无法顺利运行。因此，需要了解如何在 R 中编写高效快速代码。本课程会在R语言基础部分，介绍进行R语言的高效编程的原则。
+
+3. 有效利用本地计算资源
+
+通常电脑操作系统会自动采用一些策略分配和使用可用硬件资源来完成数据分析任务。同时，一些R语言包提供了一些多核处理和虚拟内存的高效使用的策略。这些策略也有成本，只有在数据集达到一定规模后，才能节省时间。因此，研究者需要了解决定如何更有效地利用本地计算环境来加速特定分析任务。本课程会针对不同专题（可视化、文本分析、空间数据等），介绍有效利用本地计算资源针对不同类型数据完成不同分析任务的策略。
+
+4. 扩展和分布
+
+如果在采取上述方法后，依然无法在本地完成任务，则需要考虑扩展（scale up）或分布（scale out）可用计算资源。扩展指在云端租用虚拟服务器，分布意味着协同使用多台机器（集群计算机、分布式系统）。扩展通常不需要熟悉专用软件，可以在云端更大的机器上运行与本地测试相同的脚本。分布需要熟悉一些软件组件。本课程会简要介绍如何部署扩展和利用相关软件包进行分布。
+
+方法选择的顺序是：能否抽样后用传统方法，是否有机器学习等新技术，代码是否高效，本地计算资源是否有效，能够利用扩展和分布的计算资源解决。
+
+- 解决大P问题的示例  
+
+假设某电子商务平台打算根据用户和上网浏览会话特征预测购买行为（即用户在某次会话中实际购买某物的概率）。因变量 purchase 是二值变量，若购买则为 1，否则为 0。其他变量包含用户和会话信息（用户位于何处？使用哪种浏览器？等等）。
+
+```{r}
+# 导入数据
+ga <- read.csv("ga.csv")
+head(ga[, c("source", "browser", "city", "purchase")])
+# 将source变量里面的每个网站转化成二值的虚拟变量，并添加因变量purchase
+mm <- cbind(ga$purchase,
+            model.matrix(purchase~source, data=ga,)[,-1])
+mm_df <- as.data.frame(mm)
+# 整理变量名
+names(mm_df) <- c("purchase",
+                  gsub("source", "", names(mm_df)[-1]))
+# 运行logit回归
+model1 <- glm(purchase ~ .,
+              data=mm_df, family=binomial)
+
+model1_sum <- summary(model1)
+# 筛选显著的变量
+pvalues <- model1_sum$coefficients[,"Pr(>|z|)"]
+vars <- names(pvalues[which(pvalues<0.05)][-1])
+vars
+
+# 确定最终的模型
+finalmodel <- glm(purchase ~.,
+                  data = mm_df[, c("purchase", vars)],
+                  family = binomial)
+
+summary(finalmodel)$coef[,c("Estimate", "Pr(>|z|)")]
 ```
 
-## 参考书目与文献
+在自变量数目比较多的情况下直接采用logistic回归构建预测模型会存在问题。初始模型有62个解释变量（加上截距），对系数的62个假设检验中，弃真错误概率5%，那么平均而言会错误拒绝3个“无预测效果”的原假设，尽管实际上没有预测效果。如果解释变量增加，错误数目还会增大。此外，原始变量间存在较大的相关性，添加或移除一个变量可能显著影响模型的预测能力。最终模型估计中筛选的最终变量dfa在模型中又变得不显著了。
 
-### 参考书籍
+另一种方法是基于所有可能的协变量组合估计模型（完整的组合是2的61次方！），然后根据某种样本外预测性能指标选择最终模型。显然，这种方法计算时间会很长。
+
+lasso 估计提供了方便且高效的方法来获得一系列候选模型。lasso 的核心思想是在估计过程中惩罚模型复杂性，复杂性是造成模型不稳定的主要原因。然后，可以根据 k 折交叉验证的样本外预测方法，从候选模型序列中选择最终模型。下面基于 gamlr 包采用lasso 用于生成候选模型序列，基于 k 折交叉验证选择最佳模型。
+
+```{r}
+library(gamlr)
+# 创建模型矩阵
+mm <- model.matrix(purchase~source, data = ga)
+
+# 更节省内存的方式，创建稀疏矩阵（因为模型矩阵中存在大量的0）
+mm_sparse <- sparse.model.matrix(purchase~source, data = ga)
+# 比较两种方式占用内存大小
+as.numeric(object.size(mm)/object.size(mm_sparse))
+
+# 运行带 k 折交叉验证 lasso 估计，通过惩罚降低模型复杂性
+cvpurchase <- cv.gamlr(mm_sparse, ga$purchase, family="binomial")
+
+library(PRROC)
+# 采用最佳模型进行预测
+# 模型选择依据样本外偏差最小的原则，可以避免过度拟合
+pred <- predict(cvpurchase$gamlr, mm_sparse, type="response")
+# 计算 tpr, fpr; 绘制 ROC 曲线
+comparison <- roc.curve(scores.class0 = pred,
+                        weights.class0=ga$purchase,
+                        curve=TRUE)
+plot(comparison)
+
+```
+
+上面的例子通过稀疏矩阵节省内存使用，通过lasso估计技术提供了合理的方法选择预测模型，解决了大P问题。
+
+- 解决大N问题的示例
+
+线性回归是统计分析的重要方法。但在面对观测量巨大的大数据集，以最小二乘法估计回归系数可能会运行缓慢，或者无法运行。而新的算法Uluru能够替代最小二乘法，提供更有效率的解决方案。下面的例子比较两种算法的运算时间，估计的回归系数与真实值之间的差距。整个模拟数据的观测量是1千万个，分成不同大小的子样本量（没间隔50万个）来检验。
+
+```{r, echo=FALSE}
+beta_ols <-
+     function(X, y) {
+          # compute cross products and inverse
+          XXi <- solve(crossprod(X,X))
+          Xy <- crossprod(X, y)
+          return( XXi  %*% Xy )
+     }
+
+# set parameter values
+n <- 10000000
+p <- 4
+# generate sample based on Monte Carlo
+# generate a design matrix (~ our 'dataset')
+# with 4 variables and 10,000 observations
+X <- matrix(rnorm(n*p, mean = 10), ncol = p)
+# add column for intercept
+X <- cbind(rep(1, n), X)
+
+# MC model
+y <- 2 + 1.5*X[,2] + 4*X[,3] - 3.5*X[,4] + 0.5*X[,5] + rnorm(n)
+
+# apply the OLS estimator
+beta_ols(X, y)
+
+beta_uluru <-
+     function(X_subs, y_subs, X_rem, y_rem) {
+          # compute beta_fs
+          #(this is simply OLS applied to the subsample)
+          XXi_subs <- solve(crossprod(X_subs, X_subs))
+          Xy_subs <- crossprod(X_subs, y_subs)
+          b_fs <- XXi_subs  %*% Xy_subs
+          # compute \mathbf{R}_{rem}
+          R_rem <- y_rem - X_rem %*% b_fs
+          # compute \hat{\beta}_{correct}
+          b_correct <-
+               (nrow(X_subs)/(nrow(X_rem))) *
+               XXi_subs %*% crossprod(X_rem, R_rem)
+          # beta uluru
+          return(b_fs + b_correct)
+     }
+
+# set size of sub-sample
+n_subs <- 1000
+# select sub-sample and remainder
+n_obs <- nrow(X)
+X_subs <- X[1L:n_subs,]
+y_subs <- y[1L:n_subs]
+X_rem <- X[(n_subs+1L):n_obs,]
+y_rem <- y[(n_subs+1L):n_obs]
+# apply the uluru estimator
+beta_uluru(X_subs, y_subs, X_rem, y_rem)
+
+# define sub-samples
+n_subs_sizes <- seq(from = 1000, to = 500000, by=10000)
+n_runs <- length(n_subs_sizes)
+# compute uluru result, stop time
+mc_results <- rep(NA, n_runs)
+mc_times <- rep(NA, n_runs)
+for (i in 1:n_runs) {
+     # set size of sub-sample
+     n_subs <- n_subs_sizes[i]
+     # select sub-sample and remainder
+     n_obs <- nrow(X)
+     X_subs <- X[1L:n_subs,]
+     y_subs <- y[1L:n_subs]
+     X_rem <- X[(n_subs+1L):n_obs,]
+     y_rem <- y[(n_subs+1L):n_obs]
+     mc_results[i] <- beta_uluru(X_subs,
+                                 y_subs,
+                                 X_rem,
+                                 y_rem)[2] # (1 is the intercept)
+     mc_times[i] <- system.time(beta_uluru(X_subs,
+                                           y_subs,
+                                           X_rem,
+                                           y_rem))[3]
+}
+# compute OLS results and OLS time
+ols_time <- system.time(beta_ols(X, y))
+ols_res <- beta_ols(X, y)[2]
+
+# load packages
+library(ggplot2)
+# prepare data to plot
+plotdata <- data.frame(beta1 = mc_results,
+                       time_elapsed = mc_times,
+                       subs_size = n_subs_sizes)
+
+ggplot(plotdata, aes(x = subs_size, y = time_elapsed)) +
+     geom_point(color="darkgreen") +
+     geom_hline(yintercept = ols_time[3],
+                color = "red",
+                linewidth = 1) +
+     theme_minimal() +
+     ylab("耗时") +
+     xlab("子样本大小")
+
+
+
+ggplot(plotdata, aes(x = subs_size, y = beta1)) +
+     geom_hline(yintercept = ols_res,
+                color = "red",
+                linewidth = 1) +
+       geom_hline(yintercept = 1.5,
+                color = "green",
+                linewidth = 1) +
+     geom_point(color="darkgreen") +
+     theme_minimal() +
+     ylab("系数估计") +
+     xlab("子样本大小")
+```
+
+水平红线表示通过 OLS 估计的计算时间；绿色点表示通过 Uluru 算法估计的计算时间。即使对于较大的子样本，计算时间也显著低于 OLS。
+
+水平红线表示使用 OLS 时估计系数的大小。水平绿线表示实际系数的大小。绿色点表示 Uluru 算法在不同子样本大小下估计的同一系数大小。即使是相对较小的子样本也能提供非常接近 OLS 估计的结果。综合来看，该示例说明了适用于大数据的优化算法可以提供非常接近传统方法的结果，同时具有更高的计算效率，也更节省资源。
+
+# 3 公共管理领域中的数据来源与特征
+
+公共管理正经历一场深刻的“数据驱动”变革，理解其数据生态是迈向现代化治理的关键。
+
+## 3.1 公共管理领域的主要数据来源
+
+公共管理的数据来源极其广泛，可以概括为六大类：**政府统计与行政数据、调查数据、公共事务运行数据、大数据与新兴数据源、国际与区域组织数据、地理空间数据**。
+
+1. **政府统计与行政数据**
+
+   * 各类人口、经济、社会、环境统计年鉴。
+   * 行政部门业务数据（如社保、医保、税收、教育、交通、户籍管理等）。
+   * 行政执法与司法数据（行政处罚记录、法院判决书、案件受理数据等）。
+   * 政策文件、预算与决算报告、审计报告。
+
+2. **调查数据**
+
+   * 大规模社会调查（如人口普查、住户调查、就业与收入调查）。
+   * 政策评估和民意调查。
+   * 学术机构、智库、第三方调查公司收集的数据（CGSS、CFPS、CHIP、CHARLS）。
+
+3. **公共事务运行数据**
+
+   * 公共服务绩效考核数据（如公共交通运行效率、医疗服务质量）。
+   * 城市管理数据（垃圾分类、环境监测、公共安全监控）。
+   * 公共工程与项目执行过程数据。
+
+4. **大数据与新兴数据源**
+
+   * 网络与社交媒体数据（政务平台的网民留言、微博等社交媒体上的公众舆论、网络新闻热点等）。
+   * 移动通信与位置数据（GPS、地铁刷卡、共享单车使用数据）。
+   * 互联网平台数据（电商、外卖、出行平台产生的交易与行为记录）。
+   * 物联网与传感器数据（环境监测、智慧城市中的交通摄像头、传感器网络）。
+
+5. **国际与区域组织数据**
+
+   * 联合国、世界银行、OECD等机构数据库。
+   * 区域合作组织数据（如欧盟统计局、东盟数据中心）。
+
+6. **地理空间数据**
+
+   * 地理空间数据横跨多个类别，在实际公共管理研究中，往往是作为 跨领域的支撑性数据层 存在，为各类统计、运行、调查和大数据提供地理定位与空间分析基础。
+   * 卫星遥感影像、电子地图、地质地貌、土地利用数据等，用于城市规划、灾害预警、资源调查。
+
+
+| 数据来源 | 主要特征 | 应用场景 |
+|----------|----------|----------|
+| **政府统计与行政数据** | 权威性强、周期性更新、结构化程度高，但更新滞后 | 政策制定、人口与经济分析、预算管理、绩效评估 |
+| **调查数据** | 具有代表性、针对性强，样本有限，成本高 | 政策评估、公众满意度调查、社会治理研究 |
+| **公共事务运行数据** | 贴近实际、连续性强，可能存在部门间割裂 | 公共服务绩效考核、城市管理、应急管理 |
+| **大数据与新兴数据源**（社交媒体、移动通信、平台交易、物联网等） | 实时性强、体量大、非结构化多，需处理隐私问题 | 舆情监测、智慧城市治理、应急响应、交通与环境监控 |
+| **国际与区域组织数据** | 标准化程度高、跨国可比性强，宏观性突出 | 跨国比较研究、国际合作、可持续发展目标（SDGs）评估 |
+| **地理空间数据** | 带有位置属性、跨领域、可与其他数据叠加分析 | 城市规划、区域治理、环境监测、应急调度 |
+
+## 3.2 公共管理数据的核心特征
+
+公共管理数据除了具备一般大数据的“4V”特征（Volume大量、Velocity高速、Variety多样、Value低价值密度）外，还具有其独特的领域特征：
+
+1. **多源性与异质性**
+
+   * 数据来源跨越政府部门、社会组织、企业和公众。
+   * 格式多样：结构化（统计表）、半结构化（日志、JSON）、非结构化（文本、图片、视频）。
+
+2. **公共性与开放性**
+
+   * 涉及公共利益，具有共享和开放潜力。
+   * 近年来各国推动“政府数据开放”，增强透明度和公民参与。
+
+3. **动态性与实时性**
+
+   * 大数据尤其强调实时更新（如交通流量、疫情监测）。
+   * 传统统计数据则更新周期较长。
+
+4. **空间性与区域差异**
+
+   * 很多公共管理数据带有地理属性（GIS数据、城乡差异）。
+   * 适合进行空间分析、区域治理比较。
+
+5. **敏感性与隐私性**
+
+   * 涉及个人信息（户籍、医保、社保）、组织运营信息。
+   * 需要数据安全与隐私保护机制。
+
+6. **复杂性与关联性**
+
+   * 不同数据之间存在跨领域联系（如教育与就业、环保与健康）。
+   * 分析中需多维度交叉验证，构建综合性模型。
+
+7. **质量参差不齐**
+
+   * 存在数据缺失、偏差、更新滞后等问题。
+   * 行政数据与现实情况可能存在差距。
+
+# 4 公共管理中的大数据应用
+
+## 4.1 公共管理实践中的大数据应用
+
+在公共管理中，大数据的应用已经逐渐从“辅助决策”走向“驱动治理创新”。它不仅改变了政府的治理方式，也提升了公共服务的精准性和效率。
+
+1. **社会治理与公共安全**
+
+   * **应用场景**：智慧警务（人脸识别、视频监控、预测性警务）、治安风险预测、灾害应急预警。
+   * **价值**：通过对人流、物流、网络舆情的实时分析，提高社会治理的前瞻性和精准性。
+
+2. **公共服务优化**
+
+   * **应用场景**：医疗健康（电子病历大数据、疫情传播监测）、教育资源配置（学生学业数据分析）、交通出行（智慧交通、实时路况调度）。
+   * **价值**：实现服务的个性化和差异化，提高资源配置效率。
+
+3. **政策制定与评估**
+
+   * **应用场景**：利用多源数据分析社会需求与政策效果，如住房保障政策效果评估、精准扶贫效果监测。
+   * **价值**：增强政策的科学性和针对性，推动基于证据的政策制定（evidence-based policy）。
+
+4. **经济与社会运行监测**
+
+   * **应用场景**：宏观经济运行监测（电商交易数据、金融交易数据）、就业与劳动市场监控、环境污染与碳排放监控。
+   * **价值**：弥补传统统计的滞后性，形成实时监测与预警机制。
+
+5. **政务透明与公众参与**
+
+   * **应用场景**：政府数据开放平台、在线政务服务平台、舆情监测与反馈渠道。
+   * **价值**：提高政府透明度，促进公众监督和协同治理。
+
+## 4.2 公共管理研究中的大数据分析方法应用
+
+1. **文本挖掘与自然语言处理（NLP）**
+
+* **应用**：利用政策文件、新闻报道、预算文本等非结构化数据进行分析。
+* **案例**：
+
+  * **Greer et al. (2023)**：通过计算方法分析地方政府预算叙事，揭示政府如何通过语言传递“韧性”信号（computational text analysis）。
+  * **Chen et al. (2023)**：分析媒体声誉维度对机构撤销的影响，体现了基于媒体文本的声誉数据挖掘。
+  * **Boon et al. (2025)**：利用媒体报道数据和文本特征，研究机构结构改革与声誉的关系。
+* **方法特点**：能捕捉到话语框架、媒体声誉、政策叙事对公共治理的影响。
+
+2. **机器学习与因果推断**
+
+* **应用**：通过机器学习和计量方法发现因果关系、预测政策效果。
+* **案例**：
+
+  * **韩先锋 & 李佳佳 (2025)**：使用“双重机器学习”方法，研究数智化对城市绿色增长的因果效应。
+  * **Chen et al. (2024)**：利用可解释的机器学习和多目标优化，进行北京城市绿色基础设施规划。
+  * **Ba et al. (2025)**：通过多维度政策引文特征和机器学习，揭示政策采纳中的决策逻辑。
+* **方法特点**：在大规模数据中寻找因果效应，结合可解释性方法提高政策可用性。
+
+3. **网络分析（Network Analysis）**
+
+* **应用**：刻画治理平台、协作网络、政策引用网络中的关系结构。
+* **案例**：
+
+  * **Zufall et al. (2025)**：研究环境治理平台中的委托代理矛盾，数据分析方法涉及治理网络关系。
+  * **Ambrose & Siddiki (2024)**：分析协同治理安排中的持续参与因素，运用网络数据识别合作动力。
+  * **Wang et al. (2024)**（在你上一批文献中）：利用咨询网络分析环境影响评估中的机构互动。
+  * **Ba et al. (2025)**：基于政策引文网络，研究政策采纳过程。
+* **方法特点**：揭示公共管理中的多主体互动模式与治理网络结构。
+
+4. **空间大数据与GIS分析**
+
+* **应用**：结合遥感数据、地理数据进行城市规划、环境治理和公共服务公平性研究。
+* **案例**：
+
+  * **Chen et al. (2024)**：利用空间大数据和优化算法进行城市绿色基础设施规划。
+  * **Chai-allah et al. (2025)**：利用众包图片和机器学习，分析公众对景观和物种的偏好。
+  * **王振坡等 (2025)**：基于调查和空间通勤数据，研究低碳出行方式选择。
+* **方法特点**：能体现空间异质性与公共服务分布差异，支持精细化治理。
+
+5. **情感与舆情分析**
+
+* **应用**：通过媒体、社交平台数据捕捉公众情绪和政策态度。
+* **案例**：
+
+  * **Boon et al. (2025)**、**Chen et al. (2023)**：通过媒体数据分析政府机构声誉，间接反映社会舆情。
+  * **Chai-allah et al. (2025)**：通过图像和用户数据反映公众对自然景观的偏好，也是一种情感/态度分析。
+* **方法特点**：能揭示社会信任、声誉、公众情绪对治理成效的影响。
+
+6. **规范性与优化分析（Prescriptive Analytics）**
+
+* **应用**：通过模拟与优化为政策设计提供最优方案。
+* **案例**：
+
+  * **Chen et al. (2024)**：结合多目标优化算法，提出城市绿色基础设施的最优布局。
+  * **杨丹等 (2025)**：利用实证数据评估区域品牌对农民收入的效应，为乡村振兴提供政策依据。
+* **方法特点**：不仅揭示现状，还能为政策制定提供可操作性方案。
+
+# 5 工具介绍
+
+本课程的操作会基于终端（即 bash）来安装软件、下载文件、检查文件和监控硬件性能。代码片段分为两种类型：一种是在终端中运行的代码（RStudio 中，名为 Terminal 的选项卡/窗口中输入）；另一种是 R 代码（ RStudio 中，名为 Console 的选项卡/窗口中输入）。
+
+R 是本课程中主要使用的程序语言，完成收集、导入、清洗、可视化和分析数据等主要任务。同时，安装和使用专门为大数据设计的 R 包，将R作为使用其他程序语言的高级接口（如 C语言等）。此外，还将使用 R 命令与专门设计用于处理大数据的低级软件系统通信（例如数据仓库或在集群计算机上运行分析脚本的软件）。这样做的方便之处在于不用详细了解其他高级语言或低级软件系统，只需知道触发最终计算的 R 命令即可完成特定任务。
+
+结构化查询语言（SQL）是课程中介绍的另一个重要软件工具。因为，需要通过 R 与低级大数据软件工具交互，以 SQL 命令形式（封装在 R 函数中）发送某些指令通常更方便，或者甚至是必须的。当前，SQL不仅应用于传统关系数据库系统，已经发展了许多与大数据系统交互的 SQL 变体，从 Apache Spark（用于大规模数据处理的统一分析平台）到 Apache Druid（基于列的分布式数据存储）和 AWS Athena（基于云的、无服务器查询服务，用于简单存储/数据湖）。
+
+# 参考书籍
 
 -   Pang-Ning Tan 数据挖掘导论（第2版），机械工业出版社，2019.\
 -   Ian Foster等 Big Data and Social Science: Data Science Methods and Tools for Research and Practice, CRC Press, 2021.\
 -   Kabacoff （王小宁等译） R语言实战（第3版），人民邮电出版社，2023.\
+-   Ulrich Matter Big Data Analytics: A Guide to Data Science Practitioners Making the Transition to Big Data, CRC Press, 2024.\
 -   Eric Matthes （袁国忠译） Python编程：从入门到实践（第3版），人民邮电出版社，2023.
 
-### 参考文献
+# 参考文献
 
--   文本分析与自然语言处理
+- Elise Zufall, Tyler A Scott, Mark Lubell, Linda Estelí Méndez-Barrientos, Do governance platforms achieve the aims of the platform sponsor? Principal-agent tension in environmental governance reforms, Journal of Public Administration Research and Theory, Volume 35, Issue 3, July 2025, Pages 292–308, <https://doi.org/10.1093/jopart/muaf015>
 
--   Elise Zufall, Tyler A Scott, Mark Lubell, Linda Estelí Méndez-Barrientos, Do governance platforms achieve the aims of the platform sponsor? Principal-agent tension in environmental governance reforms, Journal of Public Administration Research and Theory, Volume 35, Issue 3, July 2025, Pages 292–308, <https://doi.org/10.1093/jopart/muaf015>
+- Jan Boon, Jan Wynen, Koen Verhoest, Walter Daelemans, Jens Lemmens, A reputational perspective on structural reforms: how media reputations are related to the structural reform likelihood of public agencies, Journal of Public Administration Research and Theory, Volume 35, Issue 1, January 2025, Pages 58–72, <https://doi.org/10.1093/jopart/muae023>
 
--   Jan Boon, Jan Wynen, Koen Verhoest, Walter Daelemans, Jens Lemmens, A reputational perspective on structural reforms: how media reputations are related to the structural reform likelihood of public agencies, Journal of Public Administration Research and Theory, Volume 35, Issue 1, January 2025, Pages 58–72, <https://doi.org/10.1093/jopart/muae023>
+- Graham Ambrose, Saba Siddiki, Assessing drivers of sustained engagement in collaborative governance arrangements, Journal of Public Administration Research and Theory, Volume 34, Issue 4, October 2024, Pages 498–514, <https://doi.org/10.1093/jopart/muae005>
 
--   Graham Ambrose, Saba Siddiki, Assessing drivers of sustained engagement in collaborative governance arrangements, *Journal of Public Administration Research and Theory*, Volume 34, Issue 4, October 2024, Pages 498–514, <https://doi.org/10.1093/jopart/muae005>
+- Robert A Greer, Tima T Moldogaziev, Ryan P Scott, Tyler A Scott, Signaling Resilience: A Computational Assessment of Narratives in Local Government Budgets, Journal of Public Administration Research and Theory, Volume 33, Issue 4, October 2023, Pages 688–700, <https://doi.org/10.1093/jopart/muad001>\
 
--   Robert A Greer, Tima T Moldogaziev, Ryan P Scott, Tyler A Scott, Signaling Resilience: A Computational Assessment of Narratives in Local Government Budgets, *Journal of Public Administration Research and Theory*, Volume 33, Issue 4, October 2023, Pages 688–700, <https://doi.org/10.1093/jopart/muad001>\
+- Sicheng Chen, Tom Christensen, Liang Ma, Reputation Management and Administrative Reorganization: How Different Media Reputation Dimensions Matter for Agency Termination, Journal of Public Administration Research and Theory, Volume 33, Issue 2, April 2023, Pages 217–231, <https://doi.org/10.1093/jopart/muac028>
 
--   ABM建模
+- Hongyu Chen, Yuxiang Dong, Hao Li, Shuangzhi Tian, Longfeng Wu, Jinlong Li, Chensong Lin,
+Optimized green infrastructure planning at the city scale based on an interpretable machine learning model and multi-objective optimization algorithm: A case study of central Beijing, China,Landscape and Urban Planning,Volume 252,2024,105191,ISSN 0169-2046, <https://doi.org/10.1016/j.landurbplan.2024.105191>.
 
--   Jiho Kim, Distributive Justice in Collaborative Outputs: Empowering Minority Viewpoints Through Deliberation, Journal of Public Administration Research and Theory, Volume 34, Issue 1, January 2024, Pages 1–15, <https://doi.org/10.1093/jopart/muad012>\
+- Abdesslam Chai-allah, Johannes Hermes, Anne De La Foye, Zander S. Venter, Frédéric Joly, Gilles Brunschwig, Sandro Bimonte, Nathan Fox,Assessing recreationists’ preferences of the landscape and species using crowdsourced images and machine learning,Landscape and Urban Planning,Volume 257,2025,105315,ISSN 0169-2046, <https://doi.org/10.1016/j.landurbplan.2025.105315>.
 
--   网络分析（引文网络分析）
+- Zhichao Ba, Leilei Liu, Yikun Xia, Multidimensional policy citation features: Insights into policymakers' policy adoption decision-making, Government Information Quarterly, Volume 42, Issue 1,2025,102004,ISSN 0740-624X, <https://doi.org/10.1016/j.giq.2024.102004>.
 
--   Jie Wang, Nicola Ulibarri, Tyler A Scott, Agency consultation networks in environmental impact assessment, *Journal of Public Administration Research and Theory*, Volume 34, Issue 3, July 2024, Pages 448–464, <https://doi.org/10.1093/jopart/muae008>
+- 王振坡,侯晴怡,王丽艳.我国城市居民低碳通勤方式选择的影响因素——以天津市为例[J].城市发展研究,2025,32(07):38-47.
 
--   Christensen, J. Unpacking the Influence of Policy Advice Using Citation Network Analysis. *Public Administration Review*. https://doi.org/10.1111/puar.7001
+- 杨丹,朱珠,刘自敏,等.共同富裕目标下农产品区域公用品牌的收入效应研究——来自原国家级贫困县的经验证据[J].管理世界,2025,41(07):149-175.DOI:10.19744/j.cnki.11-1235/f.2025.0095.
 
--   机器学习
+- 韩先锋,李佳佳.数智化赋能城市包容性绿色增长：来自双重机器学习的因果推断[J].中国人口·资源与环境,2025,35(06):177-189.
 
--   Sicheng Chen, Tom Christensen, Liang Ma, Reputation Management and Administrative Reorganization: How Different Media Reputation Dimensions Matter for Agency Termination, *Journal of Public Administration Research and Theory*, Volume 33, Issue 2, April 2023, Pages 217–231, <https://doi.org/10.1093/jopart/muac028>
-
--   

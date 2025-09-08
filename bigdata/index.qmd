@@ -1,0 +1,32 @@
+---
+title: "公共管理大数据分析"
+author: ""
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc-depth: 5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+  
+### [课程介绍](./intro/introduction.html)
+### [R语言基础](./basics/rbasics.html)
+### [数据收集与预处理](./dataclean/dataclean.html)  
+### [数据描述与可视化](./visualization/visualization.html)  
+### [机器学习基础](./machlearn/mlbasics.html)  
+### [有监督学习：回归模型](./machlearn/regression.html)  
+### [有监督学习：基于决策树的模型](./machlearn/mltrees.html)  
+### [有监督学习：其他方法](.)  
+### [无监督学习：降维](.)  
+### [无监督学习：聚类](.)  
+### [文本分析与自然语言处理](.)  
+### [空间数据分析基础](./spatial/spatialdata.html)
+### [空间数据分析模型](./spatial/spatialmodels.html)
+### [因果推断与政策评估](.)
+### [期末项目展示与总结](.)
+  
+## 课堂练习  
+

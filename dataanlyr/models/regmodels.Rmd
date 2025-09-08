@@ -1,6 +1,6 @@
 ---
 title: "回归模型"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:
@@ -900,5 +900,5 @@ polygon(x=xpoly, y=ypoly, density=20, col="blue", border=FALSE)
 ```
 
 
-### 最大似然估计的理论与性质（略）
+
 

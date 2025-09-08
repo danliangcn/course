@@ -1,23 +1,25 @@
 ---
-title: "数据可视化"
+title: "数据描述与可视化"
 author: ""
 date: "`r Sys.Date()`"
-output: 
-  bookdown::html_document2:
-    toc: true
-    toc_depth: 5
-    toc_float: 
-      collapsed: false
-      smooth_scroll: false
-    number_sections: true
-    css: "../../css/styles.css" 
-
+format: 
+  html:
+    toc-depth: 5
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(showtext)
+library(sysfonts)
+
+# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
+font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
+
+# 启用 showtext 自动渲染
+showtext_auto()
 ```
-   
+
 ## 数据准备  
 
 可视化数据之前，需要准备数据，包括导入数据并进行清洗。  

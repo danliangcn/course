@@ -1,6 +1,6 @@
 ---
 title: "课堂练习一"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:

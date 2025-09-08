@@ -1,0 +1,53 @@
+---
+title: "有监督学习：基于决策树的模型"
+author: ""
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc-depth: 5
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  cache = FALSE
+)
+
+library(tidyverse)
+
+theme_set(theme_light())
+
+library(showtext)
+library(sysfonts)
+
+# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
+font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
+
+# 启用 showtext 自动渲染
+showtext_auto()
+```
+
+# 1 决策树
+
+# 2 分袋
+
+# 3 随机森林
+
+# 4 梯度提升
+
+
+```{r, echo=FALSE}
+# clean up
+rm(list = ls())
+```
+
+## 参考书籍
+
+-   Bradley Boehmke & Brandon Greenwell，Hands-On Machine Learning with R，CRC Press, 2020.\
+-   Pang-Ning Tan 数据挖掘导论（第2版），机械工业出版社，2019.\
+-   Ian Foster等 Big Data and Social Science: Data Science Methods and Tools for Research and Practice, CRC Press, 2021.\
