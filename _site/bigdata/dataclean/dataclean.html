@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2025-08-16">
+
+<title>数据获取与预处理 – course</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8610558a007458a9b978551a034f4d85.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">course</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#数据导入与获取" id="toc-数据导入与获取" class="nav-link active" data-scroll-target="#数据导入与获取">1 数据导入与获取</a>
+  <ul>
+  <li><a href="#文本文件" id="toc-文本文件" class="nav-link" data-scroll-target="#文本文件">1.1 文本文件</a></li>
+  <li><a href="#excel文件" id="toc-excel文件" class="nav-link" data-scroll-target="#excel文件">1.2 Excel文件</a></li>
+  <li><a href="#专业统计软件数据文件" id="toc-专业统计软件数据文件" class="nav-link" data-scroll-target="#专业统计软件数据文件">1.3 专业统计软件数据文件</a></li>
+  <li><a href="#数据库" id="toc-数据库" class="nav-link" data-scroll-target="#数据库">1.4 数据库</a>
+  <ul>
+  <li><a href="#dbi基础" id="toc-dbi基础" class="nav-link" data-scroll-target="#dbi基础">DBI基础</a></li>
+  <li><a href="#dbplyr基础" id="toc-dbplyr基础" class="nav-link" data-scroll-target="#dbplyr基础">dbplyr基础</a></li>
+  <li><a href="#sql基础" id="toc-sql基础" class="nav-link" data-scroll-target="#sql基础">SQL基础</a></li>
+  </ul></li>
+  <li><a href="#arrow-工具" id="toc-arrow-工具" class="nav-link" data-scroll-target="#arrow-工具">1.4 Arrow 工具</a>
+  <ul>
+  <li><a href="#打开数据集" id="toc-打开数据集" class="nav-link" data-scroll-target="#打开数据集">打开数据集</a></li>
+  <li><a href="#采用parquet格式进行分区" id="toc-采用parquet格式进行分区" class="nav-link" data-scroll-target="#采用parquet格式进行分区">采用Parquet格式进行分区</a></li>
+  <li><a href="#使用arrow支持的dplyr" id="toc-使用arrow支持的dplyr" class="nav-link" data-scroll-target="#使用arrow支持的dplyr">使用Arrow支持的dplyr</a></li>
+  <li><a href="#效率比较" id="toc-效率比较" class="nav-link" data-scroll-target="#效率比较">效率比较</a></li>
+  </ul></li>
+  <li><a href="#分层数据" id="toc-分层数据" class="nav-link" data-scroll-target="#分层数据">1.5 分层数据</a>
+  <ul>
+  <li><a href="#列表" id="toc-列表" class="nav-link" data-scroll-target="#列表">列表</a></li>
+  <li><a href="#解除列表列的嵌套" id="toc-解除列表列的嵌套" class="nav-link" data-scroll-target="#解除列表列的嵌套">解除列表列的嵌套</a></li>
+  </ul></li>
+  <li><a href="#json" id="toc-json" class="nav-link" data-scroll-target="#json">1.6 JSON</a></li>
+  <li><a href="#网页爬取" id="toc-网页爬取" class="nav-link" data-scroll-target="#网页爬取">1.7 网页爬取</a>
+  <ul>
+  <li><a href="#html基础" id="toc-html基础" class="nav-link" data-scroll-target="#html基础">HTML基础</a></li>
+  <li><a href="#静态网页数据爬取" id="toc-静态网页数据爬取" class="nav-link" data-scroll-target="#静态网页数据爬取">静态网页数据爬取</a></li>
+  <li><a href="#动态页面的爬取" id="toc-动态页面的爬取" class="nav-link" data-scroll-target="#动态页面的爬取">动态页面的爬取</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#清理数据" id="toc-清理数据" class="nav-link" data-scroll-target="#清理数据">2 清理数据</a>
+  <ul>
+  <li><a href="#选择变量" id="toc-选择变量" class="nav-link" data-scroll-target="#选择变量">2.1 选择变量</a></li>
+  <li><a href="#选择观测" id="toc-选择观测" class="nav-link" data-scroll-target="#选择观测">2.2 选择观测</a></li>
+  <li><a href="#变量创建与重新编码" id="toc-变量创建与重新编码" class="nav-link" data-scroll-target="#变量创建与重新编码">2.3 变量创建与重新编码</a></li>
+  <li><a href="#汇总数据" id="toc-汇总数据" class="nav-link" data-scroll-target="#汇总数据">2.4 汇总数据</a></li>
+  <li><a href="#使用管道" id="toc-使用管道" class="nav-link" data-scroll-target="#使用管道">2.5 使用管道</a></li>
+  <li><a href="#日期数据的处理" id="toc-日期数据的处理" class="nav-link" data-scroll-target="#日期数据的处理">2.6 日期数据的处理</a></li>
+  <li><a href="#重塑数据" id="toc-重塑数据" class="nav-link" data-scroll-target="#重塑数据">2.7 重塑数据</a></li>
+  <li><a href="#缺失数据" id="toc-缺失数据" class="nav-link" data-scroll-target="#缺失数据">2.8 缺失数据</a></li>
+  <li><a href="#参考书籍" id="toc-参考书籍" class="nav-link" data-scroll-target="#参考书籍">参考书籍</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">数据获取与预处理</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 16, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>本部分介绍数据导入与获取、数据转化和清理。</p>
+<section id="数据导入与获取" class="level1">
+<h1>1 数据导入与获取</h1>
+<p>R 几乎可以导入任何格式的数据，包括文本、Excel、SPSS和STATA等统计软件等格式的数据，同时R还能够连接数据库获取各种类型的数据。</p>
+<section id="文本文件" class="level2">
+<h2 class="anchored" data-anchor-id="文本文件">1.1 文本文件</h2>
+<p>readr包提供了将分隔文本文件导入 R 数据框的函数选择。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入逗号分割的数据</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>cgss2017 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"cgss2017.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入制表符分割的数据</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>cgss2017 <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"cgss2017.txt"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="excel文件" class="level2">
+<h2 class="anchored" data-anchor-id="excel文件">1.2 Excel文件</h2>
+<p>readxl包可以从 Excel 文件导入数据，支持 xls 和 xlsx 格式。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 从excel工作表导入数据</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>cgss2017 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"cgss2017.xlsx"</span>, <span class="at">sheet=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>由于excel文件可以包含多个工作表，因此您可以使用sheet选项指定所需的工作表。默认值为sheet=1。</p>
+</section>
+<section id="专业统计软件数据文件" class="level2">
+<h2 class="anchored" data-anchor-id="专业统计软件数据文件">1.3 专业统计软件数据文件</h2>
+<p>haven包提供了从各种统计包导入数据的功能。示例采用的<a href="./cgss2015subset.sav">CGSS2015子数据集</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入stata数据</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cgss2017 <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"cgss2017.dta"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入SPSS数据</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>cgss <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(<span class="st">"cgss2015subset.sav"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入SAS数据</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>cgss2017 <span class="ot">&lt;-</span> <span class="fu">read_sas</span>(<span class="st">"cgss2017.sas7bdat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="数据库" class="level2">
+<h2 class="anchored" data-anchor-id="数据库">1.4 数据库</h2>
+<p>本部分介绍如何从数据库获取数据。数据库操作用到的包中，DBI 是连接数据库并执行 SQL（结构化查询语言） 的低级接口；dbplyr 是高级接口，将 dplyr 代码转换为 SQL 查询，然后使用 DBI 执行。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>数据库可以看做数据框（data frame）的集合，在数据库术语中称为表（table）。数据库表存储在磁盘上，大小可以任意。数据库表有索引，可以快速找到感兴趣的行。数据库针对快速收集数据而非分析现有数据进行了优化。</p>
+<p>数据库由数据库管理系统（简称DBMS ）运行，数据库管理系统有三种基本形式，包括客户端-服务器型（ 运行在中央服务器上，通过客户端连接，例如PostgreSQL、MariaDB、SQL Server 和 Oracle）、云端数据库（例如亚马逊的 RedShift 和谷歌的 BigQuery）、进程内数据库（例如 SQLite 或 duckdb，完全在个人计算机上）。</p>
+<section id="dbi基础" class="level3">
+<h3 class="anchored" data-anchor-id="dbi基础">DBI基础</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 连接到duckdb，命令会创建一个临时数据库</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 如需建立永久数据库，可设置保存文件夹</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>())</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 从其他包加载数据创建数据库表</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"mpg"</span>, ggplot2<span class="sc">::</span>mpg)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"diamonds"</span>, ggplot2<span class="sc">::</span>diamonds)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查数据库中的表</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListTables</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "diamonds" "mpg"     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查表diamonds中的内容</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>con <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dbReadTable</span>(<span class="st">"diamonds"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 53,940 × 10
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+ 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+ 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+ 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+ 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+ 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+ 7  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+ 8  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+ 9  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
+# ℹ 53,930 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 采用SQL对数据库进行查询，并获取数据</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT carat, cut, clarity, color, price </span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM diamonds </span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE price &gt; 15000</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(<span class="fu">dbGetQuery</span>(con, sql))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,655 × 5
+   carat cut       clarity color price
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt;   &lt;fct&gt; &lt;int&gt;
+ 1  1.54 Premium   VS2     E     15002
+ 2  1.19 Ideal     VVS1    F     15005
+ 3  2.1  Premium   SI1     I     15007
+ 4  1.69 Ideal     SI1     D     15011
+ 5  1.5  Very Good VVS2    G     15013
+ 6  1.73 Very Good VS1     G     15014
+ 7  2.02 Premium   SI2     G     15014
+ 8  2.05 Very Good SI2     F     15017
+ 9  1.5  Very Good VS1     F     15022
+10  1.82 Very Good SI1     G     15025
+# ℹ 1,645 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="dbplyr基础" class="level3">
+<h3 class="anchored" data-anchor-id="dbplyr基础">dbplyr基础</h3>
+<p>dbplyr 是 dplyr 的后端，意味着可以通过 dplyr 函数代码来实现SQL操作。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 生成一个数据库表对象</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>diamonds_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"diamonds"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>diamonds_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   table&lt;diamonds&gt; [?? x 10]
+# Database: DuckDB v1.3.2 [root@Darwin 24.6.0:R 4.4.2/:memory:]
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+ 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+ 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+ 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+ 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+ 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+ 7  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+ 8  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+ 9  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
+# ℹ more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>big_diamonds_db <span class="ot">&lt;-</span> diamonds_db <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(price <span class="sc">&gt;</span> <span class="dv">15000</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carat<span class="sc">:</span>clarity, price)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>big_diamonds_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   SQL [?? x 5]
+# Database: DuckDB v1.3.2 [root@Darwin 24.6.0:R 4.4.2/:memory:]
+   carat cut       color clarity price
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;
+ 1  1.54 Premium   E     VS2     15002
+ 2  1.19 Ideal     F     VVS1    15005
+ 3  2.1  Premium   I     SI1     15007
+ 4  1.69 Ideal     D     SI1     15011
+ 5  1.5  Very Good G     VVS2    15013
+ 6  1.73 Very Good G     VS1     15014
+ 7  2.02 Premium   G     SI2     15014
+ 8  2.05 Very Good F     SI2     15017
+ 9  1.5  Very Good F     VS1     15022
+10  1.82 Very Good G     SI1     15025
+# ℹ more rows</code></pre>
+</div>
+</div>
+<p>该对象只代表一个数据库查询，并不是完整数据，顶部显示了 DBMS 名称，并且只有列数，没有行数。因为查找总行数需要执行完整的查询，而这正是在处理大数据时要避免的，执行完整查询会消耗计算资源。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 展示dplyr代码所实现的SQL</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>big_diamonds_db <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT carat, cut, color, clarity, price
+FROM diamonds
+WHERE (price &gt; 15000.0)</code></pre>
+</div>
+</div>
+<p>获取完整数据</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>big_diamonds <span class="ot">&lt;-</span> big_diamonds_db <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>big_diamonds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,655 × 5
+   carat cut       color clarity price
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;
+ 1  1.54 Premium   E     VS2     15002
+ 2  1.19 Ideal     F     VVS1    15005
+ 3  2.1  Premium   I     SI1     15007
+ 4  1.69 Ideal     D     SI1     15011
+ 5  1.5  Very Good G     VVS2    15013
+ 6  1.73 Very Good G     VS1     15014
+ 7  2.02 Premium   G     SI2     15014
+ 8  2.05 Very Good F     SI2     15017
+ 9  1.5  Very Good F     VS1     15022
+10  1.82 Very Good G     SI1     15025
+# ℹ 1,645 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="sql基础" class="level3">
+<h3 class="anchored" data-anchor-id="sql基础">SQL基础</h3>
+<p>SQL由语句组成，例如CREATE、INSERT、SELECT等。查询语句SELECT由5个子句组成，SELECT决定选择哪些列或变量；FROM指明数据库表；WHERE决定选择哪些行；ORDER BY决定如何排序；GROUP BY将查询进行汇总聚合（类似分类汇总）。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取数据，建立数据表对象</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>dbplyr<span class="sc">::</span><span class="fu">copy_nycflights13</span>(con)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>flights <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"flights"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>planes <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"planes"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">|&gt;</span> <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT *
+FROM flights</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dest <span class="sc">==</span> <span class="st">"IAH"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dep_delay) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT flights.*
+FROM flights
+WHERE (dest = 'IAH')
+ORDER BY dep_delay</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(dest) <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">dep_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT dest, AVG(dep_delay) AS dep_delay
+FROM flights
+GROUP BY dest</code></pre>
+</div>
+</div>
+<p>SQL的表连接与dplyr的数据框连接类似。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(planes <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">year_built =</span> year), <span class="fu">join_by</span>(tailnum)) <span class="sc">|&gt;</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT
+  flights.*,
+  planes."year" AS year_built,
+  "type",
+  manufacturer,
+  model,
+  engines,
+  seats,
+  speed,
+  engine
+FROM flights
+LEFT JOIN planes
+  ON (flights.tailnum = planes.tailnum)</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="arrow-工具" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-工具">1.4 Arrow 工具</h2>
+<p>Parquet 格式是一种基于开放标准的格式，被大数据系统广泛使用替代csv格式。Apache Arrow是为高效分析和传输大数据而设计的工具箱，处理速度极快。R 语言提供了 arrow 包来使用 Apache Arrow ，该包提供了一个 dplyr 后端，允许使用熟悉的 dplyr 语法分析大于内存的数据集。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr, <span class="at">warn.conflicts =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>数据为西雅图公共图书馆书籍借阅记录的CSV文件，数据共有41,389,465行，显示从2005-2022年每本书每月的借阅次数，数据大小为9GB。代码仅为演示。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 下载西雅图公共图书馆书籍借阅记录</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 数据共有41,389,465行，显示从2005-2022年每本书每月的借阅次数</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>curl<span class="sc">::</span><span class="fu">multi_download</span>(</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://r4ds.s3.us-west-2.amazonaws.com/seattle-library-checkouts.csv"</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/seattle-library-checkouts.csv"</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">resume =</span> <span class="cn">TRUE</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 10</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   success status_code resumefrom url                    destfile        error</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;lgl&gt;         &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;           &lt;chr&gt;</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 TRUE            200          0 https://r4ds.s3.us-we… data/seattle-l… &lt;NA&gt; </span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: type &lt;chr&gt;, modified &lt;dttm&gt;, time &lt;dbl&gt;,</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   headers &lt;list&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="打开数据集" class="level3">
+<h3 class="anchored" data-anchor-id="打开数据集">打开数据集</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>seattle_csv <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sources =</span> <span class="st">"data/seattle-library-checkouts.csv"</span>, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 函数会自动扫描几千行数据猜测数据结构</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 但由于部分书籍ISBN为空，直接指定该列的数据类型</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">schema</span>(<span class="at">ISBN =</span> <span class="fu">string</span>()),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">format =</span> <span class="st">"csv"</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>命令并未读取全部数据，数据仍在磁盘上，等待需要时才加载到内存。可以展现文件的元数据信息。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>seattle_csv</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FileSystemDataset with 1 csv file</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; UsageClass: string</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CheckoutType: string</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; MaterialType: string</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CheckoutYear: int64</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CheckoutMonth: int64</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Checkouts: int64</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Title: string</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ISBN: string</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Creator: string</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Subjects: string</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Publisher: string</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PublicationYear: string</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>查看文件内容</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>seattle_csv <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FileSystemDataset with 1 csv file</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41,389,465 rows x 12 columns</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ UsageClass      &lt;string&gt; "Physical", "Physical", "Digital", "Physical", "Ph…</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ CheckoutType    &lt;string&gt; "Horizon", "Horizon", "OverDrive", "Horizon", "Hor…</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ MaterialType    &lt;string&gt; "BOOK", "BOOK", "EBOOK", "BOOK", "SOUNDDISC", "BOO…</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ CheckoutYear     &lt;int64&gt; 2016, 2016, 2016, 2016, 2016, 2016, 2016, 2016, 20…</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ CheckoutMonth    &lt;int64&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,…</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ Checkouts        &lt;int64&gt; 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 2, 3, 2, 1, 3, 2,…</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ Title           &lt;string&gt; "Super rich : a guide to having it all / Russell S…</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ ISBN            &lt;string&gt; "", "", "", "", "", "", "", "", "", "", "", "", ""…</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ Creator         &lt;string&gt; "Simmons, Russell", "Barclay, James, 1965-", "Tim …</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ Subjects        &lt;string&gt; "Self realization, Conduct of life, Attitude Psych…</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ Publisher       &lt;string&gt; "Gotham Books,", "Pyr,", "Random House, Inc.", "Di…</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ PublicationYear &lt;string&gt; "c2011.", "2010.", "2015", "2005.", "c2004.", "c20…</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>获取每年的借阅总数</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>seattle_csv <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CheckoutYear) <span class="sc">|&gt;</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Checkouts =</span> <span class="fu">sum</span>(Checkouts)) <span class="sc">|&gt;</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(CheckoutYear) <span class="sc">|&gt;</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 18 × 2</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CheckoutYear Checkouts</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          &lt;int&gt;     &lt;int&gt;</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         2005   3798685</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2006   6599318</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         2007   7126627</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         2008   8438486</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         2009   9135167</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         2010   8608966</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 12 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="采用parquet格式进行分区" class="level3">
+<h3 class="anchored" data-anchor-id="采用parquet格式进行分区">采用Parquet格式进行分区</h3>
+<p>Parquet 是专为大数据需求而设计的自定义二进制格式。这意味着通常等效的 CSV 文件更小，访问速度更快。Parquet 文件拥有丰富的类型系统，能够将数据类型与数据一起记录（类似SPSS的SAV文件）。Parquet 文件是按列组织的，类似于 R 的数据框，便于数据分析。Parquet 文件是分区块的，这使得可以同时处理文件的不同部分，有时可以完全跳过一些块。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 指定分区存储路径</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>pq_path <span class="ot">&lt;-</span> <span class="st">"data/seattle-library-checkouts"</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 按照借阅年份进行分区，分成18个区块</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>seattle_csv <span class="sc">|&gt;</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CheckoutYear) <span class="sc">|&gt;</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_dataset</span>(<span class="at">path =</span> pq_path, <span class="at">format =</span> <span class="st">"parquet"</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 展示分好的区块</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">files =</span> <span class="fu">list.files</span>(pq_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_MB =</span> <span class="fu">file.size</span>(<span class="fu">file.path</span>(pq_path, files)) <span class="sc">/</span> <span class="dv">1024</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 18 × 2</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   files                            size_MB</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                              &lt;dbl&gt;</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 CheckoutYear=2005/part-0.parquet    109.</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 CheckoutYear=2006/part-0.parquet    164.</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 CheckoutYear=2007/part-0.parquet    178.</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 CheckoutYear=2008/part-0.parquet    195.</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 CheckoutYear=2009/part-0.parquet    214.</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 CheckoutYear=2010/part-0.parquet    222.</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 12 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>每个区块大小在100到300MB之间，总共4GB，远小于CSV文件的大小。</p>
+</section>
+<section id="使用arrow支持的dplyr" class="level3">
+<h3 class="anchored" data-anchor-id="使用arrow支持的dplyr">使用Arrow支持的dplyr</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>seattle_pq <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(pq_path)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 统计过去五年内每月借出的图书总数</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> seattle_pq <span class="sc">|&gt;</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CheckoutYear <span class="sc">&gt;=</span> <span class="dv">2018</span>, MaterialType <span class="sc">==</span> <span class="st">"BOOK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CheckoutYear, CheckoutMonth) <span class="sc">|&gt;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">TotalCheckouts =</span> <span class="fu">sum</span>(Checkouts)) <span class="sc">|&gt;</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(CheckoutYear, CheckoutMonth)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取数据结果</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>query <span class="sc">|&gt;</span> <span class="fu">collect</span>()</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 58 × 3</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   CheckoutYear [5]</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CheckoutYear CheckoutMonth TotalCheckouts</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          &lt;int&gt;         &lt;int&gt;          &lt;int&gt;</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         2018             1         355101</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2018             2         309813</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         2018             3         344487</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         2018             4         330988</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         2018             5         318049</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         2018             6         341825</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 52 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="效率比较" class="level3">
+<h3 class="anchored" data-anchor-id="效率比较">效率比较</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 不分区的运行时间</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>seattle_csv <span class="sc">|&gt;</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CheckoutYear <span class="sc">==</span> <span class="dv">2021</span>, MaterialType <span class="sc">==</span> <span class="st">"BOOK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CheckoutMonth) <span class="sc">|&gt;</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">TotalCheckouts =</span> <span class="fu">sum</span>(Checkouts)) <span class="sc">|&gt;</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(CheckoutMonth)) <span class="sc">|&gt;</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.time</span>()</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  11.951   1.297  11.387</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 分区后的运行时间</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>seattle_pq <span class="sc">|&gt;</span> </span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CheckoutYear <span class="sc">==</span> <span class="dv">2021</span>, MaterialType <span class="sc">==</span> <span class="st">"BOOK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CheckoutMonth) <span class="sc">|&gt;</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">TotalCheckouts =</span> <span class="fu">sum</span>(Checkouts)) <span class="sc">|&gt;</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(CheckoutMonth)) <span class="sc">|&gt;</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.time</span>()</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.263   0.058   0.063  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>分区后，效率提升了100倍。</p>
+</section>
+</section>
+<section id="分层数据" class="level2">
+<h2 class="anchored" data-anchor-id="分层数据">1.5 分层数据</h2>
+<p>本部分先介绍R语言中的另一个重要对象list，以及通过list构建分层数据解决实际问题，此外，介绍网络数据的常见格式JSON文件。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(repurrrsive)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="列表" class="level3">
+<h3 class="anchored" data-anchor-id="列表">列表</h3>
+<p>列表可以在同一个向量中存储不同类型的元素。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">"a"</span>, <span class="cn">TRUE</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>x1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 1 2 3 4
+
+[[2]]
+[1] "a"
+
+[[3]]
+[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 展示列表的结构</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(x1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ : int [1:4] 1 2 3 4
+ $ : chr "a"
+ $ : logi TRUE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="fu">list</span>(<span class="dv">2</span>, <span class="fu">list</span>(<span class="dv">3</span>, <span class="fu">list</span>(<span class="dv">4</span>, <span class="fu">list</span>(<span class="dv">5</span>)))))</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 如果列表结构过于复杂，可以采用View()进行交互探索</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(x2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>列表列是由列表（list）构成的列数据（column），而不是常见的变量。列表列便于存储分析模型的输出结果（例如，回归分析获得的系数和标准误等）、地理数据（地图对象多边形的坐标点对）等非常规数据类型。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>),</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="fu">list</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+      x y     z         
+  &lt;int&gt; &lt;chr&gt; &lt;list&gt;    
+1     1 a     &lt;list [2]&gt;
+2     2 b     &lt;list [3]&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="解除列表列的嵌套" class="level3">
+<h3 class="anchored" data-anchor-id="解除列表列的嵌套">解除列表列的嵌套</h3>
+<p>列表列的数据不便于计算与分析，常需要先进行解除嵌套操作。</p>
+<ul>
+<li>元素具有命名的列表列（或列表等长度）</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>x, <span class="sc">~</span>y,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>, <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">11</span>, <span class="at">b =</span> <span class="dv">12</span>),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span>, <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">21</span>, <span class="at">b =</span> <span class="dv">22</span>),</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">3</span>, <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">31</span>, <span class="at">b =</span> <span class="dv">32</span>),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">|&gt;</span> </span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+      x     a     b
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     1    11    12
+2     2    21    22
+3     3    31    32</code></pre>
+</div>
+</div>
+<ul>
+<li>元素未命名的列表列（通常列表长度不等）</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>x, <span class="sc">~</span>y,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>, <span class="fu">list</span>(<span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>),</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span>, <span class="fu">list</span>(<span class="dv">21</span>),</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">3</span>, <span class="fu">list</span>(<span class="dv">31</span>, <span class="dv">32</span>),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>df2 <span class="sc">|&gt;</span> </span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+      x     y
+  &lt;dbl&gt; &lt;dbl&gt;
+1     1    11
+2     1    12
+3     1    13
+4     2    21
+5     3    31
+6     3    32</code></pre>
+</div>
+</div>
+<ul>
+<li>宽数据</li>
+</ul>
+<p>有些层次数据的结构中含有多个嵌套，并且多次解除嵌套后的变量列非常长。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取层次数据，并查看结构</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>repos <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">json =</span> gh_repos)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>repos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 1
+  json       
+  &lt;list&gt;     
+1 &lt;list [30]&gt;
+2 &lt;list [30]&gt;
+3 &lt;list [30]&gt;
+4 &lt;list [26]&gt;
+5 &lt;list [30]&gt;
+6 &lt;list [30]&gt;</code></pre>
+</div>
+</div>
+<p>数据为6行1列，列表列为不等长的未命名列表</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 解除嵌套，将每个列表元素列为单独一行</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>repos <span class="sc">|&gt;</span> </span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(json)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 176 × 1
+   json             
+   &lt;list&gt;           
+ 1 &lt;named list [68]&gt;
+ 2 &lt;named list [68]&gt;
+ 3 &lt;named list [68]&gt;
+ 4 &lt;named list [68]&gt;
+ 5 &lt;named list [68]&gt;
+ 6 &lt;named list [68]&gt;
+ 7 &lt;named list [68]&gt;
+ 8 &lt;named list [68]&gt;
+ 9 &lt;named list [68]&gt;
+10 &lt;named list [68]&gt;
+# ℹ 166 more rows</code></pre>
+</div>
+</div>
+<p>解除完依然是列表，但是获得等长的命名列表。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 解除嵌套，将每个列表元素置入相应列</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>repos <span class="sc">|&gt;</span> </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 176 × 68
+        id name  full_name owner        private html_url description fork  url  
+     &lt;int&gt; &lt;chr&gt; &lt;chr&gt;     &lt;list&gt;       &lt;lgl&gt;   &lt;chr&gt;    &lt;chr&gt;       &lt;lgl&gt; &lt;chr&gt;
+ 1  6.12e7 after gaborcsa… &lt;named list&gt; FALSE   https:/… Run Code i… FALSE http…
+ 2  4.05e7 argu… gaborcsa… &lt;named list&gt; FALSE   https:/… Declarativ… FALSE http…
+ 3  3.64e7 ask   gaborcsa… &lt;named list&gt; FALSE   https:/… Friendly C… FALSE http…
+ 4  3.49e7 base… gaborcsa… &lt;named list&gt; FALSE   https:/… Do we get … FALSE http…
+ 5  6.16e7 cite… gaborcsa… &lt;named list&gt; FALSE   https:/… Test R pac… TRUE  http…
+ 6  3.39e7 clis… gaborcsa… &lt;named list&gt; FALSE   https:/… Unicode sy… FALSE http…
+ 7  3.72e7 cmak… gaborcsa… &lt;named list&gt; FALSE   https:/… port of cm… TRUE  http…
+ 8  6.80e7 cmark gaborcsa… &lt;named list&gt; FALSE   https:/… CommonMark… TRUE  http…
+ 9  6.32e7 cond… gaborcsa… &lt;named list&gt; FALSE   https:/… &lt;NA&gt;        TRUE  http…
+10  2.43e7 cray… gaborcsa… &lt;named list&gt; FALSE   https:/… R package … FALSE http…
+# ℹ 166 more rows
+# ℹ 59 more variables: forks_url &lt;chr&gt;, keys_url &lt;chr&gt;,
+#   collaborators_url &lt;chr&gt;, teams_url &lt;chr&gt;, hooks_url &lt;chr&gt;,
+#   issue_events_url &lt;chr&gt;, events_url &lt;chr&gt;, assignees_url &lt;chr&gt;,
+#   branches_url &lt;chr&gt;, tags_url &lt;chr&gt;, blobs_url &lt;chr&gt;, git_tags_url &lt;chr&gt;,
+#   git_refs_url &lt;chr&gt;, trees_url &lt;chr&gt;, statuses_url &lt;chr&gt;,
+#   languages_url &lt;chr&gt;, stargazers_url &lt;chr&gt;, contributors_url &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<p>得到68列，挑选一些列查看。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>repos <span class="sc">|&gt;</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, full_name, owner, description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 176 × 4
+         id full_name               owner             description               
+      &lt;int&gt; &lt;chr&gt;                   &lt;list&gt;            &lt;chr&gt;                     
+ 1 61160198 gaborcsardi/after       &lt;named list [17]&gt; Run Code in the Background
+ 2 40500181 gaborcsardi/argufy      &lt;named list [17]&gt; Declarative function argu…
+ 3 36442442 gaborcsardi/ask         &lt;named list [17]&gt; Friendly CLI interaction …
+ 4 34924886 gaborcsardi/baseimports &lt;named list [17]&gt; Do we get warnings for un…
+ 5 61620661 gaborcsardi/citest      &lt;named list [17]&gt; Test R package and repo f…
+ 6 33907457 gaborcsardi/clisymbols  &lt;named list [17]&gt; Unicode symbols for CLI a…
+ 7 37236467 gaborcsardi/cmaker      &lt;named list [17]&gt; port of cmake to r        
+ 8 67959624 gaborcsardi/cmark       &lt;named list [17]&gt; CommonMark parsing and re…
+ 9 63152619 gaborcsardi/conditions  &lt;named list [17]&gt; &lt;NA&gt;                      
+10 24343686 gaborcsardi/crayon      &lt;named list [17]&gt; R package for colored ter…
+# ℹ 166 more rows</code></pre>
+</div>
+</div>
+<p>对owner进行解除嵌套。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>repos <span class="sc">|&gt;</span> </span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, full_name, owner, description) <span class="sc">|&gt;</span> </span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(owner, <span class="at">names_sep =</span> <span class="st">"_"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 176 × 20
+         id full_name    owner_login owner_id owner_avatar_url owner_gravatar_id
+      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;          &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;            
+ 1 61160198 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 2 40500181 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 3 36442442 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 4 34924886 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 5 61620661 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 6 33907457 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 7 37236467 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 8 67959624 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+ 9 63152619 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+10 24343686 gaborcsardi… gaborcsardi   660288 https://avatars… ""               
+# ℹ 166 more rows
+# ℹ 14 more variables: owner_url &lt;chr&gt;, owner_html_url &lt;chr&gt;,
+#   owner_followers_url &lt;chr&gt;, owner_following_url &lt;chr&gt;,
+#   owner_gists_url &lt;chr&gt;, owner_starred_url &lt;chr&gt;,
+#   owner_subscriptions_url &lt;chr&gt;, owner_organizations_url &lt;chr&gt;,
+#   owner_repos_url &lt;chr&gt;, owner_events_url &lt;chr&gt;,
+#   owner_received_events_url &lt;chr&gt;, owner_type &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<ul>
+<li>关系型数据</li>
+</ul>
+<p>权力的游戏中的角色信息</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>chars <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">json =</span> got_chars)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>chars</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 1
+   json             
+   &lt;list&gt;           
+ 1 &lt;named list [18]&gt;
+ 2 &lt;named list [18]&gt;
+ 3 &lt;named list [18]&gt;
+ 4 &lt;named list [18]&gt;
+ 5 &lt;named list [18]&gt;
+ 6 &lt;named list [18]&gt;
+ 7 &lt;named list [18]&gt;
+ 8 &lt;named list [18]&gt;
+ 9 &lt;named list [18]&gt;
+10 &lt;named list [18]&gt;
+# ℹ 20 more rows</code></pre>
+</div>
+</div>
+<p>按命名列表列解除嵌套</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>chars <span class="sc">|&gt;</span> </span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 18
+   url           id name  gender culture born  died  alive titles aliases father
+   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;lgl&gt; &lt;list&gt; &lt;list&gt;  &lt;chr&gt; 
+ 1 https://w…  1022 Theo… Male   "Ironb… "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+ 2 https://w…  1052 Tyri… Male   ""      "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+ 3 https://w…  1074 Vict… Male   "Ironb… "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+ 4 https://w…  1109 Will  Male   ""      ""    "In … FALSE &lt;chr&gt;  &lt;chr&gt;   ""    
+ 5 https://w…  1166 Areo… Male   "Norvo… "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+ 6 https://w…  1267 Chett Male   ""      "At … "In … FALSE &lt;chr&gt;  &lt;chr&gt;   ""    
+ 7 https://w…  1295 Cres… Male   ""      "In … "In … FALSE &lt;chr&gt;  &lt;chr&gt;   ""    
+ 8 https://w…   130 Aria… Female "Dorni… "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+ 9 https://w…  1303 Daen… Female "Valyr… "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+10 https://w…  1319 Davo… Male   "Weste… "In … ""    TRUE  &lt;chr&gt;  &lt;chr&gt;   ""    
+# ℹ 20 more rows
+# ℹ 7 more variables: mother &lt;chr&gt;, spouse &lt;chr&gt;, allegiances &lt;list&gt;,
+#   books &lt;list&gt;, povBooks &lt;list&gt;, tvSeries &lt;list&gt;, playedBy &lt;list&gt;</code></pre>
+</div>
+</div>
+<p>检查列表列</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>chars <span class="sc">|&gt;</span> </span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">where</span>(is.list))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 8
+      id titles    aliases    allegiances books     povBooks  tvSeries  playedBy
+   &lt;int&gt; &lt;list&gt;    &lt;list&gt;     &lt;list&gt;      &lt;list&gt;    &lt;list&gt;    &lt;list&gt;    &lt;list&gt;  
+ 1  1022 &lt;chr [2]&gt; &lt;chr [4]&gt;  &lt;chr [1]&gt;   &lt;chr [3]&gt; &lt;chr [2]&gt; &lt;chr [6]&gt; &lt;chr&gt;   
+ 2  1052 &lt;chr [2]&gt; &lt;chr [11]&gt; &lt;chr [1]&gt;   &lt;chr [2]&gt; &lt;chr [4]&gt; &lt;chr [6]&gt; &lt;chr&gt;   
+ 3  1074 &lt;chr [2]&gt; &lt;chr [1]&gt;  &lt;chr [1]&gt;   &lt;chr [3]&gt; &lt;chr [2]&gt; &lt;chr [1]&gt; &lt;chr&gt;   
+ 4  1109 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;NULL&gt;      &lt;chr [1]&gt; &lt;chr [1]&gt; &lt;chr [1]&gt; &lt;chr&gt;   
+ 5  1166 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;chr [1]&gt;   &lt;chr [3]&gt; &lt;chr [2]&gt; &lt;chr [2]&gt; &lt;chr&gt;   
+ 6  1267 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;NULL&gt;      &lt;chr [2]&gt; &lt;chr [1]&gt; &lt;chr [1]&gt; &lt;chr&gt;   
+ 7  1295 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;NULL&gt;      &lt;chr [2]&gt; &lt;chr [1]&gt; &lt;chr [1]&gt; &lt;chr&gt;   
+ 8   130 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;chr [1]&gt;   &lt;chr [4]&gt; &lt;chr [1]&gt; &lt;chr [1]&gt; &lt;chr&gt;   
+ 9  1303 &lt;chr [5]&gt; &lt;chr [11]&gt; &lt;chr [1]&gt;   &lt;chr [1]&gt; &lt;chr [4]&gt; &lt;chr [6]&gt; &lt;chr&gt;   
+10  1319 &lt;chr [4]&gt; &lt;chr [5]&gt;  &lt;chr [2]&gt;   &lt;chr [1]&gt; &lt;chr [3]&gt; &lt;chr [5]&gt; &lt;chr&gt;   
+# ℹ 20 more rows</code></pre>
+</div>
+</div>
+<p>对称号李表列进行解除嵌套，解除后的数据可以采用连接（join）与主数据合并成结构化数据框。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>titles <span class="ot">&lt;-</span> chars <span class="sc">|&gt;</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, titles) <span class="sc">|&gt;</span> </span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(titles) <span class="sc">|&gt;</span> </span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(titles <span class="sc">!=</span> <span class="st">""</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">title =</span> titles)</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>titles</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 52 × 2
+      id title                                                                  
+   &lt;int&gt; &lt;chr&gt;                                                                  
+ 1  1022 Prince of Winterfell                                                   
+ 2  1022 Lord of the Iron Islands (by law of the green lands)                   
+ 3  1052 Acting Hand of the King (former)                                       
+ 4  1052 Master of Coin (former)                                                
+ 5  1074 Lord Captain of the Iron Fleet                                         
+ 6  1074 Master of the Iron Victory                                             
+ 7  1166 Captain of the Guard at Sunspear                                       
+ 8  1295 Maester                                                                
+ 9   130 Princess of Dorne                                                      
+10  1303 Queen of the Andals and the Rhoynar and the First Men, Lord of the Sev…
+# ℹ 42 more rows</code></pre>
+</div>
+</div>
+<ul>
+<li>深度嵌套数据</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>gmaps_cities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  city       json            
+  &lt;chr&gt;      &lt;list&gt;          
+1 Houston    &lt;named list [2]&gt;
+2 Washington &lt;named list [2]&gt;
+3 New York   &lt;named list [2]&gt;
+4 Chicago    &lt;named list [2]&gt;
+5 Arlington  &lt;named list [2]&gt;</code></pre>
+</div>
+</div>
+<p>数据为5行，5个城市名称和google geocoding API返回的地理信息列表列</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>gmaps_cities <span class="sc">|&gt;</span> </span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  city       results    status
+  &lt;chr&gt;      &lt;list&gt;     &lt;chr&gt; 
+1 Houston    &lt;list [1]&gt; OK    
+2 Washington &lt;list [2]&gt; OK    
+3 New York   &lt;list [1]&gt; OK    
+4 Chicago    &lt;list [1]&gt; OK    
+5 Arlington  &lt;list [2]&gt; OK    </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 剔除status列后继续对未命名列表进行解除嵌套</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>gmaps_cities <span class="sc">|&gt;</span> </span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>status) <span class="sc">|&gt;</span> </span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 2
+  city       results         
+  &lt;chr&gt;      &lt;list&gt;          
+1 Houston    &lt;named list [5]&gt;
+2 Washington &lt;named list [5]&gt;
+3 Washington &lt;named list [5]&gt;
+4 New York   &lt;named list [5]&gt;
+5 Chicago    &lt;named list [5]&gt;
+6 Arlington  &lt;named list [5]&gt;
+7 Arlington  &lt;named list [5]&gt;</code></pre>
+</div>
+</div>
+<p>继续解除results列表列的嵌套，得到地理信息列表列geometry</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>locations <span class="ot">&lt;-</span> gmaps_cities <span class="sc">|&gt;</span> </span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>status) <span class="sc">|&gt;</span> </span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(results) <span class="sc">|&gt;</span> </span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(results)</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>locations</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 6
+  city       address_components formatted_address   geometry     place_id types 
+  &lt;chr&gt;      &lt;list&gt;             &lt;chr&gt;               &lt;list&gt;       &lt;chr&gt;    &lt;list&gt;
+1 Houston    &lt;list [4]&gt;         Houston, TX, USA    &lt;named list&gt; ChIJAYW… &lt;list&gt;
+2 Washington &lt;list [2]&gt;         Washington, USA     &lt;named list&gt; ChIJ-bD… &lt;list&gt;
+3 Washington &lt;list [4]&gt;         Washington, DC, USA &lt;named list&gt; ChIJW-T… &lt;list&gt;
+4 New York   &lt;list [3]&gt;         New York, NY, USA   &lt;named list&gt; ChIJOwg… &lt;list&gt;
+5 Chicago    &lt;list [4]&gt;         Chicago, IL, USA    &lt;named list&gt; ChIJ7cv… &lt;list&gt;
+6 Arlington  &lt;list [4]&gt;         Arlington, TX, USA  &lt;named list&gt; ChIJ05g… &lt;list&gt;
+7 Arlington  &lt;list [4]&gt;         Arlington, VA, USA  &lt;named list&gt; ChIJD6e… &lt;list&gt;</code></pre>
+</div>
+</div>
+<p>对地理几何体解除嵌套后，得到城市边界（bounds）和位置（location）的列表列</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>locations <span class="sc">|&gt;</span> </span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(city, formatted_address, geometry) <span class="sc">|&gt;</span> </span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 6
+  city    formatted_address bounds       location     location_type viewport    
+  &lt;chr&gt;   &lt;chr&gt;             &lt;list&gt;       &lt;list&gt;       &lt;chr&gt;         &lt;list&gt;      
+1 Houston Houston, TX, USA  &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;
+2 Washin… Washington, USA   &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;
+3 Washin… Washington, DC, … &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;
+4 New Yo… New York, NY, USA &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;
+5 Chicago Chicago, IL, USA  &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;
+6 Arling… Arlington, TX, U… &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;
+7 Arling… Arlington, VA, U… &lt;named list&gt; &lt;named list&gt; APPROXIMATE   &lt;named list&gt;</code></pre>
+</div>
+</div>
+<p>继续对location进行解除嵌套，可以得到城市的经纬度坐标。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>locations <span class="sc">|&gt;</span> </span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(city, formatted_address, geometry) <span class="sc">|&gt;</span> </span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(geometry) <span class="sc">|&gt;</span> </span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 7
+  city    formatted_address bounds         lat    lng location_type viewport    
+  &lt;chr&gt;   &lt;chr&gt;             &lt;list&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;         &lt;list&gt;      
+1 Houston Houston, TX, USA  &lt;named list&gt;  29.8  -95.4 APPROXIMATE   &lt;named list&gt;
+2 Washin… Washington, USA   &lt;named list&gt;  47.8 -121.  APPROXIMATE   &lt;named list&gt;
+3 Washin… Washington, DC, … &lt;named list&gt;  38.9  -77.0 APPROXIMATE   &lt;named list&gt;
+4 New Yo… New York, NY, USA &lt;named list&gt;  40.7  -74.0 APPROXIMATE   &lt;named list&gt;
+5 Chicago Chicago, IL, USA  &lt;named list&gt;  41.9  -87.6 APPROXIMATE   &lt;named list&gt;
+6 Arling… Arlington, TX, U… &lt;named list&gt;  32.7  -97.1 APPROXIMATE   &lt;named list&gt;
+7 Arling… Arlington, VA, U… &lt;named list&gt;  38.9  -77.1 APPROXIMATE   &lt;named list&gt;</code></pre>
+</div>
+</div>
+<p>感兴趣可以继续对城市边界（bounds）进行操作。在空间数据分析部分会继续介绍地理数据。</p>
+</section>
+</section>
+<section id="json" class="level2">
+<h2 class="anchored" data-anchor-id="json">1.6 JSON</h2>
+<p>JSON（JavaScript Object Notation）是大多数网页API返回的数据格式。JSON的数据类型包括null（与R的NA类似）、字符串（需用双引号）、数字、布尔值、数组和对象。数组和对象都类似于 R 中的列表；区别在于它们是否命名。 数组（类似未命名列表）：[1, 2, 3] 、[null, 1, “string”, false] 对象（类似命名列表）：{“x”: 1, “y”: 2}</p>
+<p>jsonlite包可以将JSON转换为R数据结构。read_json()从磁盘读取JSON文件，parse_json()进行转化。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">parse_json</span>(<span class="st">'1'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> int 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">parse_json</span>(<span class="st">'[1, 2, 3]'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ : int 1
+ $ : int 2
+ $ : int 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">parse_json</span>(<span class="st">'{"x": [1, 2, 3]}'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 1
+ $ x:List of 3
+  ..$ : int 1
+  ..$ : int 2
+  ..$ : int 3</code></pre>
+</div>
+</div>
+<p>常见JSON文件只包含一个顶层数组（意味着代表多个事物，例如返回多个网页、多个记录、多个结果），可以直接转化</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 网页API返回的人员年龄数据</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>json <span class="ot">&lt;-</span> <span class="st">'[</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a><span class="st">  {"name": "张三", "age": 34},</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a><span class="st">  {"name": "李四", "age": 27}</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a><span class="st">]'</span></span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">json =</span> <span class="fu">parse_json</span>(json))</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  name    age
+  &lt;chr&gt; &lt;int&gt;
+1 张三     34
+2 李四     27</code></pre>
+</div>
+</div>
+<p>偶尔JSON文件包含一个顶级对象，需要对其先包装到列表，再进行转化。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 返回结果里包含了本次请求是否成功的信息</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>json <span class="ot">&lt;-</span> <span class="st">'{</span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a><span class="st">  "status": "OK", </span></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a><span class="st">  "results": [</span></span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a><span class="st">    {"name": "John", "age": 34},</span></span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a><span class="st">    {"name": "Susan", "age": 27}</span></span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a><span class="st"> ]</span></span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">json =</span> <span class="fu">list</span>(<span class="fu">parse_json</span>(json)))</span>
+<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb86-12"><a href="#cb86-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(json) <span class="sc">|&gt;</span> </span>
+<span id="cb86-13"><a href="#cb86-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_longer</span>(results) <span class="sc">|&gt;</span> </span>
+<span id="cb86-14"><a href="#cb86-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  status name    age
+  &lt;chr&gt;  &lt;chr&gt; &lt;int&gt;
+1 OK     John     34
+2 OK     Susan    27</code></pre>
+</div>
+</div>
+</section>
+<section id="网页爬取" class="level2">
+<h2 class="anchored" data-anchor-id="网页爬取">1.7 网页爬取</h2>
+<p>R语言可以承担一些简单的网页爬取工作，并且可以很方便的进行分析，但是具有反爬虫机制的动态网页还需更专业的爬虫工具，例如Python等。</p>
+<section id="html基础" class="level3">
+<h3 class="anchored" data-anchor-id="html基础">HTML基础</h3>
+<p>HTML是一种描述网页的语言，全称是超文本标记语言( Hyper Text Markup Language )。</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="dt">&gt;</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Page title<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>A heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Some text <span class="dv">&amp;amp;</span> <span class="dt">&lt;</span><span class="kw">b</span><span class="dt">&gt;</span>some bold text.<span class="dt">&lt;/</span><span class="kw">b</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="dt">&gt;</span></span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>HTML 是层次结构的文件，包括开始标记（例如<code>&lt;tag&gt;</code>），可选属性（<code>id='first'</code>），结束标记（如<code>&lt;/tag&gt;</code>）和内容（开始标记和结束标记之间的所有内容）。</p>
+<p>HTML 元素有 100 多个。最重要的元素是：</p>
+<ul>
+<li><p>每个 HTML 页面都必须包含在一个<code>&lt;html&gt;</code>元素中，并且该元素必须具有两个子元素：<code>&lt;head&gt;</code>，其中包含页面标题等文档元数据；以及<code>&lt;body&gt;</code>，其中包含在浏览器上看到的内容。</p></li>
+<li><p><code>&lt;h1&gt;</code>（标题 1）、<code>&lt;section&gt;</code>（部分）、<code>&lt;p&gt;</code>（段落）和<code>&lt;ol&gt;</code>（有序列表）等块标签构成了页面的整体结构。</p></li>
+<li><p>内联标签（例如<code>&lt;b&gt;</code>（粗体）、<code>&lt;i&gt;</code>（斜体）和<code>&lt;a&gt;</code>（链接））格式化块标签内的文本。</p></li>
+</ul>
+<p>标签可以具有类似于 <code>name1='value1' name2='value2'</code> 之类的属性。其中两个最重要的属性是id和class，它们与 CSS（层叠样式表）结合使用，以控制页面的视觉外观。这些属性在从页面抓取数据时通常很有用。属性还用于记录链接的目标（元素href的属性<code>&lt;a&gt;</code>）和图像的来源（元素<code>src</code>的属性<code>&lt;img&gt;</code>）。</p>
+</section>
+<section id="静态网页数据爬取" class="level3">
+<h3 class="anchored" data-anchor-id="静态网页数据爬取">静态网页数据爬取</h3>
+<p>以<a href="&quot;https://sthjj.xm.gov.cn/zwgk/gsgk/xzcf/&quot;">厦门市生态环境局行政执法栏目</a>为例说明静态网页爬取过程。</p>
+<p>爬取网页数据，首先需要确定网页数据的位置。通常可以采用CSS selector he和Xpath。CSS selector通过数据所在对象的样式和模式指定位置，参见<a href="https://www.runoob.com/cssref/css-selectors.html">CSS Selector的语法</a>；而XPath使用路径表达式来选取网页文档中的节点，可以参考<a href="https://www.runoob.com/xpath/xpath-syntax.html">XPath的语法</a>。可以通过Chrome浏览器的开发者检查元素功能，找到数据所在的页面的对象，帮助获取样式或模式信息，确定对象的位置。示例网站处罚书来自div的标签对象，其属性class类别名为gl_list1，并且依次向下有ul、li和a三个层级，a链接对象中是处罚书的名称等内容。通过rvest包中的read_html()、html_nodes()、html_text()、html_attr()函数可以实现获取html文本、网页对象节点、网页对象内容、网页对象属性内容等功能。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>myurl <span class="ot">=</span> <span class="st">"https://sthjj.xm.gov.cn/zwgk/gsgk/xzcf/"</span></span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a><span class="co">#获取html网页文本</span></span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>web<span class="ot">&lt;-</span><span class="fu">read_html</span>(myurl, <span class="at">encoding=</span><span class="st">"UTF-8"</span>) </span>
+<span id="cb89-8"><a href="#cb89-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-9"><a href="#cb89-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取网页数据处罚书</span></span>
+<span id="cb89-10"><a href="#cb89-10" aria-hidden="true" tabindex="-1"></a>punishcompany <span class="ot">&lt;-</span>  web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list1 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>()  </span>
+<span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取处罚时间</span></span>
+<span id="cb89-12"><a href="#cb89-12" aria-hidden="true" tabindex="-1"></a>punishdate <span class="ot">&lt;-</span>  web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list1 ul li span"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>()  </span>
+<span id="cb89-13"><a href="#cb89-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取处罚书链接</span></span>
+<span id="cb89-14"><a href="#cb89-14" aria-hidden="true" tabindex="-1"></a>punishlink <span class="ot">&lt;-</span> web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list1 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">"href"</span>)  </span>
+<span id="cb89-15"><a href="#cb89-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 将数据保存到数据框</span></span>
+<span id="cb89-16"><a href="#cb89-16" aria-hidden="true" tabindex="-1"></a>punish <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">company=</span>punishcompany, <span class="at">date=</span>punishdate, <span class="at">link=</span>punishlink) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>可以通过循环，快速爬取多个类似结构的静态页面，循环从1到10，对应第2页到第11页的信息。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> <span class="fu">paste</span>(myurl, <span class="st">"index_"</span>, i, <span class="st">".htm"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>  web<span class="ot">&lt;-</span><span class="fu">read_html</span>(url,<span class="at">encoding=</span><span class="st">"UTF-8"</span>)</span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>  punishcompany <span class="ot">&lt;-</span>  web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list1 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>() </span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>  punishdate <span class="ot">&lt;-</span>  web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list1 ul li span"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>() </span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>  punishlink <span class="ot">&lt;-</span> web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list1 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">"href"</span>) </span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a>  punish1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">company =</span> punishcompany, <span class="at">date =</span> punishdate, <span class="at">link =</span> punishlink)</span>
+<span id="cb90-9"><a href="#cb90-9" aria-hidden="true" tabindex="-1"></a>  punish <span class="ot">&lt;-</span> punish <span class="sc">|&gt;</span> <span class="fu">rbind</span>(punish1)</span>
+<span id="cb90-10"><a href="#cb90-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb90-11"><a href="#cb90-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-12"><a href="#cb90-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(punish)  <span class="co"># 展示获取的处罚书数据</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                     company       date
+1 厦门市腾盛兴电子技术有限公司行政处罚决定书 2024-11-26
+2 厦门市玖玖机动车检测有限公司行政处罚决定书 2024-11-13
+3 解除扣押决定书厦门市腾盛兴电子技术有限公司 2024-10-16
+4                       张帅涛行政处罚决定书 2024-10-11
+5         厦门日上钢圈有限公司行政处罚决定书 2024-10-11
+6   厦门钟利机动车检测有限公司行政处罚决定书 2024-09-29
+                            link
+1 ./202411/t20241126_2903149.htm
+2 ./202411/t20241113_2900716.htm
+3 ./202411/t20241129_2903969.htm
+4 ./202410/t20241011_2894766.htm
+5 ./202410/t20241011_2894762.htm
+6 ./202409/t20240929_2892737.htm</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(punish)  <span class="co"># 确认是否已完整获取数据</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                                       company
+193 厦门文仪电脑材料有限公司责令改正违法行为决定书 闽厦（执法）环改〔2022〕1号
+194                                责令改正违法行为决定书 厦门日上金属有限公司
+195               厦门恒兴兴业机械有限公司行政处罚决定书 闽厦环罚〔2021〕363号
+196                  厦门海湾化工有限公司行政处罚决定书  闽厦环罚〔2021〕345号
+197                   厦门海湾化工有限公司行政处罚决定书 闽厦环罚〔2021〕344号
+198  厦门三荣陶瓷开发有限公司不予行政处罚决定书  厦环（执法）不罚决字[2021]1号
+          date                           link
+193 2022-01-10 ./202201/t20220110_2616014.htm
+194 2022-01-05 ./202305/t20230526_2761318.htm
+195 2021-12-31 ./202201/t20220110_2616044.htm
+196 2021-12-15 ./202112/t20211215_2608718.htm
+197 2021-12-15 ./202112/t20211215_2608715.htm
+198 2021-12-10 ./202112/t20211215_2608668.htm</code></pre>
+</div>
+</div>
+</section>
+<section id="动态页面的爬取" class="level3">
+<h3 class="anchored" data-anchor-id="动态页面的爬取">动态页面的爬取</h3>
+<p>动态页面与静态页面不同，一般通过与用户建立对话（session）获取用户的数据请求，采用Javascript等程序语言建立定制页面返回数据。因此采用静态页面的方法是无法定位数据的。下面以厦门市生态环境局的咨询投诉栏目为例，介绍动态页面的爬取。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>myurl <span class="ot">=</span> <span class="st">"https://sthjj.xm.gov.cn/gzcy/wyzx/"</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>web<span class="ot">&lt;-</span><span class="fu">read_html</span>(myurl, <span class="at">encoding=</span><span class="st">"UTF-8"</span>)</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list2 ul li a"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{xml_nodeset (1)}
+[1] &lt;a ms-attr-href="'./index_18763.htm?id='+el.letterId+'&amp;amp;chnlId='+el.ch ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>web <span class="sc">|&gt;</span> <span class="fu">html_nodes</span>(<span class="st">"div.gl_list2 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] ""</code></pre>
+</div>
+</div>
+<p>动态页面可以先通过会话请求页面，在爬取数据后，可以模拟点击下一页，此时会话会指向下一页，便可以爬取下一页的数据，依此直到爬取结束。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chromote)</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 请求动态页面</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>myurl <span class="ot">=</span> <span class="st">"https://sthjj.xm.gov.cn/gzcy/wyzx/"</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>sess <span class="ot">&lt;-</span> <span class="fu">read_html_live</span>(myurl) </span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a><span class="co">#sess$view()</span></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>consultdata <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>i<span class="ot">=</span><span class="dv">1</span></span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 爬取前10页咨询投诉信息</span></span>
+<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(i<span class="sc">&lt;=</span><span class="dv">10</span>){</span>
+<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a>  consult <span class="ot">&lt;-</span>  sess <span class="sc">|&gt;</span> <span class="fu">html_elements</span>(<span class="st">"div.gl_list2 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>()   <span class="co"># 获取相关数据</span></span>
+<span id="cb98-14"><a href="#cb98-14" aria-hidden="true" tabindex="-1"></a>  date <span class="ot">&lt;-</span>  sess <span class="sc">|&gt;</span> <span class="fu">html_elements</span>(<span class="st">"div.gl_list2 ul li font"</span>) <span class="sc">|&gt;</span> <span class="fu">html_text</span>() </span>
+<span id="cb98-15"><a href="#cb98-15" aria-hidden="true" tabindex="-1"></a>  link <span class="ot">&lt;-</span> sess <span class="sc">|&gt;</span> <span class="fu">html_elements</span>(<span class="st">"div.gl_list2 ul li a"</span>) <span class="sc">|&gt;</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">"href"</span>) </span>
+<span id="cb98-16"><a href="#cb98-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(consult)<span class="sc">==</span><span class="dv">0</span><span class="sc">|</span> <span class="sc">!</span>(<span class="fu">length</span>(consult)<span class="sc">==</span><span class="fu">length</span>(date)<span class="sc">&amp;</span><span class="fu">length</span>(consult)<span class="sc">==</span><span class="fu">length</span>(link))) <span class="cf">next</span> </span>
+<span id="cb98-17"><a href="#cb98-17" aria-hidden="true" tabindex="-1"></a>  consulttemp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">consult=</span>consult, <span class="at">date=</span>date, <span class="at">link=</span>link)</span>
+<span id="cb98-18"><a href="#cb98-18" aria-hidden="true" tabindex="-1"></a>  consultdata <span class="ot">&lt;-</span> consultdata <span class="sc">%&gt;%</span> <span class="fu">rbind</span>(consulttemp)     <span class="co"># 保存到数据框</span></span>
+<span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb98-20"><a href="#cb98-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">nrow</span>(consultdata) <span class="sc">==</span> <span class="dv">200</span>) <span class="cf">break</span>       <span class="co"># 如果完成爬取，退出</span></span>
+<span id="cb98-21"><a href="#cb98-21" aria-hidden="true" tabindex="-1"></a>  sess<span class="sc">$</span><span class="fu">click</span>(<span class="st">"a.next.b-free-read-leaf"</span>)     <span class="co"># 模拟页面点击下一页</span></span>
+<span id="cb98-22"><a href="#cb98-22" aria-hidden="true" tabindex="-1"></a>  i<span class="ot">=</span>i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb98-23"><a href="#cb98-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb98-24"><a href="#cb98-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-25"><a href="#cb98-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查数据</span></span>
+<span id="cb98-26"><a href="#cb98-26" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(consultdata)  </span>
+<span id="cb98-27"><a href="#cb98-27" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(consultdata) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="清理数据" class="level1">
+<h1>2 清理数据</h1>
+<p>数据清理是数据分析中最耗时的任务。以下列出了最重要的步骤。虽然方法有很多，但使用dplyr和tidyr包是最快捷、最容易学习的方法之一。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>包</th>
+<th>函数</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dplyr</td>
+<td>select</td>
+<td>选择变量/列</td>
+</tr>
+<tr class="even">
+<td>dplyr</td>
+<td>filter</td>
+<td>选择观察值/行</td>
+</tr>
+<tr class="odd">
+<td>dplyr</td>
+<td>mutate</td>
+<td>转换或重新编码变量</td>
+</tr>
+<tr class="even">
+<td>dplyr</td>
+<td>summarize</td>
+<td>汇总数据</td>
+</tr>
+<tr class="odd">
+<td>dplyr</td>
+<td>group_by</td>
+<td>识别需要进一步处理的子组</td>
+</tr>
+<tr class="even">
+<td>tidyr</td>
+<td>gather</td>
+<td>将宽格式数据集转换为长格式</td>
+</tr>
+<tr class="odd">
+<td>tidyr</td>
+<td>spread</td>
+<td>将长格式数据集转换为宽格式</td>
+</tr>
+</tbody>
+</table>
+<section id="选择变量" class="level2">
+<h2 class="anchored" data-anchor-id="选择变量">2.1 选择变量</h2>
+<p>该select函数从数据集选取指定的变量或列。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入SPSS数据</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>cgss <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(<span class="st">"cgss2015subset.sav"</span>)</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 从数据框cgss中选择变量id，sex和age构成新数据集</span></span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">select</span>(cgss, id, sex, age)</span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择变量id以及hp1与hp4之间的所有变量 </span></span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">select</span>(cgss, id, hp1<span class="sc">:</span>hp4)</span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-14"><a href="#cb99-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择除了edu和lnincome以外的所有变量</span></span>
+<span id="cb99-15"><a href="#cb99-15" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">select</span>(cgss, <span class="sc">-</span>edu, <span class="sc">-</span>lnincome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="选择观测" class="level2">
+<h2 class="anchored" data-anchor-id="选择观测">2.2 选择观测</h2>
+<p>该filter函数选择符合特定条件的观测（行）。可以使用&amp;(AND) 和|(OR) 逻辑符号组合多个条件。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 为了方便展示，将带有值标签的变量转换为因子(使用值标签作为取值)   </span></span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>cgss <span class="ot">&lt;-</span> cgss <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.labelled), as_factor))</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择女性观测</span></span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">filter</span>(cgss, sex <span class="sc">==</span> <span class="st">"女"</span>)</span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择来自山东的女性</span></span>
+<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">filter</span>(cgss, sex <span class="sc">==</span> <span class="st">"女"</span> <span class="sc">&amp;</span> province <span class="sc">==</span> <span class="st">"山东省"</span>)</span>
+<span id="cb100-11"><a href="#cb100-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-12"><a href="#cb100-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择来自东北三省的观测</span></span>
+<span id="cb100-13"><a href="#cb100-13" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">filter</span>(cgss, </span>
+<span id="cb100-14"><a href="#cb100-14" aria-hidden="true" tabindex="-1"></a>                  province <span class="sc">==</span> <span class="st">"辽宁省"</span> <span class="sc">|</span> </span>
+<span id="cb100-15"><a href="#cb100-15" aria-hidden="true" tabindex="-1"></a>                  province <span class="sc">==</span> <span class="st">"吉林省"</span> <span class="sc">|</span> </span>
+<span id="cb100-16"><a href="#cb100-16" aria-hidden="true" tabindex="-1"></a>                  province <span class="sc">==</span> <span class="st">"黑龙江省"</span>)</span>
+<span id="cb100-17"><a href="#cb100-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-18"><a href="#cb100-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 更简洁的代码</span></span>
+<span id="cb100-19"><a href="#cb100-19" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">filter</span>(cgss, </span>
+<span id="cb100-20"><a href="#cb100-20" aria-hidden="true" tabindex="-1"></a>                  province <span class="sc">%in%</span> </span>
+<span id="cb100-21"><a href="#cb100-21" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">"辽宁省"</span>, <span class="st">"吉林省"</span>, <span class="st">"黑龙江省"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="变量创建与重新编码" class="level2">
+<h2 class="anchored" data-anchor-id="变量创建与重新编码">2.3 变量创建与重新编码</h2>
+<p>mutate函数可以创建新变量或转换现有变量。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 将身高从厘米转化成英寸，将体重从斤转化成磅 </span></span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">mutate</span>(cgss, </span>
+<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">height =</span> height <span class="sc">*</span> <span class="fl">0.394</span>,</span>
+<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">weight   =</span> (weight<span class="sc">/</span><span class="dv">2</span>) <span class="sc">*</span> <span class="fl">2.205</span>)</span>
+<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 如果收入高于8万元，则变量incomecat取值为"高"，否则取值为"低"</span></span>
+<span id="cb101-9"><a href="#cb101-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-10"><a href="#cb101-10" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">mutate</span>(cgss, </span>
+<span id="cb101-11"><a href="#cb101-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">incomecat =</span> <span class="fu">ifelse</span>(income <span class="sc">&gt;</span> <span class="dv">80000</span>, </span>
+<span id="cb101-12"><a href="#cb101-12" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"高"</span>, </span>
+<span id="cb101-13"><a href="#cb101-13" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"低"</span>))</span>
+<span id="cb101-14"><a href="#cb101-14" aria-hidden="true" tabindex="-1"></a>                  </span>
+<span id="cb101-15"><a href="#cb101-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 将教育程度不是初中、普通高中、中专的转化为其他类别</span></span>
+<span id="cb101-16"><a href="#cb101-16" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">mutate</span>(cgss, </span>
+<span id="cb101-17"><a href="#cb101-17" aria-hidden="true" tabindex="-1"></a>                  <span class="at">edu =</span> <span class="fu">ifelse</span>(edu <span class="sc">%in%</span> </span>
+<span id="cb101-18"><a href="#cb101-18" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">c</span>(<span class="st">"初中"</span>, <span class="st">"普通高中"</span>, <span class="st">"中专"</span>),</span>
+<span id="cb101-19"><a href="#cb101-19" aria-hidden="true" tabindex="-1"></a>                                     edu,</span>
+<span id="cb101-20"><a href="#cb101-20" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"其他"</span>))</span>
+<span id="cb101-21"><a href="#cb101-21" aria-hidden="true" tabindex="-1"></a>                  </span>
+<span id="cb101-22"><a href="#cb101-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 将身高大于200或小于75设定为缺失值</span></span>
+<span id="cb101-23"><a href="#cb101-23" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">mutate</span>(cgss, </span>
+<span id="cb101-24"><a href="#cb101-24" aria-hidden="true" tabindex="-1"></a>                  <span class="at">height =</span> <span class="fu">ifelse</span>(height <span class="sc">&lt;</span> <span class="dv">75</span> <span class="sc">|</span> height <span class="sc">&gt;</span> <span class="dv">200</span>,</span>
+<span id="cb101-25"><a href="#cb101-25" aria-hidden="true" tabindex="-1"></a>                                     <span class="cn">NA</span>,</span>
+<span id="cb101-26"><a href="#cb101-26" aria-hidden="true" tabindex="-1"></a>                                     height))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="汇总数据" class="level2">
+<h2 class="anchored" data-anchor-id="汇总数据">2.4 汇总数据</h2>
+<p>summarize函数可用于描述性统计的数据汇总。可与by_group函数结合使用，用于按组计算统计值。na.rm=TRUE选项用于在计算平均值之前删除缺失值。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 计算身高和体重的平均值</span></span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">summarize</span>(cgss, </span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mean_ht =</span> <span class="fu">mean</span>(height, <span class="at">na.rm=</span><span class="cn">TRUE</span>), </span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mean_weight =</span> <span class="fu">mean</span>(weight, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>newdata</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  mean_ht mean_weight
+    &lt;dbl&gt;       &lt;dbl&gt;
+1    164.        122.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 分性别组计算身高和体重的平均值</span></span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">group_by</span>(cgss, sex)</span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">summarize</span>(newdata, </span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mean_ht =</span> <span class="fu">mean</span>(height, <span class="at">na.rm=</span><span class="cn">TRUE</span>), </span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mean_wt =</span> <span class="fu">mean</span>(weight, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a>newdata</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  sex   mean_ht mean_wt
+  &lt;fct&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 男       170.    133.
+2 女       159.    113.</code></pre>
+</div>
+</div>
+</section>
+<section id="使用管道" class="level2">
+<h2 class="anchored" data-anchor-id="使用管道">2.5 使用管道</h2>
+<p>dplyr和tidyr软件包允许使用管道运算符以紧凑的格式编写代码%&gt;%，运算符%&gt;%将左边的结果传递给右边的函数的第一个参数。例如：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">filter</span>(cgss, </span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>                  sex <span class="sc">==</span> <span class="st">"女"</span>)</span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">group_by</span>(newdata, province)</span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">summarize</span>(newdata, </span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mean_ht =</span> <span class="fu">mean</span>(height, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 采用管道操作符更简洁，也更符合人类思维</span></span>
+<span id="cb106-10"><a href="#cb106-10" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> cgss <span class="sc">%&gt;%</span></span>
+<span id="cb106-11"><a href="#cb106-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="st">"女"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb106-12"><a href="#cb106-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(province) <span class="sc">%&gt;%</span></span>
+<span id="cb106-13"><a href="#cb106-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_ht =</span> <span class="fu">mean</span>(height, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="日期数据的处理" class="level2">
+<h2 class="anchored" data-anchor-id="日期数据的处理">2.6 日期数据的处理</h2>
+<p>在 R 中，日期值以字符的形式输入。例如，记录 3 个人出生日期的简单数据集。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">dob =</span> <span class="fu">c</span>(<span class="st">"11/10/1963"</span>, <span class="st">"Jan-23-91"</span>, <span class="st">"12:1:2001"</span>)</span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   3 obs. of  1 variable:
+ $ dob: chr  "11/10/1963" "Jan-23-91" "12:1:2001"</code></pre>
+</div>
+</div>
+<p>将字符变量转换为日期变量的方法有很多。最简单的方法之一是使用lubridate包中提供的函数。这些函数包括ymd、dmy和 ，mdy分别用于导入年-月-日、日-月-年和月-日-年的格式。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 将dob变量值从字符转化为日期型数据</span></span>
+<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>dob <span class="ot">&lt;-</span> <span class="fu">mdy</span>(df<span class="sc">$</span>dob)</span>
+<span id="cb109-4"><a href="#cb109-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   3 obs. of  1 variable:
+ $ dob: Date, format: "1963-11-10" "1991-01-23" ...</code></pre>
+</div>
+</div>
+<p>这些值在R的内部记录为自 1970 年 1 月 1日以来的天数，可以方便地执行日期运算，提取日期元素（月、日、年），重新格式化（例如，1963年10月11日）。 日期变量对于制作时间相关图表非常重要。</p>
+</section>
+<section id="重塑数据" class="level2">
+<h2 class="anchored" data-anchor-id="重塑数据">2.7 重塑数据</h2>
+<p>有些图表要求数据为宽格式，而有些图表则要求数据为长格式，示例如下。</p>
+<p>将宽数据集转换为长数据集</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>wide_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="fu">c</span>(<span class="st">"01"</span>, <span class="st">"02"</span>, <span class="st">"03"</span>),</span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">name =</span> <span class="fu">c</span>(<span class="st">"张三"</span>, <span class="st">"李四"</span>, <span class="st">"王五"</span>),</span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"男"</span>, <span class="st">"男"</span>, <span class="st">"女"</span>),</span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">height =</span> <span class="fu">c</span>(<span class="dv">70</span>, <span class="dv">72</span>, <span class="dv">62</span>),</span>
+<span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">weight =</span> <span class="fu">c</span>(<span class="dv">180</span>, <span class="dv">195</span>, <span class="dv">130</span>))</span>
+<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(wide_data, <span class="at">caption =</span> <span class="st">"宽数据"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>宽数据</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">id</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">sex</th>
+<th style="text-align: right;">height</th>
+<th style="text-align: right;">weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">01</td>
+<td style="text-align: left;">张三</td>
+<td style="text-align: left;">男</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">180</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">02</td>
+<td style="text-align: left;">李四</td>
+<td style="text-align: left;">男</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">195</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">03</td>
+<td style="text-align: left;">王五</td>
+<td style="text-align: left;">女</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">130</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>long_data <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(wide_data,</span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"height"</span>, <span class="st">"weight"</span>),</span>
+<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="st">"variable"</span>, </span>
+<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">values_to =</span><span class="st">"value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>将长数据转化为宽数据</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(long_data, <span class="at">caption =</span> <span class="st">"长数据"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>长数据</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">id</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">sex</th>
+<th style="text-align: left;">variable</th>
+<th style="text-align: right;">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">01</td>
+<td style="text-align: left;">张三</td>
+<td style="text-align: left;">男</td>
+<td style="text-align: left;">height</td>
+<td style="text-align: right;">70</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">01</td>
+<td style="text-align: left;">张三</td>
+<td style="text-align: left;">男</td>
+<td style="text-align: left;">weight</td>
+<td style="text-align: right;">180</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">02</td>
+<td style="text-align: left;">李四</td>
+<td style="text-align: left;">男</td>
+<td style="text-align: left;">height</td>
+<td style="text-align: right;">72</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">02</td>
+<td style="text-align: left;">李四</td>
+<td style="text-align: left;">男</td>
+<td style="text-align: left;">weight</td>
+<td style="text-align: right;">195</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">03</td>
+<td style="text-align: left;">王五</td>
+<td style="text-align: left;">女</td>
+<td style="text-align: left;">height</td>
+<td style="text-align: right;">62</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">03</td>
+<td style="text-align: left;">王五</td>
+<td style="text-align: left;">女</td>
+<td style="text-align: left;">weight</td>
+<td style="text-align: right;">130</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>wide_data <span class="ot">&lt;-</span> <span class="fu">pivot_wider</span>(long_data,</span>
+<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">names_from =</span> <span class="st">"variable"</span>,</span>
+<span id="cb114-3"><a href="#cb114-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_from =</span> <span class="st">"value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="缺失数据" class="level2">
+<h2 class="anchored" data-anchor-id="缺失数据">2.8 缺失数据</h2>
+<p>真实数据很可能包含缺失值。处理缺失数据有三种基本方法：特征选择、列删除和插补。ggplot2包中的msleep数据集描述了哺乳动物的睡眠习惯，并且在多个变量上存在缺失值。</p>
+<ul>
+<li>特征选择 在特征选择中，可以删除包含太多缺失值的变量（列）。</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(msleep, <span class="at">package=</span><span class="st">"ggplot2"</span>)</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 每个变量中缺失值的比例</span></span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>pctmiss <span class="ot">&lt;-</span> <span class="fu">colSums</span>(<span class="fu">is.na</span>(msleep))<span class="sc">/</span><span class="fu">nrow</span>(msleep)</span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(pctmiss, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        name        genus         vore        order conservation  sleep_total 
+        0.00         0.00         0.08         0.00         0.35         0.00 
+   sleep_rem  sleep_cycle        awake      brainwt       bodywt 
+        0.27         0.61         0.00         0.33         0.00 </code></pre>
+</div>
+</div>
+<p>61% 的 sleep_cycle 值缺失。可以决定将其删除。</p>
+<ul>
+<li>按列删除<br>
+整行删除包含缺失值的观测。</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">select</span>(msleep, genus, vore, conservation)</span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(newdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>补值<br>
+插补涉及用“合理”的猜测值（假设缺失值不存在时的值）来替换缺失值。有几种方法，详见VIM、mice、Amelia和missForest等包。这里将使用VIMkNN()包中的函数，用插补值替换缺失值。</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 用5个最近邻的值插补缺失值</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VIM)</span>
+<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">kNN</span>(msleep, <span class="at">k=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>基本上，对于每个有缺失值的案例，都会选择k个最相似的、没有缺失值的案例。如果缺失值为数值型，则使用这k 个案例的中位数作为插补值。如果缺失值为类别值，则使用这k 个案例中出现频率最高的值。该过程会迭代所有观测和变量，直到结果收敛（趋于稳定）。</p>
+<p>重要提示：缺失值可能会对研究结果造成偏差（有时甚至非常严重）。如果有大量缺失数据，在删除观测或填补缺失值之前，要慎重考虑其合理性。</p>
+</section>
+<section id="参考书籍" class="level2">
+<h2 class="anchored" data-anchor-id="参考书籍">参考书籍</h2>
+<ul>
+<li>Hadley Wickham, Mine Cetinkaya-Rundel, Garrett Grolemund. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, (2nd edition)，O’Reilly Media, 2023.<br>
+</li>
+<li>Kabacoff （王小宁等译） R语言实战（第3版），人民邮电出版社，2023.<br>
+</li>
+<li>Ulrich Matter Big Data Analytics: A Guide to Data Science Practitioners Making the Transition to Big Data, CRC Press, 2024.<br>
+</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

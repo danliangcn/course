@@ -1,0 +1,22 @@
+---
+title: "课程网站"
+author: ""
+date: ""
+format: 
+  html:
+    theme: journal
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 课程目录
+
+### [公共管理大数据分析](./bigdata/index.html)
+
+### [社会统计学]()
+
+### [社会科学研究方法]()
+
+### [环境政策分析]()

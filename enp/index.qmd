@@ -1,0 +1,28 @@
+---
+title: "环境政策分析"
+author: ""
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc-depth: 5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## [课程介绍](./intro/introduction.html)
+## [生态系统](./ecosystem/rintro.html)  
+## [文化与社会观念](./beliefs/rintro.html)  
+## [监管环境](./regulation/basicstats.html)  
+## [政治与制度背景](./institutions/visualization.html)  
+## [空气污染](./air/regmodels.html)  
+## [水资源与环境政策](./water/logitreg.html)  
+## [土地管理政策](./land/rintro.html)  
+## [固体废弃物管理政策](./waste/glm.html)  
+## [能源政策](./energy/sem.html)  
+## [国际环境问题](./international/rapplication.html)
+  
+## 案例  
+1. [大气环境治理案例](./casestudy/exercise1.html)  
+1. [水环境治理案例](./casestudy)  

@@ -1,0 +1,188 @@
+---
+title: "公共管理大数据分析课程介绍"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-depth: 5
+    toc-expand: true
+    smooth-scroll: false
+    number-sections: true
+    mermaid: 
+      theme: default
+    css: "./css/styles.css"
+engine: knitr
+---
+
+## 课程介绍
+
+随着数字政府、智慧城市和数据驱动治理的发展，公共管理领域面临着前所未有的数据挑战与分析需求。传统的政策分析方法已难以应对海量、多源、异构数据所承载的复杂治理问题。本课程旨在帮助研究生系统掌握大数据分析的基础理论、关键方法与实用工具，提升其在公共政策评估、社会治理优化、舆情研判、公共服务供给等方面的数据分析与实证研究能力，为其从事数据驱动的公共事务研究与实践奠定方法论基础，增强服务数字时代公共治理的能力。
+
+### 课程内容
+
+本课程围绕“数据赋能公共治理”的核心理念，系统讲授大数据在公共管理与公共政策分析中的应用方法与实践路径。课程内容涵盖大数据的基本概念与技术基础、描述性统计与可视化分析、回归与预测模型、分类与聚类方法、文本分析与自然语言处理、空间与网络分析、以及因果推断与政策评估等核心主题。教学采用“理论讲授+案例解析+编程实操”相结合的方式，选取公共管理领域典型场景为案例，引导学生掌握大数据分析方法背后的逻辑与应用条件，提升运用大数据分析方法和以数据驱动公共决策的能力。
+
+### 课程目标
+
+-   熟悉R语言的软件平台，了解基本操作，包括获取导入数据、绘制统计图形。\
+
+-   了解R语言中数据的基本管理与数据清洗操作。\
+
+-   介绍一般统计方法的操作，包括多元线性回归、logistic回归、因子分析等。\
+
+-   介绍高级统计方法的基本原理和操作，包括广义线性模型、多层线性模型、结构方程、因果推断等。
+
+## 课程计划
+
+1.  **课程介绍**：课程结构、大数据的定义与特点、公共管理领域中的数据来源与特征、大数据与传统数据的比较、公共管理中的大数据应用、工具介绍
+2.  **数据收集与预处理**：数据类型、结构与处理流程、数据来源、数据清洗与预处理（缺失值处理、异常值检测、数据标准化）、数据整合（多源数据融合）
+3.  **数据描述与可视化**：描述性统计、数据可视化工具与技术、地图与空间可视化、公共管理中的可视化案例
+4.  **回归分析与预测建模**：线性回归、时间序列分析、公共管理应用案例
+5.  **分类模型基础**：逻辑回归、决策树、评估分类的指标（混淆矩阵、准确率、召回率等）、公共管理应用案例
+6.  **高级分类模型**：KNN、贝叶斯分类模型、人工神经网络、支持向量机、随机森林、公共管理应用案例
+7.  **聚类分析方法**：聚类算法（K-means、层次聚类、DBSCAN）、公共管理应用案例
+8.  **文本分析与自然语言处理（NLP）**：文本预处理（分词、词频、TF-IDF）、情感分析、主题建模（LDA）、文本分类、公共管理应用案例
+9.  **网络分析**：社会网络分析基础、网络图谱、公共管理应用案例
+10. **空间数据分析**：地理信息系统基础、空间计量模型、公共管理应用案例
+11. **因果推断与政策评估**：数据质量与推断误差、偏差的来源与处理、因果推断方法（双重差分法、倾向得分匹配、工具变量、合成控制）、公共管理应用案例
+12. **期末项目展示与总结**：学生展示公共管理相关大数据分析项目、课程总结与展望
+
+Note：课程计划会根据课程进度，适度调整。
+
+## 教学方式
+
+-   理论与实践比例：约40%理论（13小时）+ 60%实践（19小时），以项目驱动和案例教学为主，强化动手能力。\
+-   理论教学：通过讲座和案例讨论，讲解大数据分析的核心方法、原理及公共管理应用场景。\
+-   实践教学：通过编程实操、数据分析项目和可视化任务，培养学生处理真实公共管理数据的技能。
+
+## 课程考核
+
+-   考核登记方式：百分制\
+-   成绩组成：考勤占10%；平时作业40%；期末论文：50%\
+-   考核标准：考勤10分，无故旷课一次扣5分，课前请假不扣分。平时作业40分，建议将平时作业作为期末论文项目的基础。期末论文占50分。\
+-   时间要求：最后一次课进行课程论文报告并同时提交课程论文。\
+-   课外学习内容：预习复习课程内容，阅读学习材料，学习相关软件的操作，完成练习，准备数据，进行数据分析，写作课程论文。
+
+## 课程论文要求
+
+-   论文应具有实质性的研究问题，有明确的观点，观点之间有关联。\
+
+## 论文格式
+
+-   中文宋体小四或英文 Times New Roman 12pt、双倍行距，无封面，左上角装订\
+-   包括论文题目、姓名、学号\
+-   参考文献建议按照《公共管理学报》要求\
+-   中间过程或不重要的细节可以放在附录中\
+-   明确写出所建立的模型\
+-   用公式编辑器编辑用到的数学公式，如果会用LaTex排版更好\
+-   数字保留两位小数或者保留到你认为足够简单清晰的位数
+
+## 论文图表格式
+
+-   图表应简明扼要，展示论点，不是展示过程，不应过度使用\
+-   图表应独立设定标题，图表分开标号，下方段落应有文字介绍\
+-   建议挑出图表中的具体某个数字或信息进行举例，帮助理解\
+-   表格采用三线表，不要每行每列都添加分隔线\
+-   表格中有百分数，应在首行标注‘%’，不要每个单元都用。\
+-   表格中每列数字的小数点应对齐。\
+-   图表大小应合适，信息量小的图尽量小。\
+-   可以用图或者表的地方，尽量用图。
+
+## 最终提交文件
+
+-   电子版： 下列文件打包成一个zip或rar文件，文件名是学号+姓名，提交时间：最后一次课后第二天中午12点，成绩以电子版为准！\
+
+1.  说明文件（\*.txt, \*.docx等，对期末论文项目涉及的文件做出说明，列明所有的文件内容）\
+2.  数据文件（\*.csv, \*.dta, \*.xlsx等）\
+3.  程序脚本文件（\*.R，\*.py）\
+4.  论文（\*.docx，\*.pdf）\
+
+-   纸版论文：最后一次课提交。
+
+```{mermaid}
+flowchart LR
+    A[研究问题] --> B[数据获取] --> C[数据存储与融合] --> D[数据处理] --> E[数据探索] --> F[建模分析] --> G[结果评估] --> H[报告展示]
+    subgraph B[数据获取]
+        direction TB
+        B1[结构化数据
+        R，Python] ~~~ B2[文本文件
+        R，Python] ~~~ B3[网络爬虫
+        R（rvest）
+        Python（requests + BeautifulSoup，selenium）] ~~~ B4[API接口
+        R，Python]
+    end
+
+    subgraph C[数据存储与融合]
+        direction TB
+        C1[数据库管理系统
+        （postgres）] ~~~ C2[R，Python脚本] ~~~ C3[记录关联]
+    end
+    subgraph D[数据处理]
+        direction TB
+        D1[结构化查询语言
+        SQL] ~~~ D2[R（dplyr，tidyr）
+        Python（pandas）] 
+    end
+    subgraph E[数据探索]
+        direction TB
+        E1[SQL] ~~~ E2[R（ggplot2）
+        Python（matplotlib）] ~~~ E3[可视化] ~~~ E4[网络分析]~~~ E5[空间分析]
+    end   
+    subgraph F[建模分析]
+        direction TB
+        F1[Python（scikit-learn）
+        R（tm, Rwordseg, topicmodels）] ~~~ F2[机器学习] ~~~ F3[文本分析]
+    end
+    subgraph G[结果评估]
+        direction TB
+        G1[Python
+        （scikit-learn）] ~~~ G2[机器学习] ~~~ G3[实验设计] ~~~ G4[统计推断]
+    end
+    subgraph H[报告展示]
+        direction TB
+        H1[R（ggplot2）
+        Python（scikit-learn）] ~~~ H2[可视化] 
+    end
+    
+    classDef method fill:#ffa500;
+    classDef tool fill:#99ff99;
+    class B1,B2,B3,B4,C1,C2,D1,D2,E1,E2,F1,G1,H1 tool;
+    class C3,E3,E4,E5,F2,F3,G2,G3,G4,H2 method;
+```
+
+## 参考书目与文献
+
+### 参考书籍
+
+-   Pang-Ning Tan 数据挖掘导论（第2版），机械工业出版社，2019.\
+-   Ian Foster等 Big Data and Social Science: Data Science Methods and Tools for Research and Practice, CRC Press, 2021.\
+-   Kabacoff （王小宁等译） R语言实战（第3版），人民邮电出版社，2023.\
+-   Eric Matthes （袁国忠译） Python编程：从入门到实践（第3版），人民邮电出版社，2023.
+
+### 参考文献
+
+-   文本分析与自然语言处理
+
+-   Elise Zufall, Tyler A Scott, Mark Lubell, Linda Estelí Méndez-Barrientos, Do governance platforms achieve the aims of the platform sponsor? Principal-agent tension in environmental governance reforms, Journal of Public Administration Research and Theory, Volume 35, Issue 3, July 2025, Pages 292–308, <https://doi.org/10.1093/jopart/muaf015>
+
+-   Jan Boon, Jan Wynen, Koen Verhoest, Walter Daelemans, Jens Lemmens, A reputational perspective on structural reforms: how media reputations are related to the structural reform likelihood of public agencies, Journal of Public Administration Research and Theory, Volume 35, Issue 1, January 2025, Pages 58–72, <https://doi.org/10.1093/jopart/muae023>
+
+-   Graham Ambrose, Saba Siddiki, Assessing drivers of sustained engagement in collaborative governance arrangements, *Journal of Public Administration Research and Theory*, Volume 34, Issue 4, October 2024, Pages 498–514, <https://doi.org/10.1093/jopart/muae005>
+
+-   Robert A Greer, Tima T Moldogaziev, Ryan P Scott, Tyler A Scott, Signaling Resilience: A Computational Assessment of Narratives in Local Government Budgets, *Journal of Public Administration Research and Theory*, Volume 33, Issue 4, October 2023, Pages 688–700, <https://doi.org/10.1093/jopart/muad001>\
+
+-   ABM建模
+
+-   Jiho Kim, Distributive Justice in Collaborative Outputs: Empowering Minority Viewpoints Through Deliberation, Journal of Public Administration Research and Theory, Volume 34, Issue 1, January 2024, Pages 1–15, <https://doi.org/10.1093/jopart/muad012>\
+
+-   网络分析（引文网络分析）
+
+-   Jie Wang, Nicola Ulibarri, Tyler A Scott, Agency consultation networks in environmental impact assessment, *Journal of Public Administration Research and Theory*, Volume 34, Issue 3, July 2024, Pages 448–464, <https://doi.org/10.1093/jopart/muae008>
+
+-   Christensen, J. Unpacking the Influence of Policy Advice Using Citation Network Analysis. *Public Administration Review*. https://doi.org/10.1111/puar.7001
+
+-   机器学习
+
+-   Sicheng Chen, Tom Christensen, Liang Ma, Reputation Management and Administrative Reorganization: How Different Media Reputation Dimensions Matter for Agency Termination, *Journal of Public Administration Research and Theory*, Volume 33, Issue 2, April 2023, Pages 217–231, <https://doi.org/10.1093/jopart/muac028>
+
+-   

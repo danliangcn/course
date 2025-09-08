@@ -1,0 +1,76 @@
+---
+title: "test"
+format: 
+  html:
+    mermaid: 
+      theme: default
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+
+```{mermaid}
+flowchart LR
+    A[研究问题] --> B[数据获取] --> C[数据存储与融合] --> D[数据处理] --> E[数据探索] --> F[建模分析] --> G[结果评估] --> H[报告展示]
+    subgraph B[数据获取]
+        direction TB
+        B1[结构化数据] ~~~ B2[文本文件] ~~~ B3[网络爬虫] ~~~ B4[API接口]
+    end
+
+    subgraph C[数据存储与融合]
+        direction TB
+        C1[数据库管理系统
+        （postgres）] ~~~ C2[Python脚本] ~~~ C3[记录关联]
+    end
+    subgraph D[数据处理]
+        direction TB
+        D1[结构化查询语言
+        SQL] ~~~ D2[Python脚本] 
+    end
+    subgraph E[数据探索]
+        direction TB
+        E1[SQL] ~~~ E2[Python
+        （pandas, 
+        matplotlib）] ~~~ E3[可视化] ~~~ E4[网络分析]~~~ E5[空间分析]
+    end   
+    subgraph F[建模分析]
+        direction TB
+        F1[Python
+        （scikit learn）] ~~~ F2[机器学习] ~~~ F3[文本分析]
+    end
+    subgraph G[结果评估]
+        direction TB
+        G1[Python
+        （scikit learn）] ~~~ G2[机器学习] ~~~ G3[实验设计] ~~~ G4[统计推断]
+    end
+    subgraph H[报告展示]
+        direction TB
+        H1[Python
+        （scikit learn）] ~~~ H2[可视化] 
+    end
+    
+    classDef method fill:#ffa500;
+    classDef tool fill:#99ff99;
+    class B1,B2,B3,B4,C1,C2,D1,D2,E1,E2,F1,G1,H1 tool;
+    class C3,E3,E4,E5,F2,F3,G2,G3,G4,H2 method;
+```
