@@ -28,5 +28,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ### [因果推断与政策评估](.)
 ### [期末项目展示与总结](.)
   
-## 课堂练习  
+## 课程作业
+### [数据检索与选题探索](./exercises/searchq.html)
 

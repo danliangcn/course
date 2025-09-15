@@ -1685,5 +1685,47 @@
     "title": "空间数据分析基础",
     "section": "参考文献",
     "text": "参考文献\n\nMoraga, Paula. (2023). Spatial Statistics for Data Science: Theory and Practice with R. Chapman & Hall/CRC Data Science Series.\n\nPebesma, E., Bivand, R. (2023). Spatial Data Science: With Applications in R (1st ed.). Chapman and Hall/CRC, Boca Raton. https://doi.org/10.1201/9780429459016"
+  },
+  {
+    "objectID": "bigdata/index.html#课程作业",
+    "href": "bigdata/index.html#课程作业",
+    "title": "公共管理大数据分析",
+    "section": "课程作业",
+    "text": "课程作业\n\n数据检索与选题探索"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html",
+    "href": "bigdata/exercises/searchq.html",
+    "title": "数据检索与选题探索作业",
+    "section": "",
+    "text": "熟悉公共管理领域常见的大数据来源，掌握数据获取与理解的基本方法，并通过结合相关文献，初步提出潜在的研究问题，为课程论文选题和设计奠定基础。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#一国内开放数据源",
+    "href": "bigdata/exercises/searchq.html#一国内开放数据源",
+    "title": "数据检索与选题探索作业",
+    "section": "一、国内开放数据源",
+    "text": "一、国内开放数据源\n\n1. 政府与公共服务\n\n中国政府网“数据”栏目 http://data.gov.cn/\n\n全国性政府数据平台，涵盖经济、社会、民生、交通等多领域。\n\n国家统计局数据 http://data.stats.gov.cn/\n\n各类宏观统计指标（人口、经济、教育、医疗、环境）。\n\n地方政府开放数据平台\n\n如：北京开放数据平台（https://data.beijing.gov.cn/），上海开放数据服务网（https://data.sh.gov.cn/）。\n可用于城市治理、公共服务供给公平研究。\n\n\n\n\n2. 环境与可持续发展\n\n中国环境监测总站数据 http://www.cnemc.cn/\n\n空气质量、水质、噪音监测数据。\n\n中国碳排放数据库（CEADs） http://www.ceads.net.cn/\n\n各省、市碳排放清单数据。\n\n国家遥感科学数据中心 http://www.rscloudmart.com/\n\n卫星遥感影像，可用于土地利用、污染检测、生态研究。\n\n\n\n\n3. 社会与民生\n\n中国知网-社会调查数据平台（部分开放） https://www.cnki.net/\n\n部分社会调查和统计数据，可结合问卷调查研究。\n\n中国健康与养老追踪调查（CHARLS） http://charls.pku.edu.cn/\n\n大规模面板数据，关注健康、养老、社会保障。\n\n中国家庭追踪调查（CFPS） http://www.isss.pku.edu.cn/cfps/\n\n涉及教育、就业、家庭结构、收入分配。\n\n\n\n\n4. 风险管理与应急\n\n中国地震局科学数据中心 http://data.earthquake.cn/\n\n地震监测数据。\n\n中国气象科学数据共享服务网 http://data.cma.cn/\n\n气象监测、灾害预警数据。\n\n微博数据（需通过API或爬取）\n\n可用于应急舆情、社会风险感知研究。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#二国际开放数据源",
+    "href": "bigdata/exercises/searchq.html#二国际开放数据源",
+    "title": "数据检索与选题探索作业",
+    "section": "二、国际开放数据源",
+    "text": "二、国际开放数据源\n\n1. 政府与公共政策\n\nWorld Bank Open Data https://data.worldbank.org/\n\n全球发展指标，适合跨国比较。\n\nOECD Data https://data.oecd.org/\n\n涵盖教育、劳动力、环境、治理等主题。\n\nUN Data https://data.un.org/\n\n联合国各类统计数据库。\n\n\n\n\n2. 环境与可持续发展\n\nNASA Earthdata https://earthdata.nasa.gov/\n\n遥感与气候数据。\n\nEuropean Environment Agency (EEA) Data https://www.eea.europa.eu/data-and-maps\n\n欧洲环境、污染、能源数据。\n\nGlobal Carbon Atlas http://www.globalcarbonatlas.org/\n\n全球碳排放数据。\n\n\n\n\n3. 社会与民生\n\nPew Research Center Datasets https://www.pewresearch.org/download-datasets/\n\n公共舆论、社会价值观、治理调查。\n\nEuropean Social Survey (ESS) https://ess-search.nsd.no/\n\n欧洲各国社会态度与政策数据。\n\nIPUMS (Integrated Public Use Microdata Series) https://ipums.org/\n\n全球人口普查与调查微观数据。\n\n\n\n\n4. 风险管理与应急\n\nEM-DAT: The International Disaster Database https://www.emdat.be/\n\n全球自然灾害数据库。\n\nCrisisNET (Archive) https://crisis.net/\n\n人道危机、冲突事件数据。\n\nTwitter API (Academic Research track) https://developer.twitter.com/en/products/twitter-api/academic-research\n\n可用于应急舆情分析。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#国内开放数据源",
+    "href": "bigdata/exercises/searchq.html#国内开放数据源",
+    "title": "数据检索与选题探索作业",
+    "section": "4.1 国内开放数据源",
+    "text": "4.1 国内开放数据源\n\n1. 政府与公共服务\n\n中国政府网“数据”栏目 http://data.gov.cn/\n\n全国性政府数据平台，涵盖经济、社会、民生、交通等多领域。\n\n国家统计局数据 http://data.stats.gov.cn/\n\n各类宏观统计指标（人口、经济、教育、医疗、环境）。\n\n地方政府开放数据平台\n\n如：北京开放数据平台（https://data.beijing.gov.cn/），上海开放数据服务网（https://data.sh.gov.cn/）\n可用于城市治理、公共服务供给公平研究。\n\n\n\n\n2. 环境与可持续发展\n\n中国环境监测总站数据 http://www.cnemc.cn/\n\n空气质量、水质、噪音监测数据。\n\n中国碳排放数据库（CEADs） http://www.ceads.net.cn/\n\n各省、市碳排放清单数据。\n\n国家地球系统科学数据中心 https://www.geodata.cn\n\n多时空尺度综合性地球系统科学数据库群。\n\n\n\n\n3. 社会与民生\n\n中国知网-中国经济社会大数据研究平台 https://data.cnki.net//\n\n统计、普查、调查资料等。\n\n中国健康与养老追踪调查（CHARLS） http://charls.pku.edu.cn/\n\n大规模面板数据，关注健康、养老、社会保障。\n\n中国家庭追踪调查（CFPS） http://www.isss.pku.edu.cn/cfps/\n\n涉及教育、就业、家庭结构、收入分配。\n\n\n\n\n4. 风险管理与应急\n\n中国地震局科学数据中心 http://data.earthquake.cn/\n\n地震监测数据。\n\n中国气象科学数据共享服务网 http://data.cma.cn/\n\n气象监测、灾害预警数据。\n\n微博数据（需通过API或爬取）\n\n可用于应急舆情、社会风险感知研究。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#国际开放数据源",
+    "href": "bigdata/exercises/searchq.html#国际开放数据源",
+    "title": "数据检索与选题探索作业",
+    "section": "4.2 国际开放数据源",
+    "text": "4.2 国际开放数据源\n\n1. 政府与公共政策\n\nWorld Bank Open Data https://data.worldbank.org/\n\n全球发展指标，适合跨国比较。\n\nOECD Data https://data.oecd.org/\n\n涵盖教育、劳动力、环境、治理等主题。\n\nUN Data https://data.un.org/\n\n联合国各类统计数据库。\n\n\n\n\n2. 环境与可持续发展\n\nNASA Earthdata https://earthdata.nasa.gov/\n\n遥感与气候数据。\n\nEuropean Environment Agency (EEA) Data https://www.eea.europa.eu/data-and-maps\n\n欧洲环境、污染、能源数据。\n\nGlobal Carbon Atlas http://www.globalcarbonatlas.org/\n\n全球碳排放数据。\n\n\n\n\n3. 社会与民生\n\nPew Research Center Datasets https://www.pewresearch.org/download-datasets/\n\n公共舆论、社会价值观、治理调查。\n\nEuropean Social Survey (ESS) https://ess-search.nsd.no/\n\n欧洲各国社会态度与政策数据。\n\nIPUMS (Integrated Public Use Microdata Series) https://ipums.org/\n\n全球人口普查与调查微观数据。\n\n\n\n\n4. 风险管理与应急\n\nEM-DAT: The International Disaster Database https://www.emdat.be/\n\n全球自然灾害数据库。\n\nCrisisNET (Archive) https://crisis.net/\n\n人道危机、冲突事件数据。\n\nTwitter API https://developer.x.com/en/docs/x-api\n\n可用于应急舆情分析。"
   }
 ]
