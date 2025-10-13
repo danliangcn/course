@@ -30,4 +30,6 @@ knitr::opts_chunk$set(echo = TRUE)
   
 ## 课程作业
 ### [数据检索与选题探索](./exercises/searchq.html)
+### [数据清洗与可视化](./exercises/cleanvisual.html)
+
 
