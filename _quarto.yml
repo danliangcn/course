@@ -18,5 +18,7 @@ format:
     css: css/styles.css
     toc: true
 
-
+execute:
+  cache: true
+  freeze: auto
 

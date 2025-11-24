@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="">
-<meta name="dcterms.date" content="2025-09-08">
+<meta name="dcterms.date" content="2025-11-24">
 
-<title>有监督学习：基于决策树的模型 – course</title>
+<title>有监督学习：决策树 – course</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,6 +105,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../css/styles.css">
 </head>
@@ -115,11 +179,26 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#决策树" id="toc-决策树" class="nav-link active" data-scroll-target="#决策树">1 决策树</a></li>
-  <li><a href="#分袋" id="toc-分袋" class="nav-link" data-scroll-target="#分袋">2 分袋</a></li>
-  <li><a href="#随机森林" id="toc-随机森林" class="nav-link" data-scroll-target="#随机森林">3 随机森林</a></li>
-  <li><a href="#梯度提升" id="toc-梯度提升" class="nav-link" data-scroll-target="#梯度提升">4 梯度提升</a>
+  <li><a href="#决策树" id="toc-决策树" class="nav-link active" data-scroll-target="#决策树">1 决策树</a>
   <ul>
+  <li><a href="#工具和数据" id="toc-工具和数据" class="nav-link" data-scroll-target="#工具和数据">1.1 工具和数据</a></li>
+  <li><a href="#决策树的结构" id="toc-决策树的结构" class="nav-link" data-scroll-target="#决策树的结构">2.2 决策树的结构</a></li>
+  <li><a href="#分区" id="toc-分区" class="nav-link" data-scroll-target="#分区">2.3 分区</a></li>
+  <li><a href="#决策树深度的选择" id="toc-决策树深度的选择" class="nav-link" data-scroll-target="#决策树深度的选择">2.4 决策树深度的选择</a>
+  <ul>
+  <li><a href="#早期停止" id="toc-早期停止" class="nav-link" data-scroll-target="#早期停止">早期停止</a></li>
+  <li><a href="#修剪" id="toc-修剪" class="nav-link" data-scroll-target="#修剪">修剪</a></li>
+  </ul></li>
+  <li><a href="#示例" id="toc-示例" class="nav-link" data-scroll-target="#示例">2.5 示例</a></li>
+  <li><a href="#特征解释" id="toc-特征解释" class="nav-link" data-scroll-target="#特征解释">2.6 特征解释</a></li>
+  </ul></li>
+  <li><a href="#装袋法" id="toc-装袋法" class="nav-link" data-scroll-target="#装袋法">2 装袋法</a>
+  <ul>
+  <li><a href="#工具与数据" id="toc-工具与数据" class="nav-link" data-scroll-target="#工具与数据">2.1 工具与数据</a></li>
+  <li><a href="#装袋法使用条件" id="toc-装袋法使用条件" class="nav-link" data-scroll-target="#装袋法使用条件">2.2 装袋法使用条件</a></li>
+  <li><a href="#模型实现" id="toc-模型实现" class="nav-link" data-scroll-target="#模型实现">2.3 模型实现</a></li>
+  <li><a href="#易于并行化" id="toc-易于并行化" class="nav-link" data-scroll-target="#易于并行化">2.4 易于并行化</a></li>
+  <li><a href="#特征解释-1" id="toc-特征解释-1" class="nav-link" data-scroll-target="#特征解释-1">2.5 特征解释</a></li>
   <li><a href="#参考书籍" id="toc-参考书籍" class="nav-link" data-scroll-target="#参考书籍">参考书籍</a></li>
   </ul></li>
   </ul>
@@ -130,7 +209,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">有监督学习：基于决策树的模型</h1>
+<h1 class="title">有监督学习：决策树</h1>
 </div>
 
 
@@ -141,7 +220,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 8, 2025</p>
+      <p class="date">November 24, 2025</p>
     </div>
   </div>
   
@@ -155,15 +234,571 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="决策树" class="level1">
 <h1>1 决策树</h1>
+<p>基于树的模型是一类非参数算法，通过使用一组分割规则将特征空间划分为多个较小的（非重叠）区域，这些区域具有相似的响应值。在每个区域内拟合一个简单模型（例如，区域内响应值的平均值）来获得预测值。这种分而治之的方法可以产生简单易解释的规则，并可以通过树形图进行可视化。单个决策树的预测性能通常较弱，但是通过集成算法（如随机森林和梯度提升机）可以组合多个决策树构建预测能力更强的模型。</p>
+<section id="工具和数据" class="level2">
+<h2 class="anchored" data-anchor-id="工具和数据">1.1 工具和数据</h2>
+<p>使用以下R包：</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 辅助包</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)       <span class="co"># 用于数据处理</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)     <span class="co"># 用于出色的绘图</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 建模包</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)       <span class="co"># 决策树直接引擎</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)       <span class="co"># 决策树元引擎</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 模型解释包</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)  <span class="co"># 用于绘制决策树</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)         <span class="co"># 用于特征重要性</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pdp)         <span class="co"># 用于特征效应</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>使用Ames住房示例来展示主要概念。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ames <span class="ot">&lt;-</span> AmesHousing<span class="sc">::</span><span class="fu">make_ames</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 分层抽样划分训练集和测试集数据</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>split  <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(ames, <span class="at">prop =</span> <span class="fl">0.7</span>, <span class="at">strata =</span> <span class="st">"Sale_Price"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ames_train  <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ames_test   <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="分袋" class="level1">
-<h1>2 分袋</h1>
+<section id="决策树的结构" class="level2">
+<h2 class="anchored" data-anchor-id="决策树的结构">2.2 决策树的结构</h2>
+<p>构建决策树有许多方法，但最常见的是分类与回归树（CART）算法。基本的决策树将训练数据划分为同质子组（即响应值相似的群体），然后在每个子组内拟合一个简单常数（例如，回归问题中子组内响应值的均值）。子组（也称为节点）是通过使用二元分割递归形成，每次分割基于对每个特征的简单“是否”问题进行（例如，年龄&lt;18岁？）。这一过程重复多次，直到满足适当的停止标准（例如，达到树的最大深度）。在所有分区完成后，模型根据不同的问题的需要预测输出，对于回归问题，使用落入该子组的所有观测值的平均响应值输出预测；对于分类问题，使用子组内占多数的类别预测，同时可以使用子组内各类别的比例获得预测概率。</p>
+<p>结果是一个倒挂的树形结构，本质上，决策树是一组规则，允许通过对每个特征提出简单的“是否”问题来进行预测。例如，如果客户是忠诚客户，家庭收入超过15万美元，并且在商店购物，下面示例的决策树将预测客户会兑换优惠券。</p>
+<p><img src="decisiontree.png" class="img-fluid"></p>
+<p>将树的顶部第一个子组称为根节点（此节点包含所有训练数据）。树底部的最终子组称为终端节点或叶节点。之间的子组称为内部节点。节点之间的连接称为分支。</p>
+<p><img src="treeterms.png" class="img-fluid"></p>
 </section>
-<section id="随机森林" class="level1">
-<h1>3 随机森林</h1>
+<section id="分区" class="level2">
+<h2 class="anchored" data-anchor-id="分区">2.3 分区</h2>
+<p>CART使用二元递归分区（递归是因为每个分割或规则依赖于其上方的分割）。每个节点的目标是找到“最佳”特征（<span class="math inline">\(x_i\)</span>）将剩余数据划分为两个区域（<span class="math inline">\(R_1\)</span> 和 <span class="math inline">\(R_2\)</span>），使实际响应值（<span class="math inline">\(y_i\)</span>）与预测常数（<span class="math inline">\(c_i\)</span>）之间的总体误差最小化。对于回归问题，要最小化的目标函数是总平方误差和（SSE），如方程定义：</p>
+<p><span class="math display">\[
+SSE = \sum_{i \in R_1} (y_i - c_1)^2 + \sum_{i \in R_2} (y_i - c_2)^2
+\]</span></p>
+<p>对于分类问题，分区通常旨在最大化交叉熵或基尼指数的减少。在回归和分类树中，分区的目标是最小化终端节点中的不相似性。</p>
+<p>找到最佳特征/分割组合后，数据被划分为两个区域，并对这两个区域重复分割过程（因此称为二元递归分区）。此过程持续进行，直到达到适当的停止标准（例如，达到最大深度或树变得“过于复杂”）。</p>
+<p>需要注意的是，单个特征可以在树中多次使用。例如，假设从简单正弦函数加随机噪声生成的数据：<span class="math inline">\(Y_i \stackrel{iid}{\sim} N(\sin(X_i), \sigma^2)\)</span>，其中 <span class="math inline">\(i=1,2,\dots,500\)</span>。构建的回归树只有一个根节点（通常称为决策桩），在 <span class="math inline">\(x=3.1\)</span> 处发生分割。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>决策树展示了对特征 <span class="math inline">\(x\)</span> 的单一分割（左）。决策边界显示了当 <span class="math inline">\(x &lt; 3.1\)</span> 时，预测值为0.64；当 <span class="math inline">\(x &gt; 3.1\)</span> 时，预测值为-0.67。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>如果继续构建更深的树，可以在同一特征（<span class="math inline">\(x\)</span>）上继续分割。因为 <span class="math inline">\(x\)</span> 是唯一可用于分割的特征，因此将继续沿该特征的值寻找最佳分割点，直到达到预定的停止标准。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>深度为3的决策树，展示了对特征 <span class="math inline">\(x\)</span> 的7次分割，生成8个预测区域。</p>
+<p>即使有多个特征可用，如果某个特征在每次分区后仍能提供最佳分割，它可能仍然占据主导地位。例如，应用于鸢尾花数据集的决策树，其中根据两个特征（萼片宽度和萼片长度）预测花的种类（setosa、versicolor和virginica），结果生成了一个包含每个特征两次分割的最佳决策树。分类问题的决策边界生成包围观测值的矩形区域。预测值是区域内占比最高的响应类别。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="梯度提升" class="level1">
-<h1>4 梯度提升</h1>
+<section id="决策树深度的选择" class="level2">
+<h2 class="anchored" data-anchor-id="决策树深度的选择">2.4 决策树深度的选择</h2>
+<p>这引出了一个重要问题：树应该有多深（即多复杂）？如果构建过于复杂的树，往往会过拟合训练数据，导致泛化性能较差。</p>
+<p>有56次分割的过拟合决策树。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>因此，需要在树的深度和复杂性之间取得平衡，以优化对未来未见数据的预测性能。为了找到这种平衡，有两种主要方法：早期停止和修剪。</p>
+<section id="早期停止" class="level3">
+<h3 class="anchored" data-anchor-id="早期停止">早期停止</h3>
+<p>早期停止明确限制树的生长。可以通过以下几种方式限制树生长，但最常见的方法是限制树深度到某个水平或限制终端节点的最小观测数。限制树深度意味着在达到某个深度后停止分割（例如，仅生长深度为5层的树）。树越浅，预测的方差越小（对训练集数据的变化不敏感）；然而，过浅的树（如决策桩）可能无法捕捉数据中的交互和复杂模式，从而引入过多偏差。</p>
+<p>限制终端节点的最小大小（例如，叶节点必须包含至少10个观测值用于预测），即决定不分割包含过少数据点的中间节点。在极端情况下，终端节点大小为1允许单个观测值被捕获在叶节点中并用作预测（完全拟合训练集数据），会导致高方差和较差的泛化能力。另一方面，较大的值限制进一步分割，从而减少方差。</p>
+<p>这两种方法可以独立实施，然而，它们会相互影响。列展示了树深度如何影响决策边界，行展示了终端节点最小观测数如何影响决策边界。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="修剪" class="level3">
+<h3 class="anchored" data-anchor-id="修剪">修剪</h3>
+<p>另一种在树的深度和复杂性之间取得平衡的方法是不明确指定决策树的深度，而是先生长一个非常大且复杂的树，然后通过修剪找到最佳子树。例如可以使用成本复杂度参数（<span class="math inline">\(\alpha\)</span>）惩罚目标函数中的终端节点数（<span class="math inline">\(T\)</span>），如方程所示：</p>
+<p><span class="math display">\[
+\text{minimize} \left\{ SSE + \alpha |T| \right\}
+\]</span></p>
+<p>对于给定的 <span class="math inline">\(\alpha\)</span> 值，我们找到具有最低惩罚误差的最小修剪树。这和之前讨论的Lasso惩罚很像。与正则化方法类似，较小的惩罚倾向于生成更复杂的模型，导致更大的树。而较大的惩罚导致更小的树。因此，随着树变大，SSE的减少必须大于成本复杂度惩罚。通常，可以评估多个 <span class="math inline">\(\alpha\)</span> 值的模型，并使用交叉验证（CV）确定最佳值，从而找到泛化能力最好的最佳子树。</p>
+<p>为了修剪树，我们首先生长一个过于复杂的树（左），然后使用成本复杂度参数识别最佳子树（右）。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="示例" class="level2">
+<h2 class="anchored" data-anchor-id="示例">2.5 示例</h2>
+<p>可以使用<code>rpart</code>拟合回归树，然后使用<code>rpart.plot</code>可视化。回归树和分类树的拟合过程和可视化输出非常相似。两者都使用公式方法表达模型（类似于<code>lm()</code>）。然而，拟合回归树时，需要设置<code>method = "anova"</code>。默认情况下，<code>rpart()</code>会根据响应列的数据类型猜测使用的方法，但明确设置更清晰。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ames_dt1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> ames_train,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method  =</span> <span class="st">"anova"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>拟合模型后，可以查看决策树输出。打印关于不同分割的各种信息。例如，从根节点的2049个观测值开始，第一次分割的变量（即提供最大SSE减少的变量）是<code>Overall_Qual</code>。在第一个节点，所有<code>Overall_Qual</code>属于 {Very_Poor, Poor, Fair, Below_Average, Average, Above_Average, Good} 的观测值进入第2分支（2)）。沿此分支的总观测数（1701）、平均销售价格（155897）和SSE（4.109012e+12）。如果查看第3分支（3)），会看到348个<code>Overall_Qual</code>属于 {Very_Good, Excellent, Very_Excellent} 的观测值沿此分支，平均销售价格为303245.90，该区域的SSE为2.838371e+12。所以，<code>Overall_Qual</code>是销售价格的重要预测变量，品质高端的房屋平均销售价格几乎是其他房屋的两倍。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ames_dt1</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## n= 2049 </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">## node), split, n, deviance, yval</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">##       * denotes terminal node</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  1) root 2049 1.321981e+13 180922.60  </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    2) Overall_Qual=Very_Poor,Poor,Fair,Below_Average,Average,Above_Average,Good 1701 4.109012e+12 155897.00  </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">##      4) Neighborhood=North_Ames,Old_Town,Edwards,Sawyer,Mitchell,Brookside,Iowa_DOT_and_Rail_Road,South_and_West_of_Iowa_State_University,Meadow_Village,Briardale,Northpark_Villa,Blueste,Landmark 1023 1.370671e+12 131815.70  </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">##        8) First_Flr_SF&lt; 1089.5 661 5.643745e+11 119572.90  </span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">##         16) Overall_Qual=Very_Poor,Poor,Fair,Below_Average 149 1.016868e+11  90363.56 *</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="do">##         17) Overall_Qual=Average,Above_Average,Good 512 2.985678e+11 128073.30 *</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">##        9) First_Flr_SF&gt;=1089.5 362 5.263151e+11 154170.60 *</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">##      5) Neighborhood=College_Creek,Somerset,Northridge_Heights,Gilbert,Northwest_Ames,Sawyer_West,Crawford,Timberland,Northridge,Stone_Brook,Clear_Creek,Bloomington_Heights,Veenker,Green_Hills 678 1.249971e+12 192232.10  </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="do">##       10) Gr_Liv_Area&lt; 1725.5 484 5.392924e+11 177594.80  </span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="do">##         20) Total_Bsmt_SF&lt; 1295.5 342 2.299978e+11 166044.60 *</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">##         21) Total_Bsmt_SF&gt;=1295.5 142 1.537824e+11 205413.00 *</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="do">##       11) Gr_Liv_Area&gt;=1725.5 194 3.482733e+11 228749.90 *</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="do">##    3) Overall_Qual=Very_Good,Excellent,Very_Excellent 348 2.838371e+12 303245.90  </span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="do">##      6) Overall_Qual=Very_Good 242 9.801339e+11 271271.60  </span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="do">##       12) Gr_Liv_Area&lt; 1920.5 143 2.792781e+11 240517.80 *</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="do">##       13) Gr_Liv_Area&gt;=1920.5 99 3.702480e+11 315693.70 *</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="do">##      7) Overall_Qual=Excellent,Very_Excellent 106 1.045983e+12 376243.90  </span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="do">##       14) Gr_Liv_Area&lt; 1956.5 47 8.921667e+10 324506.70 *</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="do">##       15) Gr_Liv_Area&gt;=1956.5 59 7.307403e+11 417458.30  </span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="do">##         30) Neighborhood=Edwards,Somerset,Veenker 8 8.904433e+10 269794.20 *</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="do">##         31) Neighborhood=College_Creek,Old_Town,Northridge_Heights,Timberland,Northridge,Stone_Brook 51 4.398958e+11 440621.30  </span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="do">##           62) First_Flr_SF&lt; 1829 28 9.425118e+10 391454.60 *</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="do">##           63) First_Flr_SF&gt;=1829 23 1.955579e+11 500476.40 *</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>可以使用<code>rpart.plot()</code>可视化树模型。<code>rpart.plot()</code>函数有许多绘图选项，可以自行探索。然而，在默认输出中，会显示每个节点的数据百分比和该节点的预测结果。此树包含10个内部节点，12个终端节点。训练数据中有80个特征，但是决策树只在10个特征上进行分区。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(ames_dt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>rpart()</code>会自动应用一系列成本复杂度（<span class="math inline">\(\alpha\)</span>）值来修剪树，找到最佳的树深度。为了比较每个 <span class="math inline">\(\alpha\)</span> 值的误差，<code>rpart()</code>默认执行10折交叉验证。超过12个终端节点后，回报递减，如图所示（y轴是交叉验证误差，下方x轴是成本复杂度（<span class="math inline">\(\alpha\)</span>）值，上方x轴是终端节点数（即树大小 <span class="math inline">\(|T|\)</span>））。在实际操作中，建议使用最小交叉验证误差的1标准误差（SE）内的最小树（称为1-SE规则），穿过 <span class="math inline">\(|T|=11\)</span> 点附近的虚线，代表可以使用具有11个终端节点的树，并合理期望在小误差范围内获得相似结果。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(ames_dt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>修剪复杂度参数（cp）图，展示不同cp值（下方x轴）的相对交叉验证误差（y轴）。较小的cp值导致更大的树（上方x轴），即cp值越小，对模型复杂度的惩罚越轻，树变越大。使用1-SE规则，树大小为10-12时提供最佳交叉验证结果。</p>
+<p>可以通过设置<code>cp = 0</code>（无惩罚导致完全生长的树）强制<code>rpart()</code>生成完整树。在11个终端节点后，误差减少的回报递减。因此，可以修剪完整树，同时实现最小的预期误差。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ames_dt2 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> ames_train,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">method  =</span> <span class="st">"anova"</span>, </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">list</span>(<span class="at">cp =</span> <span class="dv">0</span>, <span class="at">xval =</span> <span class="dv">10</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(ames_dt2)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">11</span>, <span class="at">lty =</span> <span class="st">"dashed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>默认情况下，<code>rpart()</code>执行了一些自动调参，得到最佳子树，包含10次分割、11个终端节点和交叉验证SSE为0.22。<code>rpart()</code>不提供RMSE或其他指标，但可以使用<code>caret</code>获取。在这两种情况下，较小的惩罚（更深的树）提供了更好的交叉验证结果。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rpart交叉验证结果</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ames_dt1<span class="sc">$</span>cptable</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="do">##            CP nsplit rel error    xerror       xstd</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="do">## 1  0.47447176      0 1.0000000 1.0013872 0.05662002</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 2  0.11258635      1 0.5255282 0.5269995 0.02879027</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 3  0.06144216      2 0.4129419 0.4146178 0.02793907</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 4  0.02741384      3 0.3514997 0.3624752 0.02241687</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 5  0.02500852      4 0.3240859 0.3371336 0.02050669</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 6  0.02117890      5 0.2990774 0.3132772 0.01990067</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 7  0.01709753      6 0.2778985 0.2999761 0.02033487</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 8  0.01526499      7 0.2608009 0.2951699 0.02004302</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 9  0.01241470      8 0.2455360 0.2938842 0.02004706</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 0.01176358      9 0.2331213 0.2854259 0.01964856</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 11 0.01135317     10 0.2213577 0.2684158 0.01678069</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 12 0.01000000     11 0.2100045 0.2600794 0.01660921</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># caret交叉验证结果</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>ames_dt3 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"rpart"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">10</span>),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneLength =</span> <span class="dv">20</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ames_dt3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="特征解释" class="level2">
+<h2 class="anchored" data-anchor-id="特征解释">2.6 特征解释</h2>
+<p>为了衡量特征重要性，统计每个变量在每次分割中对损失函数（例如，SSE）的减少量。在某些情况下，单个变量可能在树中多次使用；因此，某个变量在所有分割中的损失函数总减少量被加起来，用作总特征重要性。使用<code>caret</code>时，这些值被标准化，使最重要的特征值为100，其余特征根据其相对损失函数减少量评分。此外，由于可能存在重要但未用于分割的候选变量，每次分割还会统计顶级竞争变量。</p>
+<p>图展示了Ames住房决策树的前40个特征。与MARS类似，决策树执行自动特征选择，不使用的特征被视为无信息特征。图中底部四个特征的重要性为零。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vip</span>(ames_dt3, <span class="at">num_features =</span> <span class="dv">40</span>, <span class="at">bar =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>通过部分依赖图，可以看到决策树如何建模特征与目标之间的关系。<code>Gr_Liv_Area</code>具有非线性关系，在1000-2500之间对预测销售价格的影响越来越强，但超过2500后几乎没有影响。<code>Gr_Liv_Area</code>和<code>Year_Built</code>交互效应的三维图显示了决策树与之前MARS的一个关键区别：决策树具有刚性的非平滑预测表面（台阶状的）。MARS是作为CART在回归问题上的改进。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 构建部分依赖图</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">partial</span>(ames_dt3, <span class="at">pred.var =</span> <span class="st">"Gr_Liv_Area"</span>) <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">partial</span>(ames_dt3, <span class="at">pred.var =</span> <span class="st">"Year_Built"</span>) <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">partial</span>(ames_dt3, <span class="at">pred.var =</span> <span class="fu">c</span>(<span class="st">"Gr_Liv_Area"</span>, <span class="st">"Year_Built"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotPartial</span>(<span class="at">levelplot =</span> <span class="cn">FALSE</span>, <span class="at">zlab =</span> <span class="st">"yhat"</span>, <span class="at">drape =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">colorkey =</span> <span class="cn">TRUE</span>, <span class="at">screen =</span> <span class="fu">list</span>(<span class="at">z =</span> <span class="sc">-</span><span class="dv">20</span>, <span class="at">x =</span> <span class="sc">-</span><span class="dv">60</span>))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 并排显示图</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2, p3, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>决策树具有许多优点：</p>
+<ul>
+<li>决策树需要很少的预处理。特征工程也会改善决策树，但是没有预处理要求。<br>
+</li>
+<li>决策树可以轻松处理分类特征而无需预处理。对于具有两个以上级别的无序分类特征，根据结果对其类别进行排序（对于回归问题，使用响应均值；对于分类问题，使用结果类别的比例）。<br>
+</li>
+<li>大多数决策树实现可以处理特征中的缺失值，不需要插补。最常见的是为分类变量创建新的“缺失”类别等。</li>
+</ul>
+<p>然而，单个决策树通常无法达到最先进的预测准确性，因此需要集成模型。</p>
+</section>
+</section>
+<section id="装袋法" class="level1">
+<h1>2 装袋法</h1>
+<p>自举法（bootstrapping）作为一种重采样方法，通过对原始训练数据进行有放回抽样，创建 <span class="math inline">\(b\)</span> 个自举样本。本部分介绍如何利用自举法创建预测的集成模型。<strong>自举聚合</strong>（bootstrap aggregating，也称为装袋法，bagging）是机器学习的集成算法之一，旨在提高回归和分类算法的稳定性和准确性。通过模型平均，装袋法有助于降低方差并减少过拟合。尽管通常应用于决策树方法，但它可以与任何类型的方法一起使用。</p>
+<section id="工具与数据" class="level2">
+<h2 class="anchored" data-anchor-id="工具与数据">2.1 工具与数据</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 辅助包</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)       <span class="co"># 用于数据处理</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)     <span class="co"># 用于出色的绘图</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)  <span class="co"># 用于foreach的并行后端</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreach)     <span class="co"># 用于并行处理的for循环</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 建模包</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)       <span class="co"># 用于通用模型拟合</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)       <span class="co"># 用于拟合决策树</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipred)       <span class="co"># 用于拟合装袋决策树</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>使用 <code>ames_train</code> 数据集来展示主要概念。</p>
+</section>
+<section id="装袋法使用条件" class="level2">
+<h2 class="anchored" data-anchor-id="装袋法使用条件">2.2 装袋法使用条件</h2>
+<p>自举聚合（装袋法）是一种通用的预测模型方法，通过拟合多个版本的预测模型，然后将它们组合（或集成）成一个聚合预测。装袋法是一种相当直接的算法，其中创建 <span class="math inline">\(b\)</span> 个原始训练数据的自举副本，对每个自举样本应用回归或分类算法（通常称为基础学习器或分类器），在回归情境中，通过平均各个基础学习器的预测值生成新预测。对于分类问题，通过多数投票或平均估计的类别概率来组合基础学习器的预测。可以通过方程表示，其中 <span class="math inline">\(X\)</span> 是希望生成预测的记录输入，<span class="math inline">\(\hat{f}_{bag}\)</span> 是装袋预测，<span class="math inline">\(\hat{f}_1(X), \hat{f}_2(X), \dots, \hat{f}_b(X)\)</span> 是各个基础学习器的预测。</p>
+<p><span class="math display">\[
+\hat{f}_{bag} = \frac{\hat{f}_1(X) + \hat{f}_2(X) + \dots + \hat{f}_b(X)}{b} \tag{10.1}
+\]</span></p>
+<p>由于聚合过程，装袋法有效降低了单个基础学习器的方差（即平均化降低了方差）；然而，装袋法并不总是优于单个基础学习器。一些模型的方差比其他模型更大。装袋法对不稳定、高方差的基础学习器尤其有效，因为这些算法的预测输出对训练数据的微小变化会产生重大变化，例如决策树和K近邻（当 <span class="math inline">\(k\)</span> 足够小时）等算法。然而，对于更稳定或高偏差的算法，装袋法对预测输出的改进较小，因为变异性较小（例如，装袋线性回归模型对于足够大的 <span class="math inline">\(b\)</span> 实际上只返回原始预测）。</p>
+<p>装袋法背后的总体理念被称为“群体智慧”（wisdom of the crowd）效应。它本质上意味着大型多样化群体中的信息聚合通常比群体中任何单一成员的决策更好。群体成员越多样化，他们的观点和预测就越多样化，这通常导致更好的聚合信息。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>在图中展示比较了 <span class="math inline">\(b=100\)</span> 个多项式回归模型、MARS模型和CART决策树的装袋效果。可以看到低方差基础学习器（多项式回归）从装袋中获益甚微，而高方差学习器（决策树）获益更多。装袋不仅有助于减少单棵树的变异性（不稳定性），还有助于平滑预测表面。</p>
+<p>最佳性能通常通过装袋50-500棵树获得。具有少量强预测变量的数据集通常需要较少的树；而具有大量噪声或多个强预测变量的数据集可能需要更多树。使用过多树不会导致过拟合。然而，由于运行多个模型，迭代次数越多，计算和时间需求越高。随着这些需求的增加，执行k折交叉验证可能变得计算负担沉重。</p>
+<p>通过装袋创建集成的一个好处是，它基于有放回的重采样，可以提供其自身的内部预测性能估计，即<strong>袋外（out-of-bag, OOB）样本</strong>。OOB样本可用于测试预测性能，其结果通常与k折交叉验证相当，假设数据集足够大（例如 <span class="math inline">\(n \geq 1,000\)</span>）。因此，随着数据集变大和装袋迭代增加，通常使用OOB误差估计作为预测性能的代表。</p>
+<p>可以将OOB泛化性能估计视为一种非结构化但免费的交叉验证统计量。</p>
+</section>
+<section id="模型实现" class="level2">
+<h2 class="anchored" data-anchor-id="模型实现">2.3 模型实现</h2>
+<p>单个决策树在预测Ames住房数据的销售价格时表现不佳，可以使用100棵未修剪的装袋树，而不是单一修剪决策树（不修剪树，保持低偏差和高方差，这时装袋效果最大）。如下代码块所示，获得了比单个（修剪）决策树显著的改进（装袋树的RMSE为26216.47，单棵决策树的RMSE为41019）。</p>
+<p><code>bagging()</code> 函数来自 <code>ipred</code> 包，使用 <code>nbagg</code> 控制装袋模型中的迭代次数，<code>coob = TRUE</code> 表示使用OOB误差率。默认情况下，<code>bagging()</code> 使用 <code>rpart::rpart()</code> 作为决策树基础学习器，但其他基础学习器也可用。由于装袋只是聚合基础学习器，我们可以照常调整基础学习器的参数。这里，通过 <code>control</code> 参数传递给 <code>rpart()</code>，构建深树（不修剪），每个节点只需两个观测值即可分割。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 使自举法可重现</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 训练装袋模型</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>ames_bag1 <span class="ot">&lt;-</span> <span class="fu">bagging</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">nbagg =</span> <span class="dv">100</span>,  </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">coob =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">minsplit =</span> <span class="dv">2</span>, <span class="at">cp =</span> <span class="dv">0</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>ames_bag1</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="do">## Bagging regression trees with 100 bootstrap replications </span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Call: bagging.data.frame(formula = Sale_Price ~ ., data = ames_train, </span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="do">##     nbagg = 100, coob = TRUE, control = rpart.control(minsplit = 2, </span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="do">##         cp = 0))</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Out-of-bag estimate of root mean squared error:  26216.47</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>需要注意的一点是，通常树越多越好。随着添加更多树，可以在更多高方差决策树上进行平均。起初误差会显著减少，但最终误差通常会趋于平稳，表明已达到合适的树数量。一般只需50-100棵树即可稳定误差（在其他情况下可能需要500棵或更多）。对于Ames数据，误差在略超过100棵树时便会稳定，此后通过装袋更多树可能不会显著改进。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>图中显示装袋1-200棵深层未修剪决策树的误差曲线。装袋的好处在170-180左右棵树时达到最优，但是在前100棵树前，误差就已经大量减少。</p>
+<p>还可以在 <code>caret</code> 中应用装袋，并使用10折交叉验证来查看集成模型的泛化能力。可以看到200棵树的交叉验证RMSE与OOB估计值相似（差值为495）。然而，使用OOB误差计算耗时几十秒，而执行以下10折交叉验证大约需要二十多分钟。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ames_bag2 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"treebag"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">10</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nbagg =</span> <span class="dv">200</span>,  </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">minsplit =</span> <span class="dv">2</span>, <span class="at">cp =</span> <span class="dv">0</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>ames_bag2</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Bagged CART </span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 2049 samples</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   80 predictor</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="do">## No pre-processing</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Resampling: Cross-Validated (10 fold) </span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">## Summary of sample sizes: 1844, 1843, 1846, 1844, 1844, 1844, ... </span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="do">## Resampling results:</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   RMSE      Rsquared   MAE    </span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="do">##   28315.53  0.8766892  16992.4</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Bagged CART </span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 2049 samples</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   80 predictor</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co"># No pre-processing</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Resampling: Cross-Validated (10 fold) </span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of sample sizes: 1844, 1843, 1846, 1844, 1844, 1844, ... </span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Resampling results:</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="co">#   RMSE      Rsquared   MAE    </span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co">#   28315.53  0.8766892  16992.4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="易于并行化" class="level2">
+<h2 class="anchored" data-anchor-id="易于并行化">2.4 易于并行化</h2>
+<p>随着迭代次数的增加，装袋可能需要更多的计算资源。不过，装袋过程是针对每个自举样本独立拟合模型，因此可以单独地并行训练模型后，将结果聚集合并为最终模型。通过访问大型集群或多个计算核心，可以更快地在大型数据集上创建装袋后集成。</p>
+<p>以下代码展示了在Ames住房数据上并行化装袋算法（使用 <span class="math inline">\(b=160\)</span> 棵决策树），使用8个核心并返回测试数据的预测。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建并行套接字集群</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">8</span>) <span class="co"># 使用8个工作进程</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>(cl) <span class="co"># 注册并行后端</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 并行拟合树并计算测试集的预测</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">foreach</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">icount</span>(<span class="dv">160</span>), </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">.packages =</span> <span class="st">"rpart"</span>, </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">.combine =</span> cbind</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%dopar%</span> {</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 训练数据的自举副本</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    index <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(ames_train), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    ames_train_boot <span class="ot">&lt;-</span> ames_train[index, ]  </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 对自举副本拟合树</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    bagged_tree <span class="ot">&lt;-</span> <span class="fu">rpart</span>(</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">minsplit =</span> <span class="dv">2</span>, <span class="at">cp =</span> <span class="dv">0</span>),</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> ames_train_boot</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    ) </span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">predict</span>(bagged_tree, <span class="at">newdata =</span> ames_test)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>predictions[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>]</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="do">##   result.1 result.2 result.3 result.4 result.5 result.6 result.7</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="do">## 1   112500   138500   129500   132000   116000   127500   113500</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="do">## 2   185000   185000   169000   181755   181000   185000   197500</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="do">## 3   189500   191000   200500   176000   195500   173000   180400</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="do">## 4   180000   231000   180000   180000   176400   188500   180000</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="do">## 5   286000   278000   220000   213500   294464   189000   278000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后，可以绘制在不同决策树数量条件下预测的RMSE，测试误差与上面OOB误差的变化趋势很像。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>predictions <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">observation =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>(),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">actual =</span> ames_test<span class="sc">$</span>Sale_Price) <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">gather</span>(tree, predicted, <span class="sc">-</span><span class="fu">c</span>(observation, actual)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(observation) <span class="sc">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tree =</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(tree, <span class="st">'</span><span class="sc">\\</span><span class="st">d+'</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(observation, tree) <span class="sc">%&gt;%</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(observation) <span class="sc">%&gt;%</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">avg_prediction =</span> <span class="fu">cummean</span>(predicted)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(tree) <span class="sc">%&gt;%</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">RMSE =</span> <span class="fu">RMSE</span>(avg_prediction, actual)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(tree, RMSE)) <span class="sc">+</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">'决策树数量'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>最后需要关闭并行集群。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 关闭并行集群</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="特征解释-1" class="level2">
+<h2 class="anchored" data-anchor-id="特征解释-1">2.5 特征解释</h2>
+<p>装袋过程会使得可解释的模型不再具有可解释性。然而，基于给定树中每次分割对损失函数（例如，SSE）的减少量总和来衡量特征重要性，仍然可以推断特征如何影响模型。</p>
+<p>对于每棵树，计算所有分割中损失函数减少的总和。然后，对每个特征在所有树上聚合同一指标。SSE（对于回归）平均减少量最大的特征被认为是最重要的。可以使用 <code>vip</code> 构建 <code>ames_bag2</code> 模型的前40个特征的变量重要性图（VIP）。</p>
+<p>对于单棵决策树，许多无信息特征未在树中使用。然而，装袋使用基于自举样本的多个决策树，所以会有更多特征用于分割。因此，一般而言，装袋模型会涉及更多特征，但单个特征重要性水平会较低。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>vip<span class="sc">::</span><span class="fu">vip</span>(ames_bag2, <span class="at">num_features =</span> <span class="dv">40</span>, <span class="at">geom =</span> <span class="st">"point"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>装袋模型中特征与预测响应之间的关系可以采用部分依赖图（PDP），它能直观地展现每个特征如何平均影响预测输出。尽管装袋的平均效应降低了最终集成的可解释性，PDP和其他可解释性方法有助于解释任何“黑盒”模型。部分依赖图突出了特征与响应之间可能存在的独特、有时非线性、非单调的关系。下图呈现销售价格与地块面积和临街宽度特征之间的关系。</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 构建部分依赖图</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> pdp<span class="sc">::</span><span class="fu">partial</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  ames_bag2, </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pred.var =</span> <span class="st">"Lot_Area"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid.resolution =</span> <span class="dv">20</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> pdp<span class="sc">::</span><span class="fu">partial</span>(</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  ames_bag2, </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">pred.var =</span> <span class="st">"Lot_Frontage"</span>, </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid.resolution =</span> <span class="dv">20</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>装袋法以牺牲可解释性和计算速度为代价，改善了高方差（低偏差）模型的预测准确性。然而，通过使用各种可解释性算法，如VIP和PDP，仍然可以推断装袋模型如何利用特征信息。此外，由于装袋由独立过程组成，该算法易于并行化。</p>
+<p>然而，在装袋树时，仍然存在一个问题。虽然模型构建步骤是独立的，但由于每次分割都考虑所有原始特征，装袋中的树并非完全独立。因为数据结构中存在潜在的强关系，不同自举样本的树通常具有相似的结构，尤其是在树顶部。</p>
+<p>例如，使用波士顿住房数据的不同自举样本创建六棵决策树，会看到树顶部具有相似的结构。尽管有15个预测变量可供分割，所有六棵树的头几次分割都由 <code>lstat</code> 和 <code>rm</code> 变量驱动。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mltrees_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>这种特性被称为<strong>树相关性</strong>（tree correlation），它阻止装袋进一步降低基础学习器的方差。而下面的随机森林算法可以通过减少这种相关性来扩展和改进装袋决策树，从而提高整体集成的准确性。</p>
+</section>
 <section id="参考书籍" class="level2">
 <h2 class="anchored" data-anchor-id="参考书籍">参考书籍</h2>
 <ul>

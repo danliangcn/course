@@ -1,0 +1,525 @@
+---
+title: "有监督学习：基于决策树的模型"
+author: ""
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc-depth: 5
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  cache = FALSE
+)
+
+library(tidyverse)
+
+theme_set(theme_light())
+
+library(showtext)
+library(sysfonts)
+
+# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
+ font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
+# font_add("Heiti SC", "C:/Windows/Fonts/simhei.ttf")
+
+# 启用 showtext 自动渲染
+showtext_auto()
+```
+
+
+# 1 随机森林
+
+随机森林是对装袋决策树的改进，通过构建大量去相关（de-correlated）的树来进一步提高预测性能。随机森林已成为一种非常流行的“开箱即用”或“现成”学习算法，凭借相对较少的超参数调优即可获得良好的预测性能。
+
+## 1.1 工具与数据
+
+重点在于使用 `ranger`和 `h2o` 包实现随机森林。
+
+```{r}
+# 辅助包
+library(dplyr)    # 用于数据处理
+library(ggplot2)  # 用于出色的图形
+
+# 建模包
+library(ranger)   # 随机森林的C++实现
+library(h2o)      # 随机森林的Java实现
+```
+
+继续使用 `ames_train` 数据集来展示主要概念。
+
+## 1.2 扩展装袋法
+
+随机森林基于决策树和装袋法的基本原理构建。装袋法通过在训练数据的自举副本上构建多棵树，为树的构建过程引入随机成分。然后，装袋法通过聚合所有树的预测来降低整体过程的方差，并提高预测性能。但是，简单地装袋树会导致树相关性（tree correlation），限制了方差减少的效果。
+
+随机森林通过在树生长过程中注入更多随机性来帮助减少树相关性。具体来说，在装袋过程中生长决策树时，随机森林执行**分割变量随机化**（split-variable randomization），即每次进行分割时，仅从原始 $p$ 个特征中随机选择 $m_{try}$ 个特征子集进行搜索。通常的默认值是回归问题中 $m_{try} = \frac{p}{3}$，分类问题中 $m_{try} = \sqrt{p}$，可以看做是一个调优参数。
+
+回归或分类随机森林的基本算法可概括如下：
+
+1. 给定训练数据集
+2. 选择要构建的树数量（`n_trees`）
+3. 对于 $i = 1$ 到 `n_trees`，执行：
+4. | 生成原始数据的自举样本
+5. | 对自举数据生长回归/分类树
+6. | 对于每次分割：
+7. | | 从所有 $p$ 个变量中随机选择 $m_{try}$ 个变量
+8. | | 在 $m_{try}$ 个变量中选择最佳变量/分割点
+9. | | 将节点分割为两个子节点
+10. | 结束
+11. | 使用典型的树模型停止标准确定树何时完成（但不修剪）
+12. 结束
+13. 输出树的集成
+
+当 $m_{try} = p$ 时，该算法等同于装袋决策树。
+
+由于算法随机选择自举样本进行训练并在每次分割时随机选择特征子集，生成了更多样化的树集，这往往比装袋树进一步减少树相关性，并显著提高预测能力。
+
+## 3.3 开箱即用（Out-of-the-box）的性能
+
+随机森林之所以流行，是因为它们通常提供非常好的开箱即用性能。尽管有多个可调超参数，但是默认值往往就能产生良好的结果。此外，在流行的机器学习算法中，随机森林在调优时的预测准确性变异性最小。
+
+例如，使用所有超参数设置为默认值的随机森林模型进行训练，获得的袋外（OOB）RMSE优于之前运行的任何模型（无需任何调优）。
+
+默认情况下，`ranger` 将 $m_{try}$ 参数设置为 $\text{floor}(\sqrt{\text{特征数量}})$；然而，对于回归问题，建议以 $\text{floor}(\frac{\text{特征数量}}{3})$ 开始。设置 `respect.unordered.factors = "order"`，指定如何处理无序因子变量，建议设置为“order”。
+
+```{r}
+# 特征数量
+n_features <- length(setdiff(names(ames_train), "Sale_Price"))
+
+# 训练默认随机森林模型
+ames_rf1 <- ranger(
+  Sale_Price ~ ., 
+  data = ames_train,
+  mtry = floor(n_features / 3),
+  respect.unordered.factors = "order",
+  seed = 123
+)
+
+# 获取OOB RMSE
+(default_rmse <- sqrt(ames_rf1$prediction.error))
+```
+
+## 1.4 超参数
+
+尽管随机森林开箱即用表现良好，但在训练模型时还应考虑几个可调参数。主要考虑的超参数包括：
+
+1. 森林中树的棵数
+2. 每次分割考虑的特征数量：$m_{try}$
+3. 每棵树的复杂性
+4. 采样方案
+5. 树构建期间使用的分割规则
+
+其中 (1) 和 (2) 对预测准确性影响最大，应始终进行调优。(3) 和 (4) 对预测准确性的影响较小，但仍值得探索。它们还能影响计算效率。(5) 对预测准确性的影响最小，主要用于提高计算效率。
+
+### 树的棵数
+
+随机森林中的树的数量，虽然严格来说不是超参数，但树的数量需要足够大以稳定误差率。经验法则是从特征数量的10倍开始；随着其他超参数（如 $m_{try}$ 和节点大小）的调整，可能需要更多或更少的树。更多树提供更稳健和稳定的误差估计和变量重要性度量；然而，计算时间随树数量线性增加。
+
+**建议**：从 $p \times 10$ 棵树开始，并根据需要调整。
+
+Ames数据有80个特征，从特征数量的10倍开始通常可确保误差估计收敛。
+
+```{r, echo=FALSE}
+# number of features
+n_features <- ncol(ames_train) - 1
+
+# tuning grid
+tuning_grid <- expand.grid(
+  trees = seq(10, 1000, by = 20),
+  rmse  = NA
+)
+
+for(i in seq_len(nrow(tuning_grid))) {
+
+  # Fit a random forest
+  fit <- ranger(
+    formula = Sale_Price ~ ., 
+    data = ames_train, 
+    num.trees = tuning_grid$trees[i],
+    mtry = floor(n_features / 3),
+    respect.unordered.factors = 'order',
+    verbose = FALSE,
+    seed = 123
+  )
+  
+  # Extract OOB RMSE
+  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
+  
+}
+
+ggplot(tuning_grid, aes(trees, rmse)) +
+  geom_line(size = 1) +
+  ylab("OOB Error (RMSE)") +
+  xlab("树的数量")
+```
+
+
+### $m_{try}$
+
+控制随机森林分割变量随机化特征的超参数通常称为 $m_{try}$，它有助于平衡树根部的相关性与合理的预测强度。对于回归问题，默认值通常为 $m_{try} = \frac{p}{3}$，对于分类问题为 $m_{try} = \sqrt{p}$。然而，当具有相关关系的预测变量比较少（例如，噪声预测变量）时，较高的 $m_{try}$ 值往往表现更好，因为它更有可能选择信号最强的特征。当有许多预测变量具有相关性时，较低的 $m_{try}$ 可能表现更好。
+
+**建议**：将恰好五等分区间[2, p]的4个分割点取值和为中心的默认值作为 $m_{try}$ 值开始。
+
+对于Ames数据，略低于默认值（26）的 $m_{try}$ 值（21）可提高性能。
+
+```{r, echo=FALSE}
+tuning_grid <- expand.grid(
+  trees = seq(10, 1000, by = 20),
+  mtry  = floor(c(seq(2, 80, length.out = 5), 26)),
+  rmse  = NA
+)
+
+for(i in seq_len(nrow(tuning_grid))) {
+  fit <- ranger(
+  formula    = Sale_Price ~ ., 
+  data       = ames_train, 
+  num.trees  = tuning_grid$trees[i],
+  mtry       = tuning_grid$mtry[i],
+  respect.unordered.factors = 'order',
+  verbose    = FALSE,
+  seed       = 123
+)
+  
+  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
+  
+}
+
+labels <- tuning_grid %>%
+  filter(trees == 990) %>%
+  mutate(mtry = as.factor(mtry))
+
+tuning_grid %>%
+  mutate(mtry = as.factor(mtry)) %>%
+  ggplot(aes(trees, rmse, color = mtry)) +
+  geom_line(size = 1, show.legend = FALSE) +
+  ggrepel::geom_text_repel(data = labels, aes(trees, rmse, label = mtry), nudge_x = 50, show.legend = FALSE) +
+  ylab("OOB Error (RMSE)") +
+  xlab("树的数量")
+```
+
+
+### 树复杂性
+
+随机森林基于单个决策树构建；因此，大多数随机森林模型有一个或多个超参数，允许控制单个树的深度和复杂性。通常包括节点大小、最大深度、最大终端节点数或允许额外分割的所需节点大小等超参数。节点大小是控制树复杂性的最常见超参数，大多数实现使用分类问题为1、回归问题为5的默认值，这些值往往产生良好的结果。然而，如果数据有许多噪声预测变量且较高的 $m_{try}$ 值表现最佳，则增加节点大小（即减少树深度和复杂性）可能提高性能。此外，如果计算时间是一个问题，增加节点大小通常可以显著减少运行时间，且对误差估计的影响较小。
+
+**建议**：调整节点大小时，从1-10之间的三个值开始，并根据对准确性和运行时间的影响进行调整。
+
+增加节点大小以降低树复杂性通常对计算速度（右）的影响大于对误差估计的影响。
+
+```{r, echo=FALSE}
+tuning_grid <- expand.grid(
+  min.node.size = 1:20,
+  run_time  = NA,
+  rmse = NA
+)
+
+for(i in seq_len(nrow(tuning_grid))) {
+  fit_time <- system.time({
+    fit <- ranger(
+    formula    = Sale_Price ~ ., 
+    data       = ames_train, 
+    num.trees  = 1000,
+    mtry       = 26,
+    min.node.size = tuning_grid$min.node.size[i],
+    respect.unordered.factors = 'order',
+    verbose    = FALSE,
+    seed       = 123
+  )
+})
+  
+  tuning_grid$run_time[i] <- fit_time[[3]]
+  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
+  
+}
+
+min_node_size <- tuning_grid %>% 
+  mutate(
+    error_first = first(rmse),
+    runtime_first = first(run_time),
+    `Error Growth` = (rmse / error_first) - 1,
+    `Run Time Reduction` = (run_time / runtime_first) - 1
+    )
+
+p1 <-  ggplot(min_node_size, aes(min.node.size, `Error Growth`)) +
+  geom_smooth(size = 1, se = FALSE, color = "black") +
+  scale_y_continuous("误差增长百分比", labels = scales::percent) +
+  xlab("节点大小") +
+  ggtitle("A) 对误差估计的影响")
+
+p2 <-  ggplot(min_node_size, aes(min.node.size, `Run Time Reduction`)) +
+  geom_smooth(size = 1, se = FALSE, color = "black") +
+  scale_y_continuous("运行时间减少", labels = scales::percent) +
+  xlab("节点大小") +
+  ggtitle("B) 对运行时间的影响")
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+
+### 采样方案
+
+随机森林的默认采样方案是自举法，其中对100%的观测值进行有放回采样（换句话说，每个自举副本与原始训练数据大小相同）；可以通过调整样本大小以及是否有放回采样来对模型效果产生影响。样本大小参数决定为每棵树的训练抽取多少观测值，减少样本大小会产生更多样化的树，从而降低树间相关性，这可能对预测准确性产生积极影响。如果数据集中有几个主导特征，减少样本大小也有助于最小化树间相关性。
+
+此外，当有许多具有不同级别数的分类特征（类别变量的各类别的频次差别比较大）时，有放回采样可能导致变量分割选择的偏差。因此，如果有不平衡的类别，无放回采样可提供更少偏差的跨树级别使用。
+
+**建议**：评估25%-100%的3-4个样本大小值，如果有不平衡的分类特征，尝试无放回采样。
+
+Ames数据有几个不平衡的分类特征，如社区、分区、整体质量等。因此，无放回采样提高了性能，因为它导致更少偏差的分割变量选择和更多不相关的树。
+
+```{r, echo=FALSE}
+tuning_grid <- expand.grid(
+  sample.fraction = seq(.05, .95, by = .05),
+  replace  = c(TRUE, FALSE),
+  rmse = NA
+)
+
+for(i in seq_len(nrow(tuning_grid))) {
+  fit <- ranger(
+    formula    = Sale_Price ~ ., 
+    data       = ames_train, 
+    num.trees  = 1000,
+    mtry       = 26,
+    sample.fraction = tuning_grid$sample.fraction[i],
+    replace = tuning_grid$replace[i],
+    respect.unordered.factors = 'order',
+    verbose    = FALSE,
+    seed       = 123
+  )
+
+  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
+  
+}
+
+tuning_grid %>%
+  ggplot(aes(sample.fraction, rmse, color = replace)) +
+  geom_line(size = 1) +
+  scale_x_continuous("抽样比例", breaks = seq(.1, .9, by = .1), labels = scales::percent) +
+  ylab("OOB Error (RMSE)") +
+  scale_color_discrete("有放回抽样") +
+  theme(legend.position = c(0.8, 0.85),
+        legend.key = element_blank(),
+        legend.background = element_blank())
+```
+
+
+### 分割规则
+
+随机森林树构建期间的默认分割规则包括从（随机选择的 $m_{try}$）个候选变量的所有分割中选择最小化基尼不纯度（分类问题）或SSE（回归问题）的分割。然而，这些默认分割规则偏向于选择具有更多可能分割的特征（例如，连续变量或具有多个类别的分类变量），而非分割较少的变量（极端情况是只有一种可能分割的二值变量）。条件推理树（conditional inference trees）实现了一种替代分割机制，有助于减少这种变量选择偏差。然而，集成条件推理树在预测准确性方面尚未被证明优于传统方法，且训练时间更长。
+
+为了提高计算效率，可以随机化分割规则，仅考虑变量的随机子集的可能分割值。如果仅随机选择单一分割值，则称为**极随机树**（extremely randomized trees）。由于分割点的额外随机性，这种方法通常对预测准确性没有改进，甚至可能有负面影响。
+
+关于运行时间，极随机树最快，因为分割点完全随机抽取，其次是经典随机森林，而条件推理森林的运行时间最长。
+
+**建议**：如果需要显著提高计算时间，尝试完全随机化树；然而，要确保与传统分割规则的预测准确性进行比较，因为这种方法通常对损失函数有负面影响。
+
+## 1.5 调优策略
+
+随着更复杂的算法和更多的超参数，需要考虑调优策略。之前采用的完全笛卡尔网格搜索，即评估所有感兴趣的超参数组合，往往需要较长的计算时间。下面的代码块搜索120种超参数组合，此网格搜索大约需要3分钟。
+
+```{r}
+# 创建超参数网格
+hyper_grid <- expand.grid(
+  mtry = floor(n_features * c(.05, .15, .25, .333, .4)),
+  min.node.size = c(1, 3, 5, 10), 
+  replace = c(TRUE, FALSE),                               
+  sample.fraction = c(.5, .63, .8),                       
+  rmse = NA                                               
+)
+
+# 执行完全笛卡尔网格搜索
+for(i in seq_len(nrow(hyper_grid))) {
+  # 为第i个超参数组合拟合模型
+  fit <- ranger(
+    formula         = Sale_Price ~ ., 
+    data            = ames_train, 
+    num.trees       = n_features * 10,
+    mtry            = hyper_grid$mtry[i],
+    min.node.size   = hyper_grid$min.node.size[i],
+    replace         = hyper_grid$replace[i],
+    sample.fraction = hyper_grid$sample.fraction[i],
+    verbose         = FALSE,
+    seed            = 123,
+    respect.unordered.factors = 'order',
+  )
+  # 导出OOB误差
+  hyper_grid$rmse[i] <- sqrt(fit$prediction.error)
+}
+
+# 评估前10个模型
+hyper_grid %>%
+  arrange(rmse) %>%
+  mutate(perc_gain = (default_rmse - rmse) / default_rmse * 100) %>%
+  head(10)
+
+```
+
+从结果来看，前10个模型的RMSE接近或低于25000（比基线模型提高了2.5%-3.5%）。在这些结果中，默认 $m_{try}$ 值 $\lfloor \frac{\text{特征数量}}{3} \rfloor = 26$ 几乎足够，较小的节点大小（更深的树）表现最佳。最突出的是，采样率低于100%且无放回采样始终表现最佳。低于100%的采样率增加了程序的随机性，有助于进一步降低树的相关性。无放回采样可能提高性能，因为该数据有许多多类别的不平衡的分类特征。
+
+然而，随着超参数和搜索值的增加以及数据集的扩大，完全笛卡尔搜索可能变得耗时且计算成本高。除了完全笛卡尔搜索，`h2o` 包提供随机网格搜索，允许从一个随机组合跳转到另一个，并提供早期停止规则，允许在满足特定条件（例如，训练了特定数量的模型、经过特定运行时间或准确性的提升非常小）时停止网格搜索。尽管随机离散搜索路径可能无法找到最优模型，但通常能找到一个已经足够好的模型。
+
+要使用 `h2o` 拟合随机森林模型，首先需要启动 `h2o` 会话。
+
+```{r}
+h2o.no_progress()
+h2o.init(max_mem_size = "5g")
+```
+
+接下来，我们需要将训练和测试数据集转换为 `h2o` 可处理的对象。
+
+```{r}
+# 将训练数据转换为h2o对象
+train_h2o <- as.h2o(ames_train)
+
+# 设置响应列为Sale_Price
+response <- "Sale_Price"
+
+# 设置预测变量名称
+predictors <- setdiff(colnames(ames_train), response)
+```
+
+以下代码使用 `h2o` 拟合默认随机森林模型，展示基线结果（OOB RMSE = 25045.8）与之前拟合的 `ranger` 基线模型非常相似。
+
+```{r}
+h2o_rf1 <- h2o.randomForest(
+    x = predictors, 
+    y = response,
+    training_frame = train_h2o, 
+    ntrees = n_features * 10,
+    seed = 123
+)
+
+h2o_rf1
+
+```
+
+要在 `h2o` 中执行网格搜索，需要将超参数网格设置为列表。例如，以下代码搜索比之前更大的网格空间，共240个超参数组合。然后，创建随机网格搜索策略，如果最后10个模型与之前的最佳模型相比，没有哪个模型的MSE改进能够达到0.1%，则停止。如果还能继续搜索改进，在300秒（5分钟）后也中断网格搜索。
+
+```{r}
+# 超参数网格
+hyper_grid <- list(
+  mtries = floor(n_features * c(.05, .15, .25, .333, .4)),
+  min_rows = c(1, 3, 5, 10),
+  max_depth = c(10, 20, 30),
+  sample_rate = c(.55, .632, .70, .80)
+)
+
+# 随机网格搜索策略
+search_criteria <- list(
+  strategy = "RandomDiscrete",
+  stopping_metric = "mse",
+  stopping_tolerance = 0.001,   # 如果改进<0.1%则停止
+  stopping_rounds = 10,         # 在最后10个模型上
+  max_runtime_secs = 60*5      # 或在5分钟后停止搜索
+)
+```
+
+然后，可以使用 `h2o.grid()` 执行网格搜索。以下代码启用早期停止执行网格搜索。在 `h2o.grid()` 中指定的早期停止方式是在最后10棵树中，如果单个随机森林模型的整体OOB误差改进小于0.05%时则停止生长单个随机森林模型。这可能可以大大减少单个随机森林模型的构建复杂度。此网格搜索需要5分钟。
+
+```{r}
+# 执行网格搜索
+random_grid <- h2o.grid(
+  algorithm = "randomForest",
+  grid_id = "rf_random_grid",
+  x = predictors, 
+  y = response, 
+  training_frame = train_h2o,
+  hyper_params = hyper_grid,
+  ntrees = n_features * 10,
+  seed = 123,
+  stopping_metric = "RMSE",   
+  stopping_rounds = 10,           # 如果最后10棵树没有改进
+  stopping_tolerance = 0.005,     # RMSE没有0.5%的改进
+  search_criteria = search_criteria
+)
+```
+
+该网格搜索在时间停止前评估了129个模型。最佳模型（`max_depth = 30`, `min_rows = 1`, `mtries = 32`, `sample_rate = 0.7`）实现了OOB RMSE为25030。因此，尽管随机搜索评估的模型数量仅为完全网格搜索的约53%，更有效的随机搜索在指定时间约束内找到了接近最优的模型。
+
+```{r}
+# 收集结果并按我们的模型性能指标排序
+random_grid_perf <- h2o.getGrid(
+  grid_id = "rf_random_grid", 
+  sort_by = "mse", 
+  decreasing = FALSE
+)
+
+random_grid_perf
+
+```
+
+## 1.6 特征解释
+
+随机森林的特征重要性和特征效应计算遵循之前讨论的过程。然而，除了基于不纯度的特征重要性度量（其中特征重要性基于所有树中给定特征的损失函数平均总减少量）外，随机森林通常还包括基于排列的特征重要性度量。在基于排列的方法中，对于每棵树，将OOB样本传递到树中并记录预测准确性。然后，逐一随机打乱每个变量的值并再次计算准确性。由于随机打乱特征值导致的准确性下降在所有树上对每个预测变量取平均值。准确性平均下降最大的变量被认为是最重要的。
+
+例如，可以通过设置 `ranger` 的 `importance` 参数来计算两种特征重要性度量。
+
+对于 `ranger`，一旦从网格搜索中确定了最优参数值，需要使用这些超参数值重新运行模型。还可以增加树的数量，这有助于创建更稳定的变量重要性值。
+
+```{r}
+# 使用基于不纯度的变量重要性重新运行模型
+rf_impurity <- ranger(
+  formula = Sale_Price ~ ., 
+  data = ames_train, 
+  num.trees = 2000,
+  mtry = 32,
+  min.node.size = 1,
+  sample.fraction = .80,
+  replace = FALSE,
+  importance = "impurity",
+  respect.unordered.factors = "order",
+  verbose = FALSE,
+  seed  = 123
+)
+
+# 使用基于排列的变量重要性重新运行模型
+rf_permutation <- ranger(
+  formula = Sale_Price ~ ., 
+  data = ames_train, 
+  num.trees = 2000,
+  mtry = 32,
+  min.node.size = 1,
+  sample.fraction = .80,
+  replace = FALSE,
+  importance = "permutation",
+  respect.unordered.factors = "order",
+  verbose = FALSE,
+  seed  = 123
+)
+```
+
+结果的变量重要性图（VIP）如图所示。通常，两种方法下的变量重要性顺序不同；通常会在图的顶部（和底部）看到相似的变量。因此，在本例中，可以有信心地说，有足够证据表明以下三个变量最具影响力：
+
+- `Overall_Qual`
+- `Gr_Liv_Area`
+- `Neighborhood`
+
+查看两个图中的接下来的约10个变量，还会看到一些共同的影响变量（例如，`Garage_Cars`、`Exter_Qual`、`Bsmt_Qual` 和 `Year_Built`）。
+
+```{r}
+p1 <- vip::vip(rf_impurity, num_features = 25, bar = FALSE)
+p2 <- vip::vip(rf_permutation, num_features = 25, bar = FALSE)
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+基于不纯度（左）和排列（右）的前25个最重要的变量。
+
+随机森林提供了一种非常强大的开箱即用算法，通常具有出色的预测准确性。它们具有决策树（除了代理分割外）和装袋法的所有优点，但大大降低了不稳定性和树间相关性。由于增加了分割变量选择属性，随机森林比装袋法更快，因为每次树分割的特征搜索空间更小。然而，随着数据集的扩大，随机森林仍会面临计算速度慢的问题，但与装袋法类似，该算法基于独立步骤，大多数现代实现（例如，`ranger`、`h2o`）允许并行化以改善训练时间。
+
+
+```{r, echo=FALSE}
+# clean up
+rm(list = ls())
+```
+
+## 参考书籍
+
+-   Bradley Boehmke & Brandon Greenwell，Hands-On Machine Learning with R，CRC Press, 2020.\
+-   Pang-Ning Tan 数据挖掘导论（第2版），机械工业出版社，2019.\
+-   Ian Foster等 Big Data and Social Science: Data Science Methods and Tools for Research and Practice, CRC Press, 2021.\
