@@ -17,6 +17,8 @@ format:
       - brand
     css: css/styles.css
     toc: true
+    html-math-method: mathjax
+    mathjax-url: https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js
 
 execute:
   cache: true
