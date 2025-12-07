@@ -1,0 +1,15 @@
+{
+  "hash": "2a72fe2ae959e57e44ac93c4ab60b5d8",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"公共管理大数据分析\"\nauthor: \"\"\ndate: \"2025-12-07\"\nformat: \n  html:\n    toc-depth: 5\n---\n\n\n\n  \n### [课程介绍](./intro/introduction.html)\n### [R语言基础](./basics/rbasics.html)\n### [数据收集与预处理](./dataclean/dataclean.html)  \n### [数据描述与可视化](./visualization/visualization.html)  \n### [机器学习基础](./machlearn/mlbasics.html)  \n### [有监督学习：回归模型](./machlearn/regression.html)  \n### [有监督学习：基于决策树的模型](./machlearn/mltrees.html)  \n### [有监督学习：随机森林与梯度提升](./machlearn/mlforest.html)  \n### [无监督学习：降维](.)  \n### [无监督学习：聚类](.)  \n### [文本分析与自然语言处理](.)  \n### [空间数据分析基础](./spatial/spatialdata.html)\n### [空间数据分析模型](.)\n### [因果推断与政策评估](.)\n### [期末项目展示与总结](.)\n  \n## 课程作业\n### [数据检索与选题探索](./exercises/searchq.html)\n### [数据清洗与可视化](./exercises/cleanvisual.html)\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
