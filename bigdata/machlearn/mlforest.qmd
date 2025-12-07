@@ -1,5 +1,5 @@
 ---
-title: "有监督学习：基于决策树的模型"
+title: "有监督学习：随机森林与梯度提升"
 author: ""
 date: "`r Sys.Date()`"
 format: 
@@ -54,6 +54,17 @@ library(h2o)      # 随机森林的Java实现
 
 继续使用 `ames_train` 数据集来展示主要概念。
 
+```{r}
+ames <- AmesHousing::make_ames()
+
+library(rsample)
+# 分层抽样划分训练集和测试集数据
+set.seed(123)
+split  <- initial_split(ames, prop = 0.7, strata = "Sale_Price")
+ames_train  <- training(split)
+ames_test   <- testing(split)
+```
+
 ## 1.2 扩展装袋法
 
 随机森林基于决策树和装袋法的基本原理构建。装袋法通过在训练数据的自举副本上构建多棵树，为树的构建过程引入随机成分。然后，装袋法通过聚合所有树的预测来降低整体过程的方差，并提高预测性能。但是，简单地装袋树会导致树相关性（tree correlation），限制了方差减少的效果。
@@ -80,9 +91,9 @@ library(h2o)      # 随机森林的Java实现
 
 由于算法随机选择自举样本进行训练并在每次分割时随机选择特征子集，生成了更多样化的树集，这往往比装袋树进一步减少树相关性，并显著提高预测能力。
 
-## 3.3 开箱即用（Out-of-the-box）的性能
+## 1.3 开箱即用（Out-of-the-box）的性能
 
-随机森林之所以流行，是因为它们通常提供非常好的开箱即用性能。尽管有多个可调超参数，但是默认值往往就能产生良好的结果。此外，在流行的机器学习算法中，随机森林在调优时的预测准确性变异性最小。
+随机森林之所以流行，是因为它们通常提供非常好的开箱即用性能。尽管有多个可调超参数，但是默认值往往就能产生良好的结果。此外，与流行的机器学习算法相比，随机森林在调优时的预测准确性变异性最小。
 
 例如，使用所有超参数设置为默认值的随机森林模型进行训练，获得的袋外（OOB）RMSE优于之前运行的任何模型（无需任何调优）。
 
@@ -123,200 +134,35 @@ ames_rf1 <- ranger(
 
 **建议**：从 $p \times 10$ 棵树开始，并根据需要调整。
 
-Ames数据有80个特征，从特征数量的10倍开始通常可确保误差估计收敛。
-
-```{r, echo=FALSE}
-# number of features
-n_features <- ncol(ames_train) - 1
-
-# tuning grid
-tuning_grid <- expand.grid(
-  trees = seq(10, 1000, by = 20),
-  rmse  = NA
-)
-
-for(i in seq_len(nrow(tuning_grid))) {
-
-  # Fit a random forest
-  fit <- ranger(
-    formula = Sale_Price ~ ., 
-    data = ames_train, 
-    num.trees = tuning_grid$trees[i],
-    mtry = floor(n_features / 3),
-    respect.unordered.factors = 'order',
-    verbose = FALSE,
-    seed = 123
-  )
-  
-  # Extract OOB RMSE
-  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
-  
-}
-
-ggplot(tuning_grid, aes(trees, rmse)) +
-  geom_line(size = 1) +
-  ylab("OOB Error (RMSE)") +
-  xlab("树的数量")
-```
-
-
 ### $m_{try}$
 
 控制随机森林分割变量随机化特征的超参数通常称为 $m_{try}$，它有助于平衡树根部的相关性与合理的预测强度。对于回归问题，默认值通常为 $m_{try} = \frac{p}{3}$，对于分类问题为 $m_{try} = \sqrt{p}$。然而，当具有相关关系的预测变量比较少（例如，噪声预测变量）时，较高的 $m_{try}$ 值往往表现更好，因为它更有可能选择信号最强的特征。当有许多预测变量具有相关性时，较低的 $m_{try}$ 可能表现更好。
 
 **建议**：将恰好五等分区间[2, p]的4个分割点取值和为中心的默认值作为 $m_{try}$ 值开始。
 
-对于Ames数据，略低于默认值（26）的 $m_{try}$ 值（21）可提高性能。
-
-```{r, echo=FALSE}
-tuning_grid <- expand.grid(
-  trees = seq(10, 1000, by = 20),
-  mtry  = floor(c(seq(2, 80, length.out = 5), 26)),
-  rmse  = NA
-)
-
-for(i in seq_len(nrow(tuning_grid))) {
-  fit <- ranger(
-  formula    = Sale_Price ~ ., 
-  data       = ames_train, 
-  num.trees  = tuning_grid$trees[i],
-  mtry       = tuning_grid$mtry[i],
-  respect.unordered.factors = 'order',
-  verbose    = FALSE,
-  seed       = 123
-)
-  
-  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
-  
-}
-
-labels <- tuning_grid %>%
-  filter(trees == 990) %>%
-  mutate(mtry = as.factor(mtry))
-
-tuning_grid %>%
-  mutate(mtry = as.factor(mtry)) %>%
-  ggplot(aes(trees, rmse, color = mtry)) +
-  geom_line(size = 1, show.legend = FALSE) +
-  ggrepel::geom_text_repel(data = labels, aes(trees, rmse, label = mtry), nudge_x = 50, show.legend = FALSE) +
-  ylab("OOB Error (RMSE)") +
-  xlab("树的数量")
-```
-
-
 ### 树复杂性
 
-随机森林基于单个决策树构建；因此，大多数随机森林模型有一个或多个超参数，允许控制单个树的深度和复杂性。通常包括节点大小、最大深度、最大终端节点数或允许额外分割的所需节点大小等超参数。节点大小是控制树复杂性的最常见超参数，大多数实现使用分类问题为1、回归问题为5的默认值，这些值往往产生良好的结果。然而，如果数据有许多噪声预测变量且较高的 $m_{try}$ 值表现最佳，则增加节点大小（即减少树深度和复杂性）可能提高性能。此外，如果计算时间是一个问题，增加节点大小通常可以显著减少运行时间，且对误差估计的影响较小。
+随机森林基于单个决策树构建；因此，大多数随机森林模型有一个或多个超参数来控制单个树的深度和复杂性。通常包括节点大小、最大深度、最大终端节点数或允许额外分割的所需节点大小等超参数。节点大小是控制树复杂性的最常见超参数，一般分类问题设定为1、回归问题设定为5的默认值。然而，如果数据有许多噪声预测变量且较高的 $m_{try}$ 值时表现较好，则应增加节点大小（即减少树深度和复杂性）能提高性能。此外，如果要考虑计算时间，增加节点大小通常可以显著减少运行时间，且对误差估计的影响较小。
 
 **建议**：调整节点大小时，从1-10之间的三个值开始，并根据对准确性和运行时间的影响进行调整。
 
-增加节点大小以降低树复杂性通常对计算速度（右）的影响大于对误差估计的影响。
-
-```{r, echo=FALSE}
-tuning_grid <- expand.grid(
-  min.node.size = 1:20,
-  run_time  = NA,
-  rmse = NA
-)
-
-for(i in seq_len(nrow(tuning_grid))) {
-  fit_time <- system.time({
-    fit <- ranger(
-    formula    = Sale_Price ~ ., 
-    data       = ames_train, 
-    num.trees  = 1000,
-    mtry       = 26,
-    min.node.size = tuning_grid$min.node.size[i],
-    respect.unordered.factors = 'order',
-    verbose    = FALSE,
-    seed       = 123
-  )
-})
-  
-  tuning_grid$run_time[i] <- fit_time[[3]]
-  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
-  
-}
-
-min_node_size <- tuning_grid %>% 
-  mutate(
-    error_first = first(rmse),
-    runtime_first = first(run_time),
-    `Error Growth` = (rmse / error_first) - 1,
-    `Run Time Reduction` = (run_time / runtime_first) - 1
-    )
-
-p1 <-  ggplot(min_node_size, aes(min.node.size, `Error Growth`)) +
-  geom_smooth(size = 1, se = FALSE, color = "black") +
-  scale_y_continuous("误差增长百分比", labels = scales::percent) +
-  xlab("节点大小") +
-  ggtitle("A) 对误差估计的影响")
-
-p2 <-  ggplot(min_node_size, aes(min.node.size, `Run Time Reduction`)) +
-  geom_smooth(size = 1, se = FALSE, color = "black") +
-  scale_y_continuous("运行时间减少", labels = scales::percent) +
-  xlab("节点大小") +
-  ggtitle("B) 对运行时间的影响")
-
-gridExtra::grid.arrange(p1, p2, nrow = 1)
-```
-
-
 ### 采样方案
 
-随机森林的默认采样方案是自举法，其中对100%的观测值进行有放回采样（换句话说，每个自举副本与原始训练数据大小相同）；可以通过调整样本大小以及是否有放回采样来对模型效果产生影响。样本大小参数决定为每棵树的训练抽取多少观测值，减少样本大小会产生更多样化的树，从而降低树间相关性，这可能对预测准确性产生积极影响。如果数据集中有几个主导特征，减少样本大小也有助于最小化树间相关性。
+随机森林的默认采样方案是自举法，其中对100%的观测值进行有放回采样（即每个自举副本与原始训练数据大小相同）；可以通过调整样本大小以及是否有放回采样来对模型效果产生影响。样本大小参数决定为每棵树的训练抽取多少观测值，减少样本大小会产生更多样化的树，从而降低树间相关性，这会对预测准确性产生积极影响。如果数据集中有几个主导特征，减少样本大小也有助于最小化树间相关性。
 
-此外，当有许多具有不同级别数的分类特征（类别变量的各类别的频次差别比较大）时，有放回采样可能导致变量分割选择的偏差。因此，如果有不平衡的类别，无放回采样可提供更少偏差的跨树级别使用。
+此外，当有许多具有不同级别数的分类特征（类别变量的各类别的频次差别比较大）时，有放回采样可能导致变量分割选择的偏差。因此，如果有不平衡的类别，无放回采样可产生更少偏差。
 
 **建议**：评估25%-100%的3-4个样本大小值，如果有不平衡的分类特征，尝试无放回采样。
 
-Ames数据有几个不平衡的分类特征，如社区、分区、整体质量等。因此，无放回采样提高了性能，因为它导致更少偏差的分割变量选择和更多不相关的树。
-
-```{r, echo=FALSE}
-tuning_grid <- expand.grid(
-  sample.fraction = seq(.05, .95, by = .05),
-  replace  = c(TRUE, FALSE),
-  rmse = NA
-)
-
-for(i in seq_len(nrow(tuning_grid))) {
-  fit <- ranger(
-    formula    = Sale_Price ~ ., 
-    data       = ames_train, 
-    num.trees  = 1000,
-    mtry       = 26,
-    sample.fraction = tuning_grid$sample.fraction[i],
-    replace = tuning_grid$replace[i],
-    respect.unordered.factors = 'order',
-    verbose    = FALSE,
-    seed       = 123
-  )
-
-  tuning_grid$rmse[i] <- sqrt(fit$prediction.error)
-  
-}
-
-tuning_grid %>%
-  ggplot(aes(sample.fraction, rmse, color = replace)) +
-  geom_line(size = 1) +
-  scale_x_continuous("抽样比例", breaks = seq(.1, .9, by = .1), labels = scales::percent) +
-  ylab("OOB Error (RMSE)") +
-  scale_color_discrete("有放回抽样") +
-  theme(legend.position = c(0.8, 0.85),
-        legend.key = element_blank(),
-        legend.background = element_blank())
-```
-
-
 ### 分割规则
 
-随机森林树构建期间的默认分割规则包括从（随机选择的 $m_{try}$）个候选变量的所有分割中选择最小化基尼不纯度（分类问题）或SSE（回归问题）的分割。然而，这些默认分割规则偏向于选择具有更多可能分割的特征（例如，连续变量或具有多个类别的分类变量），而非分割较少的变量（极端情况是只有一种可能分割的二值变量）。条件推理树（conditional inference trees）实现了一种替代分割机制，有助于减少这种变量选择偏差。然而，集成条件推理树在预测准确性方面尚未被证明优于传统方法，且训练时间更长。
+随机森林树构建期间的默认分割规则包括从（随机选择的 $m_{try}$）个候选变量的所有分割中选择最小化基尼不纯度（分类问题）或SSE（回归问题）的分割。然而，这些默认分割规则偏向于选择具有更多可能分割的特征（例如，连续变量或具有多个类别的分类变量），而非分割较少的变量（极端情况是只有一种可能分割的二值变量）。条件推理树（conditional inference trees）采用替代分割机制，可以减少变量选择偏差，但是训练时间更长。
 
-为了提高计算效率，可以随机化分割规则，仅考虑变量的随机子集的可能分割值。如果仅随机选择单一分割值，则称为**极随机树**（extremely randomized trees）。由于分割点的额外随机性，这种方法通常对预测准确性没有改进，甚至可能有负面影响。
+为了提高计算效率，可以随机化分割规则，仅考虑变量的随机子集的可能分割值。如果仅随机选择单一分割值，则称为**极随机树**（extremely randomized trees）。
 
-关于运行时间，极随机树最快，因为分割点完全随机抽取，其次是经典随机森林，而条件推理森林的运行时间最长。
+从运行时间来看，极随机树最快，其次是经典随机森林，而条件推理森林的运行时间最长。
 
-**建议**：如果需要显著提高计算时间，尝试完全随机化树；然而，要确保与传统分割规则的预测准确性进行比较，因为这种方法通常对损失函数有负面影响。
+**建议**：如果需要显著改善计算时间，可以尝试完全随机化树；然而，要确保与传统分割规则的预测准确性进行比较，因为这种方法通常对损失函数有负面影响。
 
 ## 1.5 调优策略
 
@@ -359,9 +205,9 @@ hyper_grid %>%
 
 ```
 
-从结果来看，前10个模型的RMSE接近或低于25000（比基线模型提高了2.5%-3.5%）。在这些结果中，默认 $m_{try}$ 值 $\lfloor \frac{\text{特征数量}}{3} \rfloor = 26$ 几乎足够，较小的节点大小（更深的树）表现最佳。最突出的是，采样率低于100%且无放回采样始终表现最佳。低于100%的采样率增加了程序的随机性，有助于进一步降低树的相关性。无放回采样可能提高性能，因为该数据有许多多类别的不平衡的分类特征。
+从结果来看，前10个模型的RMSE接近或低于25000（比基线模型提高了2.5%-3.5%）。在这些结果中，默认 $m_{try}$ 值 $\lfloor \frac{\text{特征数量}}{3} \rfloor = 26$ 就是比较理想的参数，较小的节点大小（更深的树）表现最佳。最突出的是，采样率低于100%且无放回采样始终表现最佳。低于100%的采样率增加了程序的随机性，有助于进一步降低树的相关性。无放回采样能提高性能，是因为该数据有许多多类别的不平衡的分类特征。
 
-然而，随着超参数和搜索值的增加以及数据集的扩大，完全笛卡尔搜索可能变得耗时且计算成本高。除了完全笛卡尔搜索，`h2o` 包提供随机网格搜索，允许从一个随机组合跳转到另一个，并提供早期停止规则，允许在满足特定条件（例如，训练了特定数量的模型、经过特定运行时间或准确性的提升非常小）时停止网格搜索。尽管随机离散搜索路径可能无法找到最优模型，但通常能找到一个已经足够好的模型。
+然而，随着超参数和搜索值的增加以及数据集的扩大，完全笛卡尔搜索可能变得耗时且计算成本高。可以采用`h2o` 包提供的随机网格搜索，能够从一个随机组合跳转到另一个，并提供早期停止规则，在满足特定条件（例如，训练了特定数量的模型、经过特定运行时间或准确性的提升非常小）时停止网格搜索。尽管随机离散搜索路径可能无法找到最优模型，但通常能找到一个已经足够好的模型。
 
 要使用 `h2o` 拟合随机森林模型，首先需要启动 `h2o` 会话。
 
@@ -415,13 +261,17 @@ search_criteria <- list(
   stopping_metric = "mse",
   stopping_tolerance = 0.001,   # 如果改进<0.1%则停止
   stopping_rounds = 10,         # 在最后10个模型上
-  max_runtime_secs = 60*5      # 或在5分钟后停止搜索
+  max_runtime_secs = 60*2      # 或在2分钟后停止搜索
 )
 ```
 
-然后，可以使用 `h2o.grid()` 执行网格搜索。以下代码启用早期停止执行网格搜索。在 `h2o.grid()` 中指定的早期停止方式是在最后10棵树中，如果单个随机森林模型的整体OOB误差改进小于0.05%时则停止生长单个随机森林模型。这可能可以大大减少单个随机森林模型的构建复杂度。此网格搜索需要5分钟。
+然后，可以使用 `h2o.grid()` 执行网格搜索。以下代码启用早期停止执行网格搜索。在 `h2o.grid()` 中指定的早期停止方式是在最后10棵树中，如果单个随机森林模型的整体OOB误差改进小于0.05%时则停止生长单个随机森林模型。这可能可以大大减少单个随机森林模型的构建复杂度。此网格搜索需要2分钟。
 
 ```{r}
+if ("rf_random_grid" %in% h2o.ls()$key) {
+  h2o.rm("rf_random_grid")
+}   # 剔除由于反复运行可能会出现的id重复的对象
+
 # 执行网格搜索
 random_grid <- h2o.grid(
   algorithm = "randomForest",
@@ -439,13 +289,13 @@ random_grid <- h2o.grid(
 )
 ```
 
-该网格搜索在时间停止前评估了129个模型。最佳模型（`max_depth = 30`, `min_rows = 1`, `mtries = 32`, `sample_rate = 0.7`）实现了OOB RMSE为25030。因此，尽管随机搜索评估的模型数量仅为完全网格搜索的约53%，更有效的随机搜索在指定时间约束内找到了接近最优的模型。
+该网格搜索在时间停止前评估了137个模型。最佳模型（`max_depth = 10`, `min_rows = 1`, `mtries = 32`, `sample_rate = 0.7`）实现了OOB RMSE为25346.50。因此，尽管随机搜索评估的模型数量仅为完全网格搜索的约53%，更有效的随机搜索在指定时间约束内找到了接近最优的模型。
 
 ```{r}
 # 收集结果并按我们的模型性能指标排序
 random_grid_perf <- h2o.getGrid(
   grid_id = "rf_random_grid", 
-  sort_by = "mse", 
+  sort_by = "rmse", 
   decreasing = FALSE
 )
 
@@ -455,11 +305,9 @@ random_grid_perf
 
 ## 1.6 特征解释
 
-随机森林的特征重要性和特征效应计算遵循之前讨论的过程。然而，除了基于不纯度的特征重要性度量（其中特征重要性基于所有树中给定特征的损失函数平均总减少量）外，随机森林通常还包括基于排列的特征重要性度量。在基于排列的方法中，对于每棵树，将OOB样本传递到树中并记录预测准确性。然后，逐一随机打乱每个变量的值并再次计算准确性。由于随机打乱特征值导致的准确性下降在所有树上对每个预测变量取平均值。准确性平均下降最大的变量被认为是最重要的。
+随机森林的特征重要性和特征效应计算与决策树和装袋法相似。然而，除了基于不纯度的特征重要性度量（其中特征重要性基于所有树中给定特征的损失函数平均总减少量）外，随机森林通常还包括基于排列的特征重要性度量。在基于排列的方法中，对于每棵树，将OOB样本传递到树中并记录预测准确性。然后，逐一随机打乱每个变量的值并再次计算准确性。由于随机打乱特征值导致的准确性下降在所有树上对每个预测变量取平均值。准确性平均下降最大的变量被认为是最重要的。
 
 例如，可以通过设置 `ranger` 的 `importance` 参数来计算两种特征重要性度量。
-
-对于 `ranger`，一旦从网格搜索中确定了最优参数值，需要使用这些超参数值重新运行模型。还可以增加树的数量，这有助于创建更稳定的变量重要性值。
 
 ```{r}
 # 使用基于不纯度的变量重要性重新运行模型
@@ -510,8 +358,847 @@ gridExtra::grid.arrange(p1, p2, nrow = 1)
 
 基于不纯度（左）和排列（右）的前25个最重要的变量。
 
-随机森林提供了一种非常强大的开箱即用算法，通常具有出色的预测准确性。它们具有决策树（除了代理分割外）和装袋法的所有优点，但大大降低了不稳定性和树间相关性。由于增加了分割变量选择属性，随机森林比装袋法更快，因为每次树分割的特征搜索空间更小。然而，随着数据集的扩大，随机森林仍会面临计算速度慢的问题，但与装袋法类似，该算法基于独立步骤，大多数现代实现（例如，`ranger`、`h2o`）允许并行化以改善训练时间。
+随机森林提供了一种非常强大的开箱即用算法，通常具有出色的预测准确性。它们具有决策树（除了代理分割外）和装袋法的所有优点，但大大降低了不稳定性和树间相关性。由于增加了分割变量选择属性，随机森林比装袋法更快，因为每次树分割的特征搜索空间更小。然而，随着数据集的扩大，随机森林仍会面临计算速度慢的问题，但与装袋法类似，该算法基于独立步骤，大多数现代实现（例如，`ranger`、`h2o`）允许并行化来改善训练时间。
 
+# 2 梯度提升机（Gradient Boosting Machines, GBMs）
+
+梯度提升机（GBMs）是一类极其流行的机器学习算法，在多个领域都取得了显著成功，也是机器学习算法比赛 Kaggle 竞赛中最常获胜的方法之一。与随机森林使用大量深度且相互独立的树不同，GBM 通过**顺序构建浅树（shallow trees）**来形成一个模型序列，每棵树都在前一棵树的基础上不断学习与改进。单独的一棵浅树预测能力很弱，但若将它们以“提升（boosting）”的方式组合，经过适当调参后，可以形成一个强大的“委员会模型（committee）”，其预测能力往往更强。
+
+## 2.1 软件包与数据
+
+使用以下 R 包。其中部分作为辅助工具使用，但重点在展示如何利用 **gbm**（B. Greenwell et al. 2018）、**xgboost**（Chen et al. 2018）、**h2o** 包实现 GBM：
+
+```{r}
+# Helper packages
+library(dplyr)    # 数据处理工具
+
+# Modeling packages
+library(rpart)
+library(gbm)      # 原始版本的GBM，包括regular & stochastic GBM
+library(h2o)      # Java 实现，包含多种 GBM 变体
+library(xgboost)  # Extreme Gradient Boosting 实现
+```
+
+继续使用 `ames_train` 数据集，并复用前面的 h2o 环境设置。
+
+```{r}
+h2o.init(max_mem_size = "10g")
+
+train_h2o <- as.h2o(ames_train)
+response <- "Sale_Price"
+predictors <- setdiff(colnames(ames_train), response)
+```
+
+## 2.2 Boosting 的工作原理
+
+许多监督机器学习算法基于单一模型，例如：
+
+* 普通线性回归
+* 惩罚回归（penalized regression）
+* 单棵决策树
+* 支持向量机（SVM）
+
+而装袋法与随机森林则通过将多个模型组合为一个集成模型来提升表现。集成模型通过平均或投票方式组合单个模型的预测。
+由于平均可以降低方差，**装袋法更适用于高方差、低偏差的模型（例如深树）**。
+
+Boosting 则相反，它通常更适用于 **高偏差、低方差的弱模型**。
+
+Boosting 是一种通用的集成方法，可以将弱模型组合成强模型。尽管理论上 Boosting 可以应用于任意类型的弱学习器，但现实中几乎总是使用 **决策树**。
+
+### 2.2.1 顺序集成（Sequential Ensemble）方法
+
+Boosting 的核心思想：
+
+> **按序构建多棵弱树，每一棵树用于修正上一棵树的错误。**
+
+如图所示，每一棵新树都会重点学习上一棵树预测误差最大的样本。
+
+```{mermaid}
+flowchart LR
+    A[数据集] -->|训练| B[模型 1（弱学习器）]
+    B -->|测试| C[误差 1]
+    C -->|基于误差训练| D[模型 2（弱学习器）]
+    D -->|测试| E[误差 2]
+    E -->|基于误差训练| F[模型 3（弱学习器）]
+    F --> G[…… 多轮迭代 ……]
+    G --> H[综合所有子模型]
+    H --> I[最终预测结果]
+
+```
+
+
+Boosting 的三大关键：
+
+ ① 基学习器（Base learners）
+
+Boosting 是一个框架，可以使用任何弱学习器，但在实践中，几乎总是采用 **浅层决策树**。
+
+ ② 训练弱模型
+
+弱学习器的错误率仅略优于随机猜测。Boosting 通过让每一棵树重点学习上一棵树的残差来逐步减少偏差。
+
+浅树（1–6 次分裂）是典型弱学习器。
+
+ ③ 基于残差的顺序训练
+
+Boosting 回归树过程如下：
+
+1️⃣ 拟合第一棵树
+  **F₁(x) = y**
+
+2️⃣ 拟合第二棵树以学习第一棵树的残差
+  **h₁(x) = y – F₁(x)**
+  **F₂(x) = F₁(x) + h₁(x)**
+
+3️⃣ 拟合第三棵树学习第二棵树的残差
+  **h₂(x) = y – F₂(x)**
+  **F₃(x) = F₂(x) + h₂(x)**
+
+……
+
+最终模型是若干弱学习器的加性组合：
+
+[
+f(x)=\sum_{b=1}^{B} f_b(x)
+]
+
+下图展示了利用“决策桩”（单分裂树）逐步逼近复杂函数（正弦波）的例子。
+
+```{r, echo=FALSE}
+# Simulate sine wave data
+set.seed(1112)  # for reproducibility
+df <- tibble::tibble(
+  x = seq(from = 0, to = 2 * pi, length = 1000),
+  y = sin(x) + rnorm(length(x), sd = 0.5),
+  truth = sin(x)
+)
+
+# Function to boost `rpart::rpart()` trees
+rpartBoost <- function(x, y, data, num_trees = 100, learn_rate = 0.1, tree_depth = 6) {
+  x <- data[[deparse(substitute(x))]]
+  y <- data[[deparse(substitute(y))]]
+  G_b_hat <- matrix(0, nrow = length(y), ncol = num_trees + 1)
+  r <- y
+  for(tree in seq_len(num_trees)) {
+    g_b_tilde <- rpart(r ~ x, control = list(cp = 0, maxdepth = tree_depth))
+    g_b_hat <- learn_rate * predict(g_b_tilde)
+    G_b_hat[, tree + 1] <- G_b_hat[, tree] + matrix(g_b_hat)
+    r <- r - g_b_hat
+    colnames(G_b_hat) <- paste0("tree_", c(0, seq_len(num_trees)))
+  }
+  cbind(df, as.data.frame(G_b_hat)) %>%
+    gather(tree, prediction, starts_with("tree")) %>%
+    mutate(tree = stringr::str_extract(tree, "\\d+") %>% as.numeric())
+}
+
+# Plot boosted tree sequence
+rpartBoost(x, y, data = df, num_trees = 2^10, learn_rate = 0.05, tree_depth = 1) %>%
+  filter(tree %in% c(0, 2^c(0:10))) %>%
+  ggplot(aes(x, prediction)) +
+    ylab("y") +
+    geom_point(data = df, aes(x, y), alpha = .1) +
+    geom_line(data = df, aes(x, truth), color = "blue") +
+    geom_line(colour = "red", size = 1) +
+    facet_wrap(~ tree, nrow = 3)
+```
+
+### 2.2.2 梯度下降（Gradient Descent）
+
+Boosting 目标是最小化损失函数，例如：
+
+* 回归：SSE（残差平方和）、MSE、RMSE
+* 分类：log loss、deviance
+* MAE（平均绝对值误差）等更稳健的损失值
+
+对于 SSE，其梯度就是残差，因此“拟合残差”就是“沿梯度方向下降”，即当损失函数是SSE时，它的梯度正好等于残差（真值 − 预测值）。因此，让下一棵树“拟合残差”，就是让模型往让损失下降最快的方向走，也就是“沿梯度下降”。
+
+这也是“Gradient Boosting Machine”名称的来源。
+
+梯度下降通过反复沿损失函数下降最快的方向（此处为切线方向，即一阶导数）调整参数，直到到达最小值。
+```{r, echo=F}
+# create data to plot
+# 1. 定义损失函数和梯度 ---------------------------------------------
+loss <- function(theta) theta^2 + 3                # L(θ) = θ^2 + 3
+grad <- function(theta) 2 * theta                  # dL/dθ = 2θ
+
+# 2. 准备整体曲线数据 ------------------------------------------------
+x <- seq(-5, 5, by = 0.05)
+df <- data.frame(
+  theta = x,
+  loss  = loss(x)
+)
+
+# 3. 梯度下降路径 ----------------------------------------------------
+theta0    <- -4          # 初始值（可以改，比如 4 或 -3）
+eta       <- 0.2         # 学习率（step_size）
+n_steps   <- 18          # 迭代步数（含初始点 ➜ 总共 n_steps+1 个点）
+
+theta_path <- numeric(n_steps + 1)
+theta_path[1] <- theta0
+
+for (i in 2:(n_steps + 1)) {
+  theta_old <- theta_path[i - 1]
+  theta_new <- theta_old - eta * grad(theta_old)   # 真实的梯度下降更新
+  theta_path[i] <- theta_new
+}
+
+steps <- data.frame(
+  theta = theta_path,
+  loss  = loss(theta_path)
+) %>%
+  mutate(
+    theta_prev = dplyr::lag(theta),
+    loss_prev  = dplyr::lag(loss)
+  )
+
+# 4. 找到最小值位置 --------------------------------------------------
+min_row <- df[which.min(df$loss), ]
+
+# 5. 作图 ------------------------------------------------------------
+ggplot(df, aes(theta, loss)) +
+  geom_line(size = 1.2, alpha = 0.6) +
+  theme_classic() +
+  scale_y_continuous("损失函数 L(θ)", limits = c(0, 30)) +
+  xlab(expression(theta)) +
+
+  # 垂线：初始值 & 最小值
+  geom_segment(
+    aes(x = theta0, xend = theta0, y = 0, yend = loss(theta0)),
+    linetype = "dashed", colour = "grey40"
+  ) +
+  geom_segment(
+    data = min_row,
+    aes(x = theta, xend = theta, y = 0, yend = loss),
+    linetype = "dashed", colour = "grey40"
+  ) +
+
+  # 最小值点
+  geom_point(
+    data = min_row,
+    aes(theta, loss),
+    size = 4, shape = 21, fill = "yellow"
+  ) +
+
+  # 梯度下降的离散路径点
+  geom_point(
+    data = steps,
+    aes(theta, loss),
+    size = 3, shape = 21, fill = "blue", alpha = 0.6
+  ) +
+
+  # 梯度下降的“跳跃”路径（从上一个点到当前点）
+  geom_curve(
+    data = steps |> filter(!is.na(theta_prev)),
+    aes(x = theta_prev, y = loss_prev, xend = theta, yend = loss),
+    curvature = 0.3,
+    linetype = "dotted"
+  ) +
+
+  # 去掉坐标轴刻度 & 文本
+  theme(
+    axis.ticks = element_blank(),
+    axis.text  = element_blank()
+  ) +
+
+  # 文本标注 ---------------------------------------------------------
+  annotate(
+    "text",
+    x = theta0,
+    y = 1,
+    label = "初始值",
+    hjust = -0.1, vjust = 0.8
+  ) +
+  annotate(
+    "text",
+    x = min_row$theta,
+    y = 1,
+    label = "全局最小值",
+    hjust = -0.1, vjust = 0.8
+  ) +
+  annotate(
+    "text",
+    x = theta0,
+    y = loss(theta0),
+    label = "沿负梯度更新\n(学习率 · 梯度)",
+    hjust = -0.4, vjust = -0.8
+  ) +
+  ggtitle("一维梯度下降示意图：拟合残差 = 沿梯度方向下降")
+```
+
+
+学习率过小 → 收敛慢
+学习率过大 → 会跳过最优点
+
+随机梯度下降（Stochastic Gradient Descent, SGD）  
+
+并不是所有的损失函数都是凸的（即“碗状”）。损失函数可能存在局部最小值、平台区（plateaus），以及其他不规则形状，这些都会使得找到全局最小值变得困难。随机梯度下降（Stochastic Gradient Descent, SGD） 可以缓解这个问题。其做法是在每一轮中随机抽取一部分训练样本（通常是不放回抽样），并基于该子样本训练下一棵树。这不仅能加快算法速度，而且由于随机抽样引入的随机性，下降损失函数梯度的过程也会带上一些“跳跃性”。虽然这种随机性使得算法无法保证找到绝对的全局最优解，但它反而可能帮助模型跳出局部最小值或平台区，从而更接近全局最优解。
+
+## 2.3 基本 GBM（Basic GBM）
+
+上世纪 90 年代出现多种 Boosting 算法，其中最成功的是 AdaBoost（Freund & Schapire 1999）。2000 年 Friedman 将其与统计学概念（损失函数、加性模型等）结合，推广到回归问题，从而发展出今天常见的 **GBM 框架**。
+
+### 2.3.1 GBM 的超参数（Hyperparameters）
+
+GBM 的超参数分为两类：
+
+**一、Boosting 超参数**
+
+**1. 树的数量（n.trees）**
+
+* GBM 会“追赶”残差，因此树太多很容易过拟合
+* 常需要几千棵树
+* 必须通过 CV 确定最佳树数
+
+**2. 学习率（learning rate / shrinkage）**
+
+范围：0–1，一般 0.001–0.3
+
+小学习率：
+
+* 更好泛化（更稳健）
+* 防止过拟合
+* 需要更多树（训练更慢）
+
+**二、树结构超参数**
+
+**1. 树深度（interaction.depth）**
+
+* 典型范围：3–8
+* depth=1 → 决策桩（简单但需要更多树）
+* 深树可捕捉交互，但风险是过拟合
+
+**2. 叶节点最小样本（n.minobsinnode）**
+
+典型范围：5–15
+小值 → 更灵活
+大值 → 防止过拟合
+
+### 2.3.2 使用 gbm 包实现 GBM
+
+R 中最经典的 GBM 实现是 **gbm 包**。
+
+gbm::gbm() 使用 formula 接口；
+gbm::gbm.fit() 使用 X/Y 接口，更高效。
+
+默认学习率 0.001 通常过小，需要大量树，因此常手动设置：
+
+* 学习率 = 0.1
+* 树数 = 5000
+* 深度 = 3
+* 10-fold 交叉验证
+
+示例模型如下（训练约 2 分钟）：
+
+```{r}
+set.seed(123)
+ames_gbm1 <- gbm(
+  formula = Sale_Price ~ .,
+  data = ames_train,
+  distribution = "gaussian", # SSE 作为损失函数
+  n.trees = 5000,  # 树数
+  shrinkage = 0.1,  # 学习率
+  interaction.depth = 3,  # 树的深度 
+  n.minobsinnode = 10,    # 叶节点最小样本数
+  cv.folds = 10
+)
+```
+
+利用 CV 得到最佳树数：
+
+```{r}
+best <- which.min(ames_gbm1$cv.error)
+sqrt(ames_gbm1$cv.error[best])
+```
+
+
+显示了随着树数增加，训练误差（黑色）与 CV 验证误差（绿色，一般更高）的变化。
+
+```{r}
+gbm.perf(ames_gbm1, method = "cv")
+```
+
+
+### 2.3.3 一般调参策略（General tuning strategy）
+
+GBM 的表现对超参数高度敏感，其调参比随机森林更困难。典型策略：
+
+1. **首先选择较大的学习率（如 0.1）**
+2. **确定此学习率下的最佳树数，将此树数作为后续训练的大致树数范围**
+3. **在固定树结构的情况下，调学习率，评估性能与训练时间**
+4. **调树结构超参数（深度、最小样本）**
+5. **最终降低学习率并增加树数**
+6. **使用更严格的 CV（如多次重复 CV）稳定评估结果，如果之前已经是CV，这步可以省略**
+
+下面在前面0.1的学习率得到大致树数在1000多的基准下，进一步搜索不同学习率（约3分钟），然后评估性能与训练时间。
+
+```{r}
+# 创建学习率的网络搜索
+hyper_grid <- expand.grid(
+  learning_rate = c(0.3, 0.1, 0.05, 0.01, 0.005),
+  RMSE = NA,
+  trees = NA,
+  time = NA
+)
+
+# 执行搜索
+for(i in seq_len(nrow(hyper_grid))) {
+
+  # 拟合 gbm
+  set.seed(123)  
+  train_time <- system.time({
+    m <- gbm(
+      formula = Sale_Price ~ .,
+      data = ames_train,
+      distribution = "gaussian",
+      n.trees = 5000, # 由基准确定的树数范围
+      shrinkage = hyper_grid$learning_rate[i], 
+      interaction.depth = 3,  # 第一步已经确定的树参数
+      n.minobsinnode = 10,
+      cv.folds = 10 
+   )
+  })
+  
+  # 添加SSE，树数和训练时间
+  hyper_grid$RMSE[i]  <- sqrt(min(m$cv.error))
+  hyper_grid$trees[i] <- which.min(m$cv.error)
+  hyper_grid$time[i]  <- train_time[["elapsed"]]
+
+}
+
+# 按最优顺序排结果
+arrange(hyper_grid, RMSE)
+```
+
+那么最佳学习率：0.05
+
+接着第4步来调树结构（约10分钟）
+虽然最佳学习率为0.05，但是以其为基准选择一个较小的学习率0.01，可以让树结构参数精调更稳定，较小的学习率更容易反映出树的结构差异，不会被过大的调整幅度掩盖，同时能够看到树细微变化，避免过拟合。
+```{r}
+# 创建学习率的网络搜索
+hyper_grid <- expand.grid(
+  n.trees = 6000,
+  shrinkage = 0.01,  
+  interaction.depth = c(3, 5, 7),
+  n.minobsinnode = c(5, 10, 15)
+)
+
+# 模型拟合函数
+model_fit <- function(n.trees, shrinkage, interaction.depth, n.minobsinnode) {
+  set.seed(123)
+  m <- gbm(
+    formula = Sale_Price ~ .,
+    data = ames_train,
+    distribution = "gaussian",
+    n.trees = n.trees,
+    shrinkage = shrinkage,
+    interaction.depth = interaction.depth,
+    n.minobsinnode = n.minobsinnode,
+    cv.folds = 10
+  )
+  # 计算 RMSE
+  sqrt(min(m$cv.error))
+}
+
+# 执行搜索
+hyper_grid$rmse <- purrr::pmap_dbl(
+  hyper_grid,
+  ~ model_fit(
+    n.trees = ..1,
+    shrinkage = ..2,
+    interaction.depth = ..3,
+    n.minobsinnode = ..4
+    )
+)
+
+# 排序结果
+arrange(hyper_grid, rmse)
+```
+
+进一步降低学习率与增加树数没有带来明显的增益（从21807.96仅下降到21505.73，但是计算时间上升了3倍）。
+
+
+### 2.4 随机梯度提升机（Stochastic GBMs）
+
+Breiman 在开发 bagging 和随机森林算法时（Breiman 1996a; Breiman 2001）的一个重要洞察是：**在训练数据集中随机抽取子样本来训练算法**，可以进一步减少树之间的相关性，从而提高预测准确性。Friedman（2002）使用了相同的逻辑并相应地更新了提升算法。这种过程被称为**随机梯度提升**，它有助于减少陷入损失函数局部最小值、平台期和其他不规则地形的可能性，从而找到接近全局最优解。
+
+### 2.4.1 随机超参数
+
+随机梯度提升有几种变体可以使用，所有这些变体都有额外的超参数：
+
+* **在创建每棵树之前对行（观测）进行子采样**（在 `gbm`、`h2o` 和 `xgboost` 中可用）
+* **在创建每棵树之前对列（特征）进行子采样**（`h2o` 和 `xgboost`）
+* **在考虑每棵树中的每个分割之前对列进行子采样**（`h2o` 和 `xgboost`）
+
+一般来说，**对行的激进子采样**（如仅选择50%或更少的训练数据）已被证明是有益的，典型值范围在 **0.5–0.8** 之间。**列子采样**对性能的影响很大程度上取决于数据的性质、是否存在强多重共线性或是否有大量噪声特征。类似于随机森林中的 `mtry` 参数，如果**相关预测变量较少**（噪声数据较多），**较高的列子采样比值**往往表现更好，因为它更有可能选择具有最强信号的特征。当**相关预测变量较多**时，**较低的列子采样比值**往往表现良好。
+
+在添加随机过程时，可以将其包含在上述**一般调参策略的第4步**，或者在找到**最优基本模型之后**（第6步）。根据经验，没有看到随机超参数与其他提升和树特定超参数之间存在强烈的交互作用。
+
+### 2.4.2 实现
+
+以下使用 `h2o` 实现随机 GBM。使用前一节找到的最优超参数，并在此基础上评估在构建每棵树之前对行和列进行子采样的各种值，以及在每个分割之前对列进行子采样。为了加速训练，为单个 GBM 建模过程使用**早停**，并添加**随机搜索标准**。
+
+这个网格搜索只设定运行了10分钟，评估了可能27个模型中的13个，完整跑完可能需要1个小时。
+
+```{r}
+# 精细化的超参数网格
+hyper_grid <- list(
+  sample_rate = c(0.5, 0.75, 1),              # 行子采样
+  col_sample_rate = c(0.5, 0.75, 1),          # 每个分割的列子采样
+  col_sample_rate_per_tree = c(0.5, 0.75, 1)  # 每棵树的列子采样
+)
+
+# 随机网格搜索策略
+search_criteria <- list(
+  strategy = "RandomDiscrete",
+  stopping_metric = "mse",
+  stopping_tolerance = 0.001,   
+  stopping_rounds = 10,         
+  max_runtime_secs = 60*10      
+)
+
+if ("gbm_grid" %in% h2o.ls()$key) {
+  h2o.rm("gbm_grid")
+}   # 剔除由于反复运行可能会出现的id重复的对象
+
+# 执行网格搜索 
+grid <- h2o.grid(
+  algorithm = "gbm",
+  grid_id = "gbm_grid",
+  x = predictors, 
+  y = response,
+  training_frame = train_h2o,
+  hyper_params = hyper_grid,
+  ntrees = 6000,
+  learn_rate = 0.01,
+  max_depth = 7,
+  min_rows = 5,
+  nfolds = 10,
+  stopping_rounds = 10,
+  stopping_tolerance = 0,
+  search_criteria = search_criteria,
+  seed = 123
+)
+
+# 收集结果并按我们选择的模型性能指标排序
+grid_perf <- h2o.getGrid(
+  grid_id = "gbm_grid", 
+  sort_by = "mse", 
+  decreasing = FALSE
+)
+
+grid_perf
+```
+
+网格搜索展示了几个重要的结果：
+
+1. **为每棵树随机抽样行**和**在每个分割之前随机抽样特征**似乎对性能有**积极影响**
+2. **在创建每棵树之前抽样特征**是否有影响尚不明确
+3. **最佳采样值非常低**（0.5）；进一步的网格搜索可能有益于评估更低的值
+
+下面的代码片段提取了表现最好的模型。在这种特定情况下，**没有看到10折交叉验证RMSE比最佳非随机GBM模型有额外改进**。
+
+```{r, eval=F}
+# 获取通过交叉验证误差选择的最佳模型的 model_id
+best_model_id <- grid_perf@model_ids[[1]]
+best_model <- h2o.getModel(best_model_id)
+
+# 现在获取最佳模型的性能指标
+h2o.performance(model = best_model, xval = TRUE)
+```
+
+关键要点总结
+
+1. **随机子采样的优势**：
+   - 减少树之间的相关性
+   - 帮助逃离损失函数的局部最小值
+   - 提高预测准确性
+
+2. **三种随机策略**：
+   | 策略 | 参数名称 | 适用范围 | 典型值 |
+   |------|----------|----------|--------|
+   | 行子采样 | `sample_rate` | 每棵树 | 0.5-0.8 |
+   | 每棵树列子采样 | `col_sample_rate_per_tree` | 每棵树 | 0.5-1.0 |
+   | 每个分割列子采样 | `col_sample_rate` | 每个分割 | 0.5-1.0 |
+
+3. **调参建议**：
+   - **行子采样**：0.5-0.8 通常最优
+   - **列子采样**：
+     - 噪声特征多 → 较高值（0.8-1.0）
+     - 相关特征多 → 较低值（0.5-0.7）
+
+4. **实现优势**：
+   - 使用 `h2o.grid()` 的随机搜索策略
+   - 结合早停机制加速训练
+   - 自动评估多个组合
+
+5. **实际结果解读**：
+   - 最佳组合：`sample_rate = 0.5`, `col_sample_rate = 0.5`, `col_sample_rate_per_tree = 0.5`
+   - RMSE = 21270.43（与非随机GBM相当）
+   - 表明在这个特定数据集上，随机性提升有限
+
+这个部分展示了如何通过引入随机性来改进梯度提升机的性能，同时保持了调参过程的系统性。通过网格搜索和早停机制，可以高效地找到最优的随机参数组合。
+
+
+## 2.5 XGBoost
+
+**极限梯度提升（XGBoost）** 是一个优化的分布式梯度提升库，设计目标是高效、灵活且跨多种语言可移植（Chen 和 Guestrin 2016）。虽然 XGBoost提供了前面展示的相同的提升和基于树的超参数选项，但它相较于传统提升方法还具有以下几个优势：
+
+* **正则化**：XGBoost 提供了额外的正则化超参数，为防止过拟合提供了额外的保护。
+
+* **早停（Early Stopping）**：与 h2o 类似，XGBoost 实现了早停机制，可以在添加更多树不再带来改进时停止模型评估。
+
+* **并行处理**：由于梯度提升本质上是顺序的，很难并行化。XGBoost 实现了支持 GPU 和 Spark 兼容性的程序，允许使用强大的分布式处理引擎来拟合梯度提升模型。
+
+* **损失函数**：XGBoost 允许用户定义和优化梯度提升模型，使用自定义的目标函数和评估标准。
+
+* **继续现有模型**：用户可以训练一个 XGBoost 模型，保存结果，然后稍后返回该模型并继续构建结果。允许在不从头开始的情况下继续训练模型。
+
+* **不同的基学习器**：大多数 GBM 实现都基于决策树，但 XGBoost 还提供了提升的广义线性模型。
+
+* **多种语言支持**：XGBoost 在 R、Python、Julia、Scala、Java 和 C++ 中都有实现。
+
+除了跨多种语言提供支持外，XGBoost 在 R 中也可以通过多种方式实现。主要 R 实现是 `xgboost` 包；也可以使用 `caret` 作为元引擎来实现 XGBoost。`h2o` 包也提供了 XGBoost 的实现。这里演示 `xgboost` 包的使用。
+
+### 2.5.1 XGBoost 超参数
+
+`xgboost` 提供了额外的超参数，可以帮助减少过拟合的可能性，从而降低预测变异性，进而提高准确性。
+
+#### 2.5.1.1 正则化
+
+`xgboost` 提供了多种正则化参数来帮助减少模型复杂性并防止过拟合。第一个参数是 **gamma**，这是一个伪正则化超参数，称为拉格朗日乘子，控制给定树的复杂性。`gamma` 指定了在树的叶节点上进行进一步分割所需的最小损失减少量。当指定 `gamma` 时，`xgboost` 会将树生长到指定的最大深度，然后修剪树以找到并移除不满足指定 `gamma` 的分割。`gamma` 在 GBM 中的树变得更深时，以及当训练和测试交叉验证误差存在显著差异时，值得探索。`gamma` 的取值范围为 0−∞（0 表示无约束，较大的数字表示更高的正则化）。什么算作大的 `gamma` 值取决于损失函数，但一般来说，如果 `gamma` 有影响，1-20 之间的较低值就足够了。
+
+另外两个传统的正则化参数包括 **alpha** 和 **lambda**。`alpha` 提供 L1 正则化，`lambda` 提供 L2 正则化。将两者都设置为大于 0 会产生弹性网正则化；与 `gamma` 类似，这些参数的取值范围也是 0−∞。这些正则化参数限制了树中叶节点的权重（或影响）变得极端。
+
+这三个超参数（`gamma`、`alpha`、`lambda`）都用于约束模型复杂性并减少过拟合。虽然 `gamma` 更常用，但调参策略应该探索所有三个参数的影响。正则化使过拟合模型在训练数据上更加保守，在某些情况下，这可以改善验证误差。
+
+#### 2.5.1.2 Dropout
+
+**Dropout** 是减少过拟合的另一种方法，也可以描述为正则化。由 Srivastava 等人（2014a）开发的 dropout 方法已被广泛应用于深度学习中，以防止深度神经网络过拟合。Dropout 也可以用于解决 GBM 中的过拟合问题。在构建 GBM 时，集成开始时添加的前几棵树通常主导模型性能，而后面添加的树通常只改善特征空间的一小部分预测。这常常会增加过拟合的风险，而 dropout 的思想是通过在提升序列中随机丢弃树来构建集成。这通常被称为 **DART**（Rashmi 和 Gilad-Bachrach 2015），因为它最初是在多重加性回归树（MART）的背景下探索的；DART 指的是 **Dropout Additive Regression Trees**。丢弃的百分比是另一个正则化参数。
+
+通常，当 `gamma`、`alpha` 或 `lambda` 无法帮助控制过拟合时，探索 DART 超参数将是下一个最佳选择。
+
+### 2.5.2 调参策略
+
+探索 `xgboost` 超参数的一般调参策略建立在基本和随机 GBM 调参策略的基础上：
+
+1. **增加树的数量并调参学习率，使用早停**
+2. **调参树特定的超参数**
+3. **探索随机 GBM 属性**
+4. **如果发生严重的过拟合（例如，训练和交叉验证误差之间存在很大差异），探索正则化超参数**
+5. **如果你发现与默认设置明显不同的超参数值，请确保重新调参学习率**
+6. **获得最终的"最优"模型**
+
+使用 `xgboost` 运行 XGBoost 模型需要一些额外的**数据准备**。`xgboost` 要求特征输入为矩阵，响应为向量。因此，为了提供特征的矩阵输入,需要将分类变量进行数值编码（即独热编码、标签编码）。以下代码对所有分类特征进行数值标签编码，并将训练数据框转换为矩阵：
+
+```{r}
+library(recipes)
+xgb_prep <- recipe(Sale_Price ~ ., data = ames_train) %>%
+  step_integer(all_nominal()) %>% # 类别变量数值编码
+  prep(training = ames_train, retain = TRUE) %>%
+  juice()
+
+X <- as.matrix(xgb_prep[setdiff(names(xgb_prep), "Sale_Price")]) # 训练数据转为矩阵
+Y <- xgb_prep$Sale_Price
+```
+
+`xgboost` 接受三种不同类型的特征矩阵：普通的 R 矩阵、来自 `Matrix` 包的稀疏矩阵，或者 `xgboost` 内部的 `xgb.DMatrix` 对象。
+
+接下来，进行了网格搜索，发现以下模型超参数表现较好。RMSE接近前面常规和随机 GBM 模型。
+
+```{r}
+set.seed(123)
+ames_xgb <- xgb.cv(
+  data = X,
+  label = Y,
+  nrounds = 6000, # 迭代次数，树的总数
+  objective = "reg:squarederror", # 目标函数
+  early_stopping_rounds = 50,  # 50次迭代没有任何改进则终止
+  nfold = 10, # 交叉验证折数
+  params = list(
+    eta = 0.1, # 梯度提升的学习速率
+    max_depth = 3, # 树的最大深度
+    min_child_weight = 3, # 叶子节点的大小
+    subsample = 0.8, # 行子采样比例
+    colsample_bytree = 1.0), # 列子采样比例（此处不控制）
+  verbose = 0
+)  
+
+# 最小测试交叉验证 RMSE
+min(ames_xgb$evaluation_log$test_rmse_mean)
+```
+
+接下来，通过执行一个检查各种正则化参数（`gamma`、`lambda` 和 `alpha`）的网格搜索来评估过拟合是否限制了我们模型的性能。结果表明，最佳表现的模型使用 `lambda = 1`，而且 `alpha` 或 `gamma` 似乎没有任何一致的模式。然而，即使 `lambda = 1`，交叉验证 RMSE 也没有比之前的 XGBoost 模型有所改善。
+
+由于学习率（`eta`）较低，完整的笛卡尔网格搜索需要很长时间。这里粗略设定参数进行调试。
+
+```{r}
+# 超参数网格
+hyper_grid <- expand.grid(
+  eta = 0.01,
+  max_depth = 3, 
+  min_child_weight = 3,
+  subsample = 0.5, 
+  colsample_bytree = 0.5,
+  gamma = c(0, 1, 10),
+  lambda = c(0, 1e-2, 0.1),
+  alpha = c(0, 1e-2, 0.1),
+  rmse = 0,          # 用于存储 RMSE 结果的位置
+  trees = 0          # 用于存储所需树数量的位置
+)
+
+# 网格搜索
+for(i in seq_len(nrow(hyper_grid))) {
+  set.seed(123)
+  m <- xgb.cv(
+    data = X,
+    label = Y,
+    nrounds = 4000,
+    objective = "reg:squarederror",
+    early_stopping_rounds = 5, 
+    nfold = 5,
+    verbose = 0,
+    params = list( 
+      eta = hyper_grid$eta[i], 
+      max_depth = hyper_grid$max_depth[i],
+      min_child_weight = hyper_grid$min_child_weight[i],
+      subsample = hyper_grid$subsample[i],
+      colsample_bytree = hyper_grid$colsample_bytree[i],
+      gamma = hyper_grid$gamma[i], 
+      lambda = hyper_grid$lambda[i], 
+      alpha = hyper_grid$alpha[i]
+    ) 
+  )
+  hyper_grid$rmse[i] <- min(m$evaluation_log$test_rmse_mean)
+  hyper_grid$trees[i] <- m$best_iteration
+}
+
+# 结果
+hyper_grid %>%
+  filter(rmse > 0) %>%
+  arrange(rmse) %>%
+  glimpse()
+
+```
+
+一旦找到了最优超参数，就使用 `xgb.train` 或 `xgboost` 拟合最终模型。确保使用交叉验证期间找到的最优树数量。添加正则化没有带来改进，因此在最终模型中排除了它们。
+
+```{r}
+# 最优参数列表
+params <- list(
+  eta = 0.01,  
+  max_depth = 3,
+  min_child_weight = 3,
+  subsample = 0.5,
+  colsample_bytree = 0.5,
+  lambda = 0.1,
+  alpha = 0.01
+)
+
+# 训练最终模型
+xgb.fit.final <- xgboost(
+  params = params,
+  data = X,
+  label = Y,
+  nrounds = 1144,
+  objective = "reg:squarederror",
+  verbose = 0
+)
+```
+
+## 2.6 特征解释
+
+测量 GBM 特征重要性和影响的方法与随机森林相同。与随机森林类似，`gbm` 和 `h2o` 包提供了**基于杂质的特征重要性**。`xgboost` 实际上提供了**三种内置的特征重要性度量**：
+
+1. **Gain（增益）**：
+   - 相当于随机森林中的杂质度量  
+   - 是最常用的**模型中心度量**
+
+2. **Coverage（覆盖率）**：
+   - 量化由该特征影响的观测值的相对数量
+   - 例如：如果有100个观测值、4个特征和3棵树，假设 `x1` 在 tree1、tree2 和 tree3 中分别用于决定10、5和2个观测值的叶节点；那么该度量将计算该特征的覆盖率为 **10+5+2=17** 个观测值
+   - 对所有4个特征进行计算并表示为百分比
+
+3. **Frequency（频率）**：
+   - 表示特定特征在模型树中出现次数的相对百分比
+   - 在上述例子中，如果 `x1` 在 tree1、tree2 和 tree3 中分别用于2次、1次和3次分割；那么 `x1` 的权重为 **2+1+3=6**
+   - `x1` 的频率计算为所有特征权重中的百分比权重
+
+如果使用**杂质（gain）度量**检查最终模型中**前10个最具影响力的特征**，会看到与随机森林模型非常相似的结果。主要区别是**不再将 Neighborhood 视为顶级影响特征**，这可能是由于对分类特征进行标签编码的方式造成的。
+
+默认情况下，`vip::vip()` 使用 **gain 方法**进行特征重要性计算，但可以使用 `type` 参数评估其他类型。也可以使用 `xgboost::xgb.ggplot.importance()` 来绘制各种特征重要性度量，但需要先在最终模型上运行 `xgb.importance()`。
+
+```{r}
+# 变量重要性图
+vip::vip(xgb.fit.final) 
+```
+
+特征重要性度量对比表
+
+| 度量类型 | 定义 | 计算方式 | 适用场景 |
+|---------|------|----------|----------|
+| **Gain** | 每个特征分割带来的杂质减少总和 | 所有使用该特征的分割的增益总和 | 评估特征对预测贡献 |
+| **Coverage** | 特征影响的观测值数量 | 影响观测值的总和/总观测值 | 评估特征的覆盖范围 |
+| **Frequency** | 特征在树中出现的频率 | 特征分割次数/总分割次数 | 评估特征的使用频率 |
+
+**GBM（梯度提升机）** 是**最具强大集成算法之一**，在预测准确性上通常名列前茅。虽然它们**不如许多其他机器学习算法直观**，且**计算需求更高**，但它们是你的工具箱中**不可或缺的组成部分**。
+
+一些替代算法。例如：
+
+**LightGBM**
+- **Ke 等人（2017）** 开发的梯度提升框架
+- **叶优先树生长** vs 传统的**层优先树生长**
+- 树生长更深时，专注于**扩展单个分支**而非**生长多个分支**  
+- 在 R 中可用
+
+**CatBoost**
+- **Dorogush、Ershov 和 Gulin（2018）** 开发的梯度提升框架
+- 专注于**高效编码分类特征**
+- 在梯度提升过程中使用专门的方法处理分类变量
+- 在 R 中可用
+
+GBM 家族算法对比
+
+| 算法 | 树生长策略 | 分类特征处理 | 主要优势 | R 包 |
+|------|-----------|-------------|----------|------|
+| **XGBoost** | 层优先 | 需预处理 | 正则化、早停、并行 | `xgboost` |
+| **LightGBM** | 叶优先 | 自动处理 | 速度快、内存效率高 | `lightgbm` |
+| **CatBoost** | 对称树 | 原生支持 | 分类特征处理、过拟合控制 | `catboost` |
+
+实际应用建议
+
+1. **模型选择策略**：
+   ```{r}
+   # 推荐的测试顺序
+   models_to_try <- c(
+     "xgboost",    # 通常第一选择
+     "lightgbm",   # 速度优先
+     "catboost",   # 分类特征多时
+     "h2o_gbm"     # 简单部署
+   )
+   ```
+
+2. **性能预期**：  
+
+   | 数据集特征 | 推荐算法 | 预期RMSE改善 |  
+   |-----------|----------|-------------|  
+   | 中等规模 | XGBoost | 基准 |  
+   | 大规模 | LightGBM | 20-50%更快 |  
+   | 分类特征多 | CatBoost | 5-15%更好 |  
+ 
+3. **调参优先级**：
+   - **第一步**：学习率 + 树数量（早停）
+   - **第二步**：树深度 + 最小子节点权重
+   - **第三步**：随机性参数（子采样）
+   - **第四步**：正则化参数
+
+总结：GBM 系列算法是现代机器学习中的先进代表算法，在 Kaggle 竞赛和工业应用中持续领先。掌握 GBM 算法能够显著提升机器学习建模能力。
+
+**关键要点**：  
+- ✅ **预测准确性顶尖**  
+- ✅ **特征重要性可解释**  
+- ✅ **多种实现可选**  
+- ⚠️ **调参复杂**  
+- ⚠️ **计算资源需求高**  
 
 ```{r, echo=FALSE}
 # clean up

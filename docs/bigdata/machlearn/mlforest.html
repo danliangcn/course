@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2025-12-07">
+
+<title>有监督学习：随机森林与梯度提升 – course</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8610558a007458a9b978551a034f4d85.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">course</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#随机森林" id="toc-随机森林" class="nav-link active" data-scroll-target="#随机森林">1 随机森林</a>
+  <ul>
+  <li><a href="#工具与数据" id="toc-工具与数据" class="nav-link" data-scroll-target="#工具与数据">1.1 工具与数据</a></li>
+  <li><a href="#扩展装袋法" id="toc-扩展装袋法" class="nav-link" data-scroll-target="#扩展装袋法">1.2 扩展装袋法</a></li>
+  <li><a href="#开箱即用out-of-the-box的性能" id="toc-开箱即用out-of-the-box的性能" class="nav-link" data-scroll-target="#开箱即用out-of-the-box的性能">1.3 开箱即用（Out-of-the-box）的性能</a></li>
+  <li><a href="#超参数" id="toc-超参数" class="nav-link" data-scroll-target="#超参数">1.4 超参数</a>
+  <ul>
+  <li><a href="#树的棵数" id="toc-树的棵数" class="nav-link" data-scroll-target="#树的棵数">树的棵数</a></li>
+  <li><a href="#m_try" id="toc-m_try" class="nav-link" data-scroll-target="#m_try"><span class="math inline">\(m_{try}\)</span></a></li>
+  <li><a href="#树复杂性" id="toc-树复杂性" class="nav-link" data-scroll-target="#树复杂性">树复杂性</a></li>
+  <li><a href="#采样方案" id="toc-采样方案" class="nav-link" data-scroll-target="#采样方案">采样方案</a></li>
+  <li><a href="#分割规则" id="toc-分割规则" class="nav-link" data-scroll-target="#分割规则">分割规则</a></li>
+  </ul></li>
+  <li><a href="#调优策略" id="toc-调优策略" class="nav-link" data-scroll-target="#调优策略">1.5 调优策略</a></li>
+  <li><a href="#特征解释" id="toc-特征解释" class="nav-link" data-scroll-target="#特征解释">1.6 特征解释</a></li>
+  </ul></li>
+  <li><a href="#梯度提升机gradient-boosting-machines-gbms" id="toc-梯度提升机gradient-boosting-machines-gbms" class="nav-link" data-scroll-target="#梯度提升机gradient-boosting-machines-gbms">2 梯度提升机（Gradient Boosting Machines, GBMs）</a>
+  <ul>
+  <li><a href="#软件包与数据" id="toc-软件包与数据" class="nav-link" data-scroll-target="#软件包与数据">2.1 软件包与数据</a></li>
+  <li><a href="#boosting-的工作原理" id="toc-boosting-的工作原理" class="nav-link" data-scroll-target="#boosting-的工作原理">2.2 Boosting 的工作原理</a>
+  <ul>
+  <li><a href="#顺序集成sequential-ensemble方法" id="toc-顺序集成sequential-ensemble方法" class="nav-link" data-scroll-target="#顺序集成sequential-ensemble方法">2.2.1 顺序集成（Sequential Ensemble）方法</a></li>
+  <li><a href="#梯度下降gradient-descent" id="toc-梯度下降gradient-descent" class="nav-link" data-scroll-target="#梯度下降gradient-descent">2.2.2 梯度下降（Gradient Descent）</a></li>
+  </ul></li>
+  <li><a href="#基本-gbmbasic-gbm" id="toc-基本-gbmbasic-gbm" class="nav-link" data-scroll-target="#基本-gbmbasic-gbm">2.3 基本 GBM（Basic GBM）</a>
+  <ul>
+  <li><a href="#gbm-的超参数hyperparameters" id="toc-gbm-的超参数hyperparameters" class="nav-link" data-scroll-target="#gbm-的超参数hyperparameters">2.3.1 GBM 的超参数（Hyperparameters）</a></li>
+  <li><a href="#使用-gbm-包实现-gbm" id="toc-使用-gbm-包实现-gbm" class="nav-link" data-scroll-target="#使用-gbm-包实现-gbm">2.3.2 使用 gbm 包实现 GBM</a></li>
+  <li><a href="#一般调参策略general-tuning-strategy" id="toc-一般调参策略general-tuning-strategy" class="nav-link" data-scroll-target="#一般调参策略general-tuning-strategy">2.3.3 一般调参策略（General tuning strategy）</a></li>
+  <li><a href="#随机梯度提升机stochastic-gbms" id="toc-随机梯度提升机stochastic-gbms" class="nav-link" data-scroll-target="#随机梯度提升机stochastic-gbms">2.4 随机梯度提升机（Stochastic GBMs）</a></li>
+  <li><a href="#随机超参数" id="toc-随机超参数" class="nav-link" data-scroll-target="#随机超参数">2.4.1 随机超参数</a></li>
+  <li><a href="#实现" id="toc-实现" class="nav-link" data-scroll-target="#实现">2.4.2 实现</a></li>
+  </ul></li>
+  <li><a href="#xgboost" id="toc-xgboost" class="nav-link" data-scroll-target="#xgboost">2.5 XGBoost</a>
+  <ul>
+  <li><a href="#xgboost-超参数" id="toc-xgboost-超参数" class="nav-link" data-scroll-target="#xgboost-超参数">2.5.1 XGBoost 超参数</a>
+  <ul class="collapse">
+  <li><a href="#正则化" id="toc-正则化" class="nav-link" data-scroll-target="#正则化">2.5.1.1 正则化</a></li>
+  <li><a href="#dropout" id="toc-dropout" class="nav-link" data-scroll-target="#dropout">2.5.1.2 Dropout</a></li>
+  </ul></li>
+  <li><a href="#调参策略" id="toc-调参策略" class="nav-link" data-scroll-target="#调参策略">2.5.2 调参策略</a></li>
+  </ul></li>
+  <li><a href="#特征解释-1" id="toc-特征解释-1" class="nav-link" data-scroll-target="#特征解释-1">2.6 特征解释</a></li>
+  <li><a href="#参考书籍" id="toc-参考书籍" class="nav-link" data-scroll-target="#参考书籍">参考书籍</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">有监督学习：随机森林与梯度提升</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 7, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="随机森林" class="level1">
+<h1>1 随机森林</h1>
+<p>随机森林是对装袋决策树的改进，通过构建大量去相关（de-correlated）的树来进一步提高预测性能。随机森林已成为一种非常流行的“开箱即用”或“现成”学习算法，凭借相对较少的超参数调优即可获得良好的预测性能。</p>
+<section id="工具与数据" class="level2">
+<h2 class="anchored" data-anchor-id="工具与数据">1.1 工具与数据</h2>
+<p>重点在于使用 <code>ranger</code>和 <code>h2o</code> 包实现随机森林。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 辅助包</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)    <span class="co"># 用于数据处理</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)  <span class="co"># 用于出色的图形</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 建模包</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)   <span class="co"># 随机森林的C++实现</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(h2o)      <span class="co"># 随机森林的Java实现</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+----------------------------------------------------------------------
+
+Your next step is to start H2O:
+    &gt; h2o.init()
+
+For H2O package documentation, ask for help:
+    &gt; ??h2o
+
+After starting H2O, you can use the Web UI at http://localhost:54321
+For more information visit https://docs.h2o.ai
+
+----------------------------------------------------------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'h2o'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:lubridate':
+
+    day, hour, month, week, year</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    cor, sd, var</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    &amp;&amp;, %*%, %in%, ||, apply, as.factor, as.numeric, colnames,
+    colnames&lt;-, ifelse, is.character, is.factor, is.numeric, log,
+    log10, log1p, log2, round, signif, trunc</code></pre>
+</div>
+</div>
+<p>继续使用 <code>ames_train</code> 数据集来展示主要概念。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ames <span class="ot">&lt;-</span> AmesHousing<span class="sc">::</span><span class="fu">make_ames</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 分层抽样划分训练集和测试集数据</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>split  <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(ames, <span class="at">prop =</span> <span class="fl">0.7</span>, <span class="at">strata =</span> <span class="st">"Sale_Price"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ames_train  <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>ames_test   <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="扩展装袋法" class="level2">
+<h2 class="anchored" data-anchor-id="扩展装袋法">1.2 扩展装袋法</h2>
+<p>随机森林基于决策树和装袋法的基本原理构建。装袋法通过在训练数据的自举副本上构建多棵树，为树的构建过程引入随机成分。然后，装袋法通过聚合所有树的预测来降低整体过程的方差，并提高预测性能。但是，简单地装袋树会导致树相关性（tree correlation），限制了方差减少的效果。</p>
+<p>随机森林通过在树生长过程中注入更多随机性来帮助减少树相关性。具体来说，在装袋过程中生长决策树时，随机森林执行<strong>分割变量随机化</strong>（split-variable randomization），即每次进行分割时，仅从原始 <span class="math inline">\(p\)</span> 个特征中随机选择 <span class="math inline">\(m_{try}\)</span> 个特征子集进行搜索。通常的默认值是回归问题中 <span class="math inline">\(m_{try} = \frac{p}{3}\)</span>，分类问题中 <span class="math inline">\(m_{try} = \sqrt{p}\)</span>，可以看做是一个调优参数。</p>
+<p>回归或分类随机森林的基本算法可概括如下：</p>
+<ol type="1">
+<li>给定训练数据集</li>
+<li>选择要构建的树数量（<code>n_trees</code>）</li>
+<li>对于 <span class="math inline">\(i = 1\)</span> 到 <code>n_trees</code>，执行：</li>
+<li><div class="line-block">生成原始数据的自举样本</div></li>
+<li><div class="line-block">对自举数据生长回归/分类树</div></li>
+<li><div class="line-block">对于每次分割：</div></li>
+<li><div class="line-block">| 从所有 <span class="math inline">\(p\)</span> 个变量中随机选择 <span class="math inline">\(m_{try}\)</span> 个变量</div></li>
+<li><div class="line-block">| 在 <span class="math inline">\(m_{try}\)</span> 个变量中选择最佳变量/分割点</div></li>
+<li><div class="line-block">| 将节点分割为两个子节点</div></li>
+<li><div class="line-block">结束</div></li>
+<li><div class="line-block">使用典型的树模型停止标准确定树何时完成（但不修剪）</div></li>
+<li>结束</li>
+<li>输出树的集成</li>
+</ol>
+<p>当 <span class="math inline">\(m_{try} = p\)</span> 时，该算法等同于装袋决策树。</p>
+<p>由于算法随机选择自举样本进行训练并在每次分割时随机选择特征子集，生成了更多样化的树集，这往往比装袋树进一步减少树相关性，并显著提高预测能力。</p>
+</section>
+<section id="开箱即用out-of-the-box的性能" class="level2">
+<h2 class="anchored" data-anchor-id="开箱即用out-of-the-box的性能">1.3 开箱即用（Out-of-the-box）的性能</h2>
+<p>随机森林之所以流行，是因为它们通常提供非常好的开箱即用性能。尽管有多个可调超参数，但是默认值往往就能产生良好的结果。此外，与流行的机器学习算法相比，随机森林在调优时的预测准确性变异性最小。</p>
+<p>例如，使用所有超参数设置为默认值的随机森林模型进行训练，获得的袋外（OOB）RMSE优于之前运行的任何模型（无需任何调优）。</p>
+<p>默认情况下，<code>ranger</code> 将 <span class="math inline">\(m_{try}\)</span> 参数设置为 <span class="math inline">\(\text{floor}(\sqrt{\text{特征数量}})\)</span>；然而，对于回归问题，建议以 <span class="math inline">\(\text{floor}(\frac{\text{特征数量}}{3})\)</span> 开始。设置 <code>respect.unordered.factors = "order"</code>，指定如何处理无序因子变量，建议设置为“order”。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 特征数量</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>n_features <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">setdiff</span>(<span class="fu">names</span>(ames_train), <span class="st">"Sale_Price"</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 训练默认随机森林模型</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ames_rf1 <span class="ot">&lt;-</span> <span class="fu">ranger</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="fu">floor</span>(n_features <span class="sc">/</span> <span class="dv">3</span>),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">respect.unordered.factors =</span> <span class="st">"order"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取OOB RMSE</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>(default_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(ames_rf1<span class="sc">$</span>prediction.error))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 25423.06</code></pre>
+</div>
+</div>
+</section>
+<section id="超参数" class="level2">
+<h2 class="anchored" data-anchor-id="超参数">1.4 超参数</h2>
+<p>尽管随机森林开箱即用表现良好，但在训练模型时还应考虑几个可调参数。主要考虑的超参数包括：</p>
+<ol type="1">
+<li>森林中树的棵数</li>
+<li>每次分割考虑的特征数量：<span class="math inline">\(m_{try}\)</span></li>
+<li>每棵树的复杂性</li>
+<li>采样方案</li>
+<li>树构建期间使用的分割规则</li>
+</ol>
+<p>其中 (1) 和 (2) 对预测准确性影响最大，应始终进行调优。(3) 和 (4) 对预测准确性的影响较小，但仍值得探索。它们还能影响计算效率。(5) 对预测准确性的影响最小，主要用于提高计算效率。</p>
+<section id="树的棵数" class="level3">
+<h3 class="anchored" data-anchor-id="树的棵数">树的棵数</h3>
+<p>随机森林中的树的数量，虽然严格来说不是超参数，但树的数量需要足够大以稳定误差率。经验法则是从特征数量的10倍开始；随着其他超参数（如 <span class="math inline">\(m_{try}\)</span> 和节点大小）的调整，可能需要更多或更少的树。更多树提供更稳健和稳定的误差估计和变量重要性度量；然而，计算时间随树数量线性增加。</p>
+<p><strong>建议</strong>：从 <span class="math inline">\(p \times 10\)</span> 棵树开始，并根据需要调整。</p>
+</section>
+<section id="m_try" class="level3">
+<h3 class="anchored" data-anchor-id="m_try"><span class="math inline">\(m_{try}\)</span></h3>
+<p>控制随机森林分割变量随机化特征的超参数通常称为 <span class="math inline">\(m_{try}\)</span>，它有助于平衡树根部的相关性与合理的预测强度。对于回归问题，默认值通常为 <span class="math inline">\(m_{try} = \frac{p}{3}\)</span>，对于分类问题为 <span class="math inline">\(m_{try} = \sqrt{p}\)</span>。然而，当具有相关关系的预测变量比较少（例如，噪声预测变量）时，较高的 <span class="math inline">\(m_{try}\)</span> 值往往表现更好，因为它更有可能选择信号最强的特征。当有许多预测变量具有相关性时，较低的 <span class="math inline">\(m_{try}\)</span> 可能表现更好。</p>
+<p><strong>建议</strong>：将恰好五等分区间[2, p]的4个分割点取值和为中心的默认值作为 <span class="math inline">\(m_{try}\)</span> 值开始。</p>
+</section>
+<section id="树复杂性" class="level3">
+<h3 class="anchored" data-anchor-id="树复杂性">树复杂性</h3>
+<p>随机森林基于单个决策树构建；因此，大多数随机森林模型有一个或多个超参数来控制单个树的深度和复杂性。通常包括节点大小、最大深度、最大终端节点数或允许额外分割的所需节点大小等超参数。节点大小是控制树复杂性的最常见超参数，一般分类问题设定为1、回归问题设定为5的默认值。然而，如果数据有许多噪声预测变量且较高的 <span class="math inline">\(m_{try}\)</span> 值时表现较好，则应增加节点大小（即减少树深度和复杂性）能提高性能。此外，如果要考虑计算时间，增加节点大小通常可以显著减少运行时间，且对误差估计的影响较小。</p>
+<p><strong>建议</strong>：调整节点大小时，从1-10之间的三个值开始，并根据对准确性和运行时间的影响进行调整。</p>
+</section>
+<section id="采样方案" class="level3">
+<h3 class="anchored" data-anchor-id="采样方案">采样方案</h3>
+<p>随机森林的默认采样方案是自举法，其中对100%的观测值进行有放回采样（即每个自举副本与原始训练数据大小相同）；可以通过调整样本大小以及是否有放回采样来对模型效果产生影响。样本大小参数决定为每棵树的训练抽取多少观测值，减少样本大小会产生更多样化的树，从而降低树间相关性，这会对预测准确性产生积极影响。如果数据集中有几个主导特征，减少样本大小也有助于最小化树间相关性。</p>
+<p>此外，当有许多具有不同级别数的分类特征（类别变量的各类别的频次差别比较大）时，有放回采样可能导致变量分割选择的偏差。因此，如果有不平衡的类别，无放回采样可产生更少偏差。</p>
+<p><strong>建议</strong>：评估25%-100%的3-4个样本大小值，如果有不平衡的分类特征，尝试无放回采样。</p>
+</section>
+<section id="分割规则" class="level3">
+<h3 class="anchored" data-anchor-id="分割规则">分割规则</h3>
+<p>随机森林树构建期间的默认分割规则包括从（随机选择的 <span class="math inline">\(m_{try}\)</span>）个候选变量的所有分割中选择最小化基尼不纯度（分类问题）或SSE（回归问题）的分割。然而，这些默认分割规则偏向于选择具有更多可能分割的特征（例如，连续变量或具有多个类别的分类变量），而非分割较少的变量（极端情况是只有一种可能分割的二值变量）。条件推理树（conditional inference trees）采用替代分割机制，可以减少变量选择偏差，但是训练时间更长。</p>
+<p>为了提高计算效率，可以随机化分割规则，仅考虑变量的随机子集的可能分割值。如果仅随机选择单一分割值，则称为<strong>极随机树</strong>（extremely randomized trees）。</p>
+<p>从运行时间来看，极随机树最快，其次是经典随机森林，而条件推理森林的运行时间最长。</p>
+<p><strong>建议</strong>：如果需要显著改善计算时间，可以尝试完全随机化树；然而，要确保与传统分割规则的预测准确性进行比较，因为这种方法通常对损失函数有负面影响。</p>
+</section>
+</section>
+<section id="调优策略" class="level2">
+<h2 class="anchored" data-anchor-id="调优策略">1.5 调优策略</h2>
+<p>随着更复杂的算法和更多的超参数，需要考虑调优策略。之前采用的完全笛卡尔网格搜索，即评估所有感兴趣的超参数组合，往往需要较长的计算时间。下面的代码块搜索120种超参数组合，此网格搜索大约需要3分钟。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建超参数网格</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="fu">floor</span>(n_features <span class="sc">*</span> <span class="fu">c</span>(.<span class="dv">05</span>, .<span class="dv">15</span>, .<span class="dv">25</span>, .<span class="dv">333</span>, .<span class="dv">4</span>)),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.node.size =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>), </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>),                               </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample.fraction =</span> <span class="fu">c</span>(.<span class="dv">5</span>, .<span class="dv">63</span>, .<span class="dv">8</span>),                       </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">rmse =</span> <span class="cn">NA</span>                                               </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行完全笛卡尔网格搜索</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(hyper_grid))) {</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 为第i个超参数组合拟合模型</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">ranger</span>(</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula         =</span> Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">data            =</span> ames_train, </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">num.trees       =</span> n_features <span class="sc">*</span> <span class="dv">10</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">mtry            =</span> hyper_grid<span class="sc">$</span>mtry[i],</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">min.node.size   =</span> hyper_grid<span class="sc">$</span>min.node.size[i],</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">replace         =</span> hyper_grid<span class="sc">$</span>replace[i],</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">sample.fraction =</span> hyper_grid<span class="sc">$</span>sample.fraction[i],</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose         =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed            =</span> <span class="dv">123</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">respect.unordered.factors =</span> <span class="st">'order'</span>,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 导出OOB误差</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  hyper_grid<span class="sc">$</span>rmse[i] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(fit<span class="sc">$</span>prediction.error)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 评估前10个模型</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="sc">%&gt;%</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(rmse) <span class="sc">%&gt;%</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">perc_gain =</span> (default_rmse <span class="sc">-</span> rmse) <span class="sc">/</span> default_rmse <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   mtry min.node.size replace sample.fraction     rmse perc_gain
+1    26             1   FALSE             0.8 24910.63  2.015610
+2    12             1   FALSE             0.8 24984.93  1.723339
+3    12             5   FALSE             0.8 25034.17  1.529646
+4    20             1   FALSE             0.8 25040.19  1.505984
+5    32             1   FALSE             0.8 25049.52  1.469293
+6    20             3   FALSE             0.8 25056.39  1.442254
+7    26             3   FALSE             0.8 25074.46  1.371189
+8    26             5   FALSE             0.8 25113.53  1.217501
+9    12             3   FALSE             0.8 25113.95  1.215830
+10   32             3   FALSE             0.8 25160.93  1.031053</code></pre>
+</div>
+</div>
+<p>从结果来看，前10个模型的RMSE接近或低于25000（比基线模型提高了2.5%-3.5%）。在这些结果中，默认 <span class="math inline">\(m_{try}\)</span> 值 <span class="math inline">\(\lfloor \frac{\text{特征数量}}{3} \rfloor = 26\)</span> 就是比较理想的参数，较小的节点大小（更深的树）表现最佳。最突出的是，采样率低于100%且无放回采样始终表现最佳。低于100%的采样率增加了程序的随机性，有助于进一步降低树的相关性。无放回采样能提高性能，是因为该数据有许多多类别的不平衡的分类特征。</p>
+<p>然而，随着超参数和搜索值的增加以及数据集的扩大，完全笛卡尔搜索可能变得耗时且计算成本高。可以采用<code>h2o</code> 包提供的随机网格搜索，能够从一个随机组合跳转到另一个，并提供早期停止规则，在满足特定条件（例如，训练了特定数量的模型、经过特定运行时间或准确性的提升非常小）时停止网格搜索。尽管随机离散搜索路径可能无法找到最优模型，但通常能找到一个已经足够好的模型。</p>
+<p>要使用 <code>h2o</code> 拟合随机森林模型，首先需要启动 <code>h2o</code> 会话。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">h2o.no_progress</span>()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">h2o.init</span>(<span class="at">max_mem_size =</span> <span class="st">"5g"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Connection successful!
+
+R is connected to the H2O cluster: 
+    H2O cluster uptime:         8 days 5 hours 
+    H2O cluster timezone:       Asia/Shanghai 
+    H2O data parsing timezone:  UTC 
+    H2O cluster version:        3.44.0.3 
+    H2O cluster version age:    1 year, 11 months and 17 days 
+    H2O cluster name:           H2O_started_from_R_liangdan_ats696 
+    H2O cluster total nodes:    1 
+    H2O cluster total memory:   0.84 GB 
+    H2O cluster total cores:    10 
+    H2O cluster allowed cores:  10 
+    H2O cluster healthy:        TRUE 
+    H2O Connection ip:          localhost 
+    H2O Connection port:        54321 
+    H2O Connection proxy:       NA 
+    H2O Internal Security:      FALSE 
+    R Version:                  R version 4.4.2 (2024-10-31) </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in h2o.clusterInfo(): 
+Your H2O cluster version is (1 year, 11 months and 17 days) old. There may be a newer version available.
+Please download and install the latest version from: https://h2o-release.s3.amazonaws.com/h2o/latest_stable.html</code></pre>
+</div>
+</div>
+<p>接下来，我们需要将训练和测试数据集转换为 <code>h2o</code> 可处理的对象。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 将训练数据转换为h2o对象</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>train_h2o <span class="ot">&lt;-</span> <span class="fu">as.h2o</span>(ames_train)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置响应列为Sale_Price</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="st">"Sale_Price"</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置预测变量名称</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">colnames</span>(ames_train), response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>以下代码使用 <code>h2o</code> 拟合默认随机森林模型，展示基线结果（OOB RMSE = 25045.8）与之前拟合的 <code>ranger</code> 基线模型非常相似。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>h2o_rf1 <span class="ot">&lt;-</span> <span class="fu">h2o.randomForest</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> predictors, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> response,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">training_frame =</span> train_h2o, </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">ntrees =</span> n_features <span class="sc">*</span> <span class="dv">10</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>h2o_rf1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model Details:
+==============
+
+H2ORegressionModel: drf
+Model ID:  DRF_model_R_1764404962582_6 
+Model Summary: 
+  number_of_trees number_of_internal_trees model_size_in_bytes min_depth
+1             800                      800            12318752        19
+  max_depth mean_depth min_leaves max_leaves mean_leaves
+1        20   19.99875       1128       1286  1220.41130
+
+
+H2ORegressionMetrics: drf
+** Reported on training data. **
+** Metrics reported on Out-Of-Bag training samples **
+
+MSE:  627291937
+RMSE:  25045.8
+MAE:  15236.82
+RMSLE:  0.1415736
+Mean Residual Deviance :  627291937</code></pre>
+</div>
+</div>
+<p>要在 <code>h2o</code> 中执行网格搜索，需要将超参数网格设置为列表。例如，以下代码搜索比之前更大的网格空间，共240个超参数组合。然后，创建随机网格搜索策略，如果最后10个模型与之前的最佳模型相比，没有哪个模型的MSE改进能够达到0.1%，则停止。如果还能继续搜索改进，在300秒（5分钟）后也中断网格搜索。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 超参数网格</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtries =</span> <span class="fu">floor</span>(n_features <span class="sc">*</span> <span class="fu">c</span>(.<span class="dv">05</span>, .<span class="dv">15</span>, .<span class="dv">25</span>, .<span class="dv">333</span>, .<span class="dv">4</span>)),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_rows =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_depth =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_rate =</span> <span class="fu">c</span>(.<span class="dv">55</span>, .<span class="dv">632</span>, .<span class="dv">70</span>, .<span class="dv">80</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 随机网格搜索策略</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>search_criteria <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="st">"RandomDiscrete"</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_metric =</span> <span class="st">"mse"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_tolerance =</span> <span class="fl">0.001</span>,   <span class="co"># 如果改进&lt;0.1%则停止</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_rounds =</span> <span class="dv">10</span>,         <span class="co"># 在最后10个模型上</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_runtime_secs =</span> <span class="dv">60</span><span class="sc">*</span><span class="dv">2</span>      <span class="co"># 或在2分钟后停止搜索</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后，可以使用 <code>h2o.grid()</code> 执行网格搜索。以下代码启用早期停止执行网格搜索。在 <code>h2o.grid()</code> 中指定的早期停止方式是在最后10棵树中，如果单个随机森林模型的整体OOB误差改进小于0.05%时则停止生长单个随机森林模型。这可能可以大大减少单个随机森林模型的构建复杂度。此网格搜索需要2分钟。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"rf_random_grid"</span> <span class="sc">%in%</span> <span class="fu">h2o.ls</span>()<span class="sc">$</span>key) {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">h2o.rm</span>(<span class="st">"rf_random_grid"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}   <span class="co"># 剔除由于反复运行可能会出现的id重复的对象</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行网格搜索</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>random_grid <span class="ot">&lt;-</span> <span class="fu">h2o.grid</span>(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"randomForest"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid_id =</span> <span class="st">"rf_random_grid"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> predictors, </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> response, </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">training_frame =</span> train_h2o,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">hyper_params =</span> hyper_grid,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ntrees =</span> n_features <span class="sc">*</span> <span class="dv">10</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_metric =</span> <span class="st">"RMSE"</span>,   </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_rounds =</span> <span class="dv">10</span>,           <span class="co"># 如果最后10棵树没有改进</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_tolerance =</span> <span class="fl">0.005</span>,     <span class="co"># RMSE没有0.5%的改进</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">search_criteria =</span> search_criteria</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>该网格搜索在时间停止前评估了137个模型。最佳模型（<code>max_depth = 10</code>, <code>min_rows = 1</code>, <code>mtries = 32</code>, <code>sample_rate = 0.7</code>）实现了OOB RMSE为25346.50。因此，尽管随机搜索评估的模型数量仅为完全网格搜索的约53%，更有效的随机搜索在指定时间约束内找到了接近最优的模型。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 收集结果并按我们的模型性能指标排序</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>random_grid_perf <span class="ot">&lt;-</span> <span class="fu">h2o.getGrid</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid_id =</span> <span class="st">"rf_random_grid"</span>, </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sort_by =</span> <span class="st">"rmse"</span>, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">decreasing =</span> <span class="cn">FALSE</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>random_grid_perf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>H2O Grid Details
+================
+
+Grid ID: rf_random_grid 
+Used hyper parameters: 
+  -  max_depth 
+  -  min_rows 
+  -  mtries 
+  -  sample_rate 
+Number of models: 122 
+Number of failed models: 0 
+
+Hyper-Parameter Search Summary: ordered by increasing rmse
+  max_depth min_rows   mtries sample_rate               model_ids        rmse
+1  20.00000  1.00000 32.00000     0.70000 rf_random_grid_model_73 25032.02025
+2  30.00000  1.00000 32.00000     0.80000 rf_random_grid_model_50 25406.24586
+3  20.00000  1.00000 26.00000     0.63200 rf_random_grid_model_74 25563.08628
+4  30.00000  1.00000 20.00000     0.70000 rf_random_grid_model_55 25582.26141
+5  20.00000  1.00000 20.00000     0.70000 rf_random_grid_model_37 25583.02405
+
+---
+    max_depth min_rows  mtries sample_rate                model_ids        rmse
+117  20.00000 10.00000 4.00000     0.70000  rf_random_grid_model_65 32996.30102
+118  30.00000 10.00000 4.00000     0.70000  rf_random_grid_model_95 32996.30102
+119  20.00000 10.00000 4.00000     0.63200  rf_random_grid_model_78 33051.43114
+120  10.00000 10.00000 4.00000     0.70000  rf_random_grid_model_10 33059.58047
+121  10.00000 10.00000 4.00000     0.63200 rf_random_grid_model_112 33112.30804
+122  10.00000 10.00000 4.00000     0.55000  rf_random_grid_model_58 33576.85787</code></pre>
+</div>
+</div>
+</section>
+<section id="特征解释" class="level2">
+<h2 class="anchored" data-anchor-id="特征解释">1.6 特征解释</h2>
+<p>随机森林的特征重要性和特征效应计算与决策树和装袋法相似。然而，除了基于不纯度的特征重要性度量（其中特征重要性基于所有树中给定特征的损失函数平均总减少量）外，随机森林通常还包括基于排列的特征重要性度量。在基于排列的方法中，对于每棵树，将OOB样本传递到树中并记录预测准确性。然后，逐一随机打乱每个变量的值并再次计算准确性。由于随机打乱特征值导致的准确性下降在所有树上对每个预测变量取平均值。准确性平均下降最大的变量被认为是最重要的。</p>
+<p>例如，可以通过设置 <code>ranger</code> 的 <code>importance</code> 参数来计算两种特征重要性度量。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用基于不纯度的变量重要性重新运行模型</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>rf_impurity <span class="ot">&lt;-</span> <span class="fu">ranger</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">num.trees =</span> <span class="dv">2000</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="dv">32</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.node.size =</span> <span class="dv">1</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample.fraction =</span> .<span class="dv">80</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">importance =</span> <span class="st">"impurity"</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">respect.unordered.factors =</span> <span class="st">"order"</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed  =</span> <span class="dv">123</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用基于排列的变量重要性重新运行模型</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>rf_permutation <span class="ot">&lt;-</span> <span class="fu">ranger</span>(</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train, </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">num.trees =</span> <span class="dv">2000</span>,</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="dv">32</span>,</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">min.node.size =</span> <span class="dv">1</span>,</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample.fraction =</span> .<span class="dv">80</span>,</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">importance =</span> <span class="st">"permutation"</span>,</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">respect.unordered.factors =</span> <span class="st">"order"</span>,</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed  =</span> <span class="dv">123</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>结果的变量重要性图（VIP）如图所示。通常，两种方法下的变量重要性顺序不同；通常会在图的顶部（和底部）看到相似的变量。因此，在本例中，可以有信心地说，有足够证据表明以下三个变量最具影响力：</p>
+<ul>
+<li><code>Overall_Qual</code></li>
+<li><code>Gr_Liv_Area</code></li>
+<li><code>Neighborhood</code></li>
+</ul>
+<p>查看两个图中的接下来的约10个变量，还会看到一些共同的影响变量（例如，<code>Garage_Cars</code>、<code>Exter_Qual</code>、<code>Bsmt_Qual</code> 和 <code>Year_Built</code>）。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> vip<span class="sc">::</span><span class="fu">vip</span>(rf_impurity, <span class="at">num_features =</span> <span class="dv">25</span>, <span class="at">bar =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> vip<span class="sc">::</span><span class="fu">vip</span>(rf_permutation, <span class="at">num_features =</span> <span class="dv">25</span>, <span class="at">bar =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mlforest_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>基于不纯度（左）和排列（右）的前25个最重要的变量。</p>
+<p>随机森林提供了一种非常强大的开箱即用算法，通常具有出色的预测准确性。它们具有决策树（除了代理分割外）和装袋法的所有优点，但大大降低了不稳定性和树间相关性。由于增加了分割变量选择属性，随机森林比装袋法更快，因为每次树分割的特征搜索空间更小。然而，随着数据集的扩大，随机森林仍会面临计算速度慢的问题，但与装袋法类似，该算法基于独立步骤，大多数现代实现（例如，<code>ranger</code>、<code>h2o</code>）允许并行化来改善训练时间。</p>
+</section>
+</section>
+<section id="梯度提升机gradient-boosting-machines-gbms" class="level1">
+<h1>2 梯度提升机（Gradient Boosting Machines, GBMs）</h1>
+<p>梯度提升机（GBMs）是一类极其流行的机器学习算法，在多个领域都取得了显著成功，也是机器学习算法比赛 Kaggle 竞赛中最常获胜的方法之一。与随机森林使用大量深度且相互独立的树不同，GBM 通过<strong>顺序构建浅树（shallow trees）</strong>来形成一个模型序列，每棵树都在前一棵树的基础上不断学习与改进。单独的一棵浅树预测能力很弱，但若将它们以“提升（boosting）”的方式组合，经过适当调参后，可以形成一个强大的“委员会模型（committee）”，其预测能力往往更强。</p>
+<section id="软件包与数据" class="level2">
+<h2 class="anchored" data-anchor-id="软件包与数据">2.1 软件包与数据</h2>
+<p>使用以下 R 包。其中部分作为辅助工具使用，但重点在展示如何利用 <strong>gbm</strong>（B. Greenwell et al.&nbsp;2018）、<strong>xgboost</strong>（Chen et al.&nbsp;2018）、<strong>h2o</strong> 包实现 GBM：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper packages</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)    <span class="co"># 数据处理工具</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Modeling packages</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gbm)      <span class="co"># 原始版本的GBM，包括regular &amp; stochastic GBM</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loaded gbm 2.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(h2o)      <span class="co"># Java 实现，包含多种 GBM 变体</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xgboost)  <span class="co"># Extreme Gradient Boosting 实现</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'xgboost'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    slice</code></pre>
+</div>
+</div>
+<p>继续使用 <code>ames_train</code> 数据集，并复用前面的 h2o 环境设置。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">h2o.init</span>(<span class="at">max_mem_size =</span> <span class="st">"10g"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Connection successful!
+
+R is connected to the H2O cluster: 
+    H2O cluster uptime:         8 days 5 hours 
+    H2O cluster timezone:       Asia/Shanghai 
+    H2O data parsing timezone:  UTC 
+    H2O cluster version:        3.44.0.3 
+    H2O cluster version age:    1 year, 11 months and 17 days 
+    H2O cluster name:           H2O_started_from_R_liangdan_ats696 
+    H2O cluster total nodes:    1 
+    H2O cluster total memory:   0.83 GB 
+    H2O cluster total cores:    10 
+    H2O cluster allowed cores:  10 
+    H2O cluster healthy:        TRUE 
+    H2O Connection ip:          localhost 
+    H2O Connection port:        54321 
+    H2O Connection proxy:       NA 
+    H2O Internal Security:      FALSE 
+    R Version:                  R version 4.4.2 (2024-10-31) </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in h2o.clusterInfo(): 
+Your H2O cluster version is (1 year, 11 months and 17 days) old. There may be a newer version available.
+Please download and install the latest version from: https://h2o-release.s3.amazonaws.com/h2o/latest_stable.html</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>train_h2o <span class="ot">&lt;-</span> <span class="fu">as.h2o</span>(ames_train)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="st">"Sale_Price"</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">colnames</span>(ames_train), response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="boosting-的工作原理" class="level2">
+<h2 class="anchored" data-anchor-id="boosting-的工作原理">2.2 Boosting 的工作原理</h2>
+<p>许多监督机器学习算法基于单一模型，例如：</p>
+<ul>
+<li>普通线性回归</li>
+<li>惩罚回归（penalized regression）</li>
+<li>单棵决策树</li>
+<li>支持向量机（SVM）</li>
+</ul>
+<p>而装袋法与随机森林则通过将多个模型组合为一个集成模型来提升表现。集成模型通过平均或投票方式组合单个模型的预测。 由于平均可以降低方差，<strong>装袋法更适用于高方差、低偏差的模型（例如深树）</strong>。</p>
+<p>Boosting 则相反，它通常更适用于 <strong>高偏差、低方差的弱模型</strong>。</p>
+<p>Boosting 是一种通用的集成方法，可以将弱模型组合成强模型。尽管理论上 Boosting 可以应用于任意类型的弱学习器，但现实中几乎总是使用 <strong>决策树</strong>。</p>
+<section id="顺序集成sequential-ensemble方法" class="level3">
+<h3 class="anchored" data-anchor-id="顺序集成sequential-ensemble方法">2.2.1 顺序集成（Sequential Ensemble）方法</h3>
+<p>Boosting 的核心思想：</p>
+<blockquote class="blockquote">
+<p><strong>按序构建多棵弱树，每一棵树用于修正上一棵树的错误。</strong></p>
+</blockquote>
+<p>如图所示，每一棵新树都会重点学习上一棵树预测误差最大的样本。</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[数据集] --&gt;|训练| B[模型 1（弱学习器）]
+    B --&gt;|测试| C[误差 1]
+    C --&gt;|基于误差训练| D[模型 2（弱学习器）]
+    D --&gt;|测试| E[误差 2]
+    E --&gt;|基于误差训练| F[模型 3（弱学习器）]
+    F --&gt; G[…… 多轮迭代 ……]
+    G --&gt; H[综合所有子模型]
+    H --&gt; I[最终预测结果]
+
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Boosting 的三大关键：</p>
+<p>① 基学习器（Base learners）</p>
+<p>Boosting 是一个框架，可以使用任何弱学习器，但在实践中，几乎总是采用 <strong>浅层决策树</strong>。</p>
+<p>② 训练弱模型</p>
+<p>弱学习器的错误率仅略优于随机猜测。Boosting 通过让每一棵树重点学习上一棵树的残差来逐步减少偏差。</p>
+<p>浅树（1–6 次分裂）是典型弱学习器。</p>
+<p>③ 基于残差的顺序训练</p>
+<p>Boosting 回归树过程如下：</p>
+<p>1️⃣ 拟合第一棵树   <strong>F₁(x) = y</strong></p>
+<p>2️⃣ 拟合第二棵树以学习第一棵树的残差   <strong>h₁(x) = y – F₁(x)</strong>   <strong>F₂(x) = F₁(x) + h₁(x)</strong></p>
+<p>3️⃣ 拟合第三棵树学习第二棵树的残差   <strong>h₂(x) = y – F₂(x)</strong>   <strong>F₃(x) = F₂(x) + h₂(x)</strong></p>
+<p>……</p>
+<p>最终模型是若干弱学习器的加性组合：</p>
+<p>[ f(x)=_{b=1}^{B} f_b(x)]</p>
+<p>下图展示了利用“决策桩”（单分裂树）逐步逼近复杂函数（正弦波）的例子。</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mlforest_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="梯度下降gradient-descent" class="level3">
+<h3 class="anchored" data-anchor-id="梯度下降gradient-descent">2.2.2 梯度下降（Gradient Descent）</h3>
+<p>Boosting 目标是最小化损失函数，例如：</p>
+<ul>
+<li>回归：SSE（残差平方和）、MSE、RMSE</li>
+<li>分类：log loss、deviance</li>
+<li>MAE（平均绝对值误差）等更稳健的损失值</li>
+</ul>
+<p>对于 SSE，其梯度就是残差，因此“拟合残差”就是“沿梯度方向下降”，即当损失函数是SSE时，它的梯度正好等于残差（真值 − 预测值）。因此，让下一棵树“拟合残差”，就是让模型往让损失下降最快的方向走，也就是“沿梯度下降”。</p>
+<p>这也是“Gradient Boosting Machine”名称的来源。</p>
+<p>梯度下降通过反复沿损失函数下降最快的方向（此处为切线方向，即一阶导数）调整参数，直到到达最小值。</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = theta0, xend = theta0, y = 0, yend = loss(theta0)), : All aesthetics have length 1, but the data has 201 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mlforest_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>学习率过小 → 收敛慢 学习率过大 → 会跳过最优点</p>
+<p>随机梯度下降（Stochastic Gradient Descent, SGD）</p>
+<p>并不是所有的损失函数都是凸的（即“碗状”）。损失函数可能存在局部最小值、平台区（plateaus），以及其他不规则形状，这些都会使得找到全局最小值变得困难。随机梯度下降（Stochastic Gradient Descent, SGD） 可以缓解这个问题。其做法是在每一轮中随机抽取一部分训练样本（通常是不放回抽样），并基于该子样本训练下一棵树。这不仅能加快算法速度，而且由于随机抽样引入的随机性，下降损失函数梯度的过程也会带上一些“跳跃性”。虽然这种随机性使得算法无法保证找到绝对的全局最优解，但它反而可能帮助模型跳出局部最小值或平台区，从而更接近全局最优解。</p>
+</section>
+</section>
+<section id="基本-gbmbasic-gbm" class="level2">
+<h2 class="anchored" data-anchor-id="基本-gbmbasic-gbm">2.3 基本 GBM（Basic GBM）</h2>
+<p>上世纪 90 年代出现多种 Boosting 算法，其中最成功的是 AdaBoost（Freund &amp; Schapire 1999）。2000 年 Friedman 将其与统计学概念（损失函数、加性模型等）结合，推广到回归问题，从而发展出今天常见的 <strong>GBM 框架</strong>。</p>
+<section id="gbm-的超参数hyperparameters" class="level3">
+<h3 class="anchored" data-anchor-id="gbm-的超参数hyperparameters">2.3.1 GBM 的超参数（Hyperparameters）</h3>
+<p>GBM 的超参数分为两类：</p>
+<p><strong>一、Boosting 超参数</strong></p>
+<p><strong>1. 树的数量（n.trees）</strong></p>
+<ul>
+<li>GBM 会“追赶”残差，因此树太多很容易过拟合</li>
+<li>常需要几千棵树</li>
+<li>必须通过 CV 确定最佳树数</li>
+</ul>
+<p><strong>2. 学习率（learning rate / shrinkage）</strong></p>
+<p>范围：0–1，一般 0.001–0.3</p>
+<p>小学习率：</p>
+<ul>
+<li>更好泛化（更稳健）</li>
+<li>防止过拟合</li>
+<li>需要更多树（训练更慢）</li>
+</ul>
+<p><strong>二、树结构超参数</strong></p>
+<p><strong>1. 树深度（interaction.depth）</strong></p>
+<ul>
+<li>典型范围：3–8</li>
+<li>depth=1 → 决策桩（简单但需要更多树）</li>
+<li>深树可捕捉交互，但风险是过拟合</li>
+</ul>
+<p><strong>2. 叶节点最小样本（n.minobsinnode）</strong></p>
+<p>典型范围：5–15 小值 → 更灵活 大值 → 防止过拟合</p>
+</section>
+<section id="使用-gbm-包实现-gbm" class="level3">
+<h3 class="anchored" data-anchor-id="使用-gbm-包实现-gbm">2.3.2 使用 gbm 包实现 GBM</h3>
+<p>R 中最经典的 GBM 实现是 <strong>gbm 包</strong>。</p>
+<p>gbm::gbm() 使用 formula 接口； gbm::gbm.fit() 使用 X/Y 接口，更高效。</p>
+<p>默认学习率 0.001 通常过小，需要大量树，因此常手动设置：</p>
+<ul>
+<li>学习率 = 0.1</li>
+<li>树数 = 5000</li>
+<li>深度 = 3</li>
+<li>10-fold 交叉验证</li>
+</ul>
+<p>示例模型如下（训练约 2 分钟）：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>ames_gbm1 <span class="ot">&lt;-</span> <span class="fu">gbm</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ames_train,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">distribution =</span> <span class="st">"gaussian"</span>, <span class="co"># SSE 作为损失函数</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n.trees =</span> <span class="dv">5000</span>,  <span class="co"># 树数</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">shrinkage =</span> <span class="fl">0.1</span>,  <span class="co"># 学习率</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">interaction.depth =</span> <span class="dv">3</span>,  <span class="co"># 树的深度 </span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">n.minobsinnode =</span> <span class="dv">10</span>,    <span class="co"># 叶节点最小样本数</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv.folds =</span> <span class="dv">10</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>利用 CV 得到最佳树数：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>best <span class="ot">&lt;-</span> <span class="fu">which.min</span>(ames_gbm1<span class="sc">$</span>cv.error)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(ames_gbm1<span class="sc">$</span>cv.error[best])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 22402.07</code></pre>
+</div>
+</div>
+<p>显示了随着树数增加，训练误差（黑色）与 CV 验证误差（绿色，一般更高）的变化。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gbm.perf</span>(ames_gbm1, <span class="at">method =</span> <span class="st">"cv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mlforest_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1119</code></pre>
+</div>
+</div>
+</section>
+<section id="一般调参策略general-tuning-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="一般调参策略general-tuning-strategy">2.3.3 一般调参策略（General tuning strategy）</h3>
+<p>GBM 的表现对超参数高度敏感，其调参比随机森林更困难。典型策略：</p>
+<ol type="1">
+<li><strong>首先选择较大的学习率（如 0.1）</strong></li>
+<li><strong>确定此学习率下的最佳树数，将此树数作为后续训练的大致树数范围</strong></li>
+<li><strong>在固定树结构的情况下，调学习率，评估性能与训练时间</strong></li>
+<li><strong>调树结构超参数（深度、最小样本）</strong></li>
+<li><strong>最终降低学习率并增加树数</strong></li>
+<li><strong>使用更严格的 CV（如多次重复 CV）稳定评估结果，如果之前已经是CV，这步可以省略</strong></li>
+</ol>
+<p>下面在前面0.1的学习率得到大致树数在1000多的基准下，进一步搜索不同学习率（约3分钟），然后评估性能与训练时间。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建学习率的网络搜索</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">learning_rate =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.1</span>, <span class="fl">0.05</span>, <span class="fl">0.01</span>, <span class="fl">0.005</span>),</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">RMSE =</span> <span class="cn">NA</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">trees =</span> <span class="cn">NA</span>,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="cn">NA</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行搜索</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(hyper_grid))) {</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 拟合 gbm</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)  </span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  train_time <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">gbm</span>(</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> ames_train,</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">distribution =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">n.trees =</span> <span class="dv">5000</span>, <span class="co"># 由基准确定的树数范围</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">shrinkage =</span> hyper_grid<span class="sc">$</span>learning_rate[i], </span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">interaction.depth =</span> <span class="dv">3</span>,  <span class="co"># 第一步已经确定的树参数</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">n.minobsinnode =</span> <span class="dv">10</span>,</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">cv.folds =</span> <span class="dv">10</span> </span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 添加SSE，树数和训练时间</span></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>  hyper_grid<span class="sc">$</span>RMSE[i]  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">min</span>(m<span class="sc">$</span>cv.error))</span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>  hyper_grid<span class="sc">$</span>trees[i] <span class="ot">&lt;-</span> <span class="fu">which.min</span>(m<span class="sc">$</span>cv.error)</span>
+<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a>  hyper_grid<span class="sc">$</span>time[i]  <span class="ot">&lt;-</span> train_time[[<span class="st">"elapsed"</span>]]</span>
+<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-32"><a href="#cb41-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-33"><a href="#cb41-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-34"><a href="#cb41-34" aria-hidden="true" tabindex="-1"></a><span class="co"># 按最优顺序排结果</span></span>
+<span id="cb41-35"><a href="#cb41-35" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(hyper_grid, RMSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  learning_rate     RMSE trees   time
+1         0.050 21807.96  1565 39.265
+2         0.010 22102.34  4986 39.761
+3         0.100 22402.07  1119 39.415
+4         0.005 23054.68  4995 38.580
+5         0.300 24411.95   269 39.630</code></pre>
+</div>
+</div>
+<p>那么最佳学习率：0.05</p>
+<p>接着第4步来调树结构（约10分钟） 虽然最佳学习率为0.05，但是以其为基准选择一个较小的学习率0.01，可以让树结构参数精调更稳定，较小的学习率更容易反映出树的结构差异，不会被过大的调整幅度掩盖，同时能够看到树细微变化，避免过拟合。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建学习率的网络搜索</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">n.trees =</span> <span class="dv">6000</span>,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">shrinkage =</span> <span class="fl">0.01</span>,  </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">interaction.depth =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>),</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n.minobsinnode =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 模型拟合函数</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> <span class="cf">function</span>(n.trees, shrinkage, interaction.depth, n.minobsinnode) {</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">gbm</span>(</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> ames_train,</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">distribution =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">n.trees =</span> n.trees,</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">shrinkage =</span> shrinkage,</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">interaction.depth =</span> interaction.depth,</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">n.minobsinnode =</span> n.minobsinnode,</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv.folds =</span> <span class="dv">10</span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 计算 RMSE</span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>(<span class="fu">min</span>(m<span class="sc">$</span>cv.error))</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行搜索</span></span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>hyper_grid<span class="sc">$</span>rmse <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">pmap_dbl</span>(</span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>  hyper_grid,</span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> <span class="fu">model_fit</span>(</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">n.trees =</span> ..<span class="dv">1</span>,</span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">shrinkage =</span> ..<span class="dv">2</span>,</span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">interaction.depth =</span> ..<span class="dv">3</span>,</span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">n.minobsinnode =</span> ..<span class="dv">4</span></span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 排序结果</span></span>
+<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(hyper_grid, rmse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  n.trees shrinkage interaction.depth n.minobsinnode     rmse
+1    6000      0.01                 5              5 21505.73
+2    6000      0.01                 7              5 21525.52
+3    6000      0.01                 5             10 21667.50
+4    6000      0.01                 7             10 21706.33
+5    6000      0.01                 3              5 21962.44
+6    6000      0.01                 3             10 21983.03
+7    6000      0.01                 5             15 21999.32
+8    6000      0.01                 7             15 22189.80
+9    6000      0.01                 3             15 22204.50</code></pre>
+</div>
+</div>
+<p>进一步降低学习率与增加树数没有带来明显的增益（从21807.96仅下降到21505.73，但是计算时间上升了3倍）。</p>
+</section>
+<section id="随机梯度提升机stochastic-gbms" class="level3">
+<h3 class="anchored" data-anchor-id="随机梯度提升机stochastic-gbms">2.4 随机梯度提升机（Stochastic GBMs）</h3>
+<p>Breiman 在开发 bagging 和随机森林算法时（Breiman 1996a; Breiman 2001）的一个重要洞察是：<strong>在训练数据集中随机抽取子样本来训练算法</strong>，可以进一步减少树之间的相关性，从而提高预测准确性。Friedman（2002）使用了相同的逻辑并相应地更新了提升算法。这种过程被称为<strong>随机梯度提升</strong>，它有助于减少陷入损失函数局部最小值、平台期和其他不规则地形的可能性，从而找到接近全局最优解。</p>
+</section>
+<section id="随机超参数" class="level3">
+<h3 class="anchored" data-anchor-id="随机超参数">2.4.1 随机超参数</h3>
+<p>随机梯度提升有几种变体可以使用，所有这些变体都有额外的超参数：</p>
+<ul>
+<li><strong>在创建每棵树之前对行（观测）进行子采样</strong>（在 <code>gbm</code>、<code>h2o</code> 和 <code>xgboost</code> 中可用）</li>
+<li><strong>在创建每棵树之前对列（特征）进行子采样</strong>（<code>h2o</code> 和 <code>xgboost</code>）</li>
+<li><strong>在考虑每棵树中的每个分割之前对列进行子采样</strong>（<code>h2o</code> 和 <code>xgboost</code>）</li>
+</ul>
+<p>一般来说，<strong>对行的激进子采样</strong>（如仅选择50%或更少的训练数据）已被证明是有益的，典型值范围在 <strong>0.5–0.8</strong> 之间。<strong>列子采样</strong>对性能的影响很大程度上取决于数据的性质、是否存在强多重共线性或是否有大量噪声特征。类似于随机森林中的 <code>mtry</code> 参数，如果<strong>相关预测变量较少</strong>（噪声数据较多），<strong>较高的列子采样比值</strong>往往表现更好，因为它更有可能选择具有最强信号的特征。当<strong>相关预测变量较多</strong>时，<strong>较低的列子采样比值</strong>往往表现良好。</p>
+<p>在添加随机过程时，可以将其包含在上述<strong>一般调参策略的第4步</strong>，或者在找到<strong>最优基本模型之后</strong>（第6步）。根据经验，没有看到随机超参数与其他提升和树特定超参数之间存在强烈的交互作用。</p>
+</section>
+<section id="实现" class="level3">
+<h3 class="anchored" data-anchor-id="实现">2.4.2 实现</h3>
+<p>以下使用 <code>h2o</code> 实现随机 GBM。使用前一节找到的最优超参数，并在此基础上评估在构建每棵树之前对行和列进行子采样的各种值，以及在每个分割之前对列进行子采样。为了加速训练，为单个 GBM 建模过程使用<strong>早停</strong>，并添加<strong>随机搜索标准</strong>。</p>
+<p>这个网格搜索只设定运行了10分钟，评估了可能27个模型中的13个，完整跑完可能需要1个小时。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 精细化的超参数网格</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_rate =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>),              <span class="co"># 行子采样</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_sample_rate =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>),          <span class="co"># 每个分割的列子采样</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_sample_rate_per_tree =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>)  <span class="co"># 每棵树的列子采样</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 随机网格搜索策略</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>search_criteria <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="st">"RandomDiscrete"</span>,</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_metric =</span> <span class="st">"mse"</span>,</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_tolerance =</span> <span class="fl">0.001</span>,   </span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_rounds =</span> <span class="dv">10</span>,         </span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_runtime_secs =</span> <span class="dv">60</span><span class="sc">*</span><span class="dv">10</span>      </span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"gbm_grid"</span> <span class="sc">%in%</span> <span class="fu">h2o.ls</span>()<span class="sc">$</span>key) {</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">h2o.rm</span>(<span class="st">"gbm_grid"</span>)</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>}   <span class="co"># 剔除由于反复运行可能会出现的id重复的对象</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行网格搜索 </span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">h2o.grid</span>(</span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"gbm"</span>,</span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid_id =</span> <span class="st">"gbm_grid"</span>,</span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> predictors, </span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> response,</span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">training_frame =</span> train_h2o,</span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">hyper_params =</span> hyper_grid,</span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">ntrees =</span> <span class="dv">6000</span>,</span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">learn_rate =</span> <span class="fl">0.01</span>,</span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_depth =</span> <span class="dv">7</span>,</span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_rows =</span> <span class="dv">5</span>,</span>
+<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfolds =</span> <span class="dv">10</span>,</span>
+<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_rounds =</span> <span class="dv">10</span>,</span>
+<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">stopping_tolerance =</span> <span class="dv">0</span>,</span>
+<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">search_criteria =</span> search_criteria,</span>
+<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb45-38"><a href="#cb45-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-39"><a href="#cb45-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-40"><a href="#cb45-40" aria-hidden="true" tabindex="-1"></a><span class="co"># 收集结果并按我们选择的模型性能指标排序</span></span>
+<span id="cb45-41"><a href="#cb45-41" aria-hidden="true" tabindex="-1"></a>grid_perf <span class="ot">&lt;-</span> <span class="fu">h2o.getGrid</span>(</span>
+<span id="cb45-42"><a href="#cb45-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid_id =</span> <span class="st">"gbm_grid"</span>, </span>
+<span id="cb45-43"><a href="#cb45-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">sort_by =</span> <span class="st">"mse"</span>, </span>
+<span id="cb45-44"><a href="#cb45-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">decreasing =</span> <span class="cn">FALSE</span></span>
+<span id="cb45-45"><a href="#cb45-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-46"><a href="#cb45-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-47"><a href="#cb45-47" aria-hidden="true" tabindex="-1"></a>grid_perf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>H2O Grid Details
+================
+
+Grid ID: gbm_grid 
+Used hyper parameters: 
+  -  col_sample_rate 
+  -  col_sample_rate_per_tree 
+  -  sample_rate 
+Number of models: 12 
+Number of failed models: 0 
+
+Hyper-Parameter Search Summary: ordered by increasing mse
+   col_sample_rate col_sample_rate_per_tree sample_rate         model_ids
+1          0.50000                  1.00000     0.50000  gbm_grid_model_2
+2          0.75000                  0.50000     0.50000  gbm_grid_model_5
+3          0.50000                  1.00000     0.75000  gbm_grid_model_3
+4          0.75000                  0.75000     0.75000  gbm_grid_model_6
+5          0.75000                  1.00000     0.75000  gbm_grid_model_4
+6          0.50000                  1.00000     1.00000  gbm_grid_model_1
+7          1.00000                  0.75000     1.00000  gbm_grid_model_7
+8          0.75000                  0.75000     1.00000  gbm_grid_model_8
+9          0.50000                  0.50000     0.75000  gbm_grid_model_9
+10         1.00000                  1.00000     1.00000 gbm_grid_model_10
+11         0.75000                  1.00000     0.50000 gbm_grid_model_11
+12         1.00000                  0.50000     1.00000 gbm_grid_model_12
+                mse
+1   452431100.85359
+2   458280855.54982
+3   471111963.66550
+4   474654797.16037
+5   483500693.90715
+6   515864743.58130
+7   528810128.24734
+8   601111769.93020
+9  1291500256.31247
+10 4517273604.34495
+11 5373644981.63226
+12 6345709992.72047</code></pre>
+</div>
+</div>
+<p>网格搜索展示了几个重要的结果：</p>
+<ol type="1">
+<li><strong>为每棵树随机抽样行</strong>和<strong>在每个分割之前随机抽样特征</strong>似乎对性能有<strong>积极影响</strong></li>
+<li><strong>在创建每棵树之前抽样特征</strong>是否有影响尚不明确</li>
+<li><strong>最佳采样值非常低</strong>（0.5）；进一步的网格搜索可能有益于评估更低的值</li>
+</ol>
+<p>下面的代码片段提取了表现最好的模型。在这种特定情况下，<strong>没有看到10折交叉验证RMSE比最佳非随机GBM模型有额外改进</strong>。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取通过交叉验证误差选择的最佳模型的 model_id</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>best_model_id <span class="ot">&lt;-</span> grid_perf<span class="sc">@</span>model_ids[[<span class="dv">1</span>]]</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>best_model <span class="ot">&lt;-</span> <span class="fu">h2o.getModel</span>(best_model_id)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 现在获取最佳模型的性能指标</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">h2o.performance</span>(<span class="at">model =</span> best_model, <span class="at">xval =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>关键要点总结</p>
+<ol type="1">
+<li><p><strong>随机子采样的优势</strong>：</p>
+<ul>
+<li>减少树之间的相关性</li>
+<li>帮助逃离损失函数的局部最小值</li>
+<li>提高预测准确性</li>
+</ul></li>
+<li><p><strong>三种随机策略</strong>： | 策略 | 参数名称 | 适用范围 | 典型值 | |——|———-|———-|——–| | 行子采样 | <code>sample_rate</code> | 每棵树 | 0.5-0.8 | | 每棵树列子采样 | <code>col_sample_rate_per_tree</code> | 每棵树 | 0.5-1.0 | | 每个分割列子采样 | <code>col_sample_rate</code> | 每个分割 | 0.5-1.0 |</p></li>
+<li><p><strong>调参建议</strong>：</p>
+<ul>
+<li><strong>行子采样</strong>：0.5-0.8 通常最优</li>
+<li><strong>列子采样</strong>：
+<ul>
+<li>噪声特征多 → 较高值（0.8-1.0）</li>
+<li>相关特征多 → 较低值（0.5-0.7）</li>
+</ul></li>
+</ul></li>
+<li><p><strong>实现优势</strong>：</p>
+<ul>
+<li>使用 <code>h2o.grid()</code> 的随机搜索策略</li>
+<li>结合早停机制加速训练</li>
+<li>自动评估多个组合</li>
+</ul></li>
+<li><p><strong>实际结果解读</strong>：</p>
+<ul>
+<li>最佳组合：<code>sample_rate = 0.5</code>, <code>col_sample_rate = 0.5</code>, <code>col_sample_rate_per_tree = 0.5</code></li>
+<li>RMSE = 21270.43（与非随机GBM相当）</li>
+<li>表明在这个特定数据集上，随机性提升有限</li>
+</ul></li>
+</ol>
+<p>这个部分展示了如何通过引入随机性来改进梯度提升机的性能，同时保持了调参过程的系统性。通过网格搜索和早停机制，可以高效地找到最优的随机参数组合。</p>
+</section>
+</section>
+<section id="xgboost" class="level2">
+<h2 class="anchored" data-anchor-id="xgboost">2.5 XGBoost</h2>
+<p><strong>极限梯度提升（XGBoost）</strong> 是一个优化的分布式梯度提升库，设计目标是高效、灵活且跨多种语言可移植（Chen 和 Guestrin 2016）。虽然 XGBoost提供了前面展示的相同的提升和基于树的超参数选项，但它相较于传统提升方法还具有以下几个优势：</p>
+<ul>
+<li><p><strong>正则化</strong>：XGBoost 提供了额外的正则化超参数，为防止过拟合提供了额外的保护。</p></li>
+<li><p><strong>早停（Early Stopping）</strong>：与 h2o 类似，XGBoost 实现了早停机制，可以在添加更多树不再带来改进时停止模型评估。</p></li>
+<li><p><strong>并行处理</strong>：由于梯度提升本质上是顺序的，很难并行化。XGBoost 实现了支持 GPU 和 Spark 兼容性的程序，允许使用强大的分布式处理引擎来拟合梯度提升模型。</p></li>
+<li><p><strong>损失函数</strong>：XGBoost 允许用户定义和优化梯度提升模型，使用自定义的目标函数和评估标准。</p></li>
+<li><p><strong>继续现有模型</strong>：用户可以训练一个 XGBoost 模型，保存结果，然后稍后返回该模型并继续构建结果。允许在不从头开始的情况下继续训练模型。</p></li>
+<li><p><strong>不同的基学习器</strong>：大多数 GBM 实现都基于决策树，但 XGBoost 还提供了提升的广义线性模型。</p></li>
+<li><p><strong>多种语言支持</strong>：XGBoost 在 R、Python、Julia、Scala、Java 和 C++ 中都有实现。</p></li>
+</ul>
+<p>除了跨多种语言提供支持外，XGBoost 在 R 中也可以通过多种方式实现。主要 R 实现是 <code>xgboost</code> 包；也可以使用 <code>caret</code> 作为元引擎来实现 XGBoost。<code>h2o</code> 包也提供了 XGBoost 的实现。这里演示 <code>xgboost</code> 包的使用。</p>
+<section id="xgboost-超参数" class="level3">
+<h3 class="anchored" data-anchor-id="xgboost-超参数">2.5.1 XGBoost 超参数</h3>
+<p><code>xgboost</code> 提供了额外的超参数，可以帮助减少过拟合的可能性，从而降低预测变异性，进而提高准确性。</p>
+<section id="正则化" class="level4">
+<h4 class="anchored" data-anchor-id="正则化">2.5.1.1 正则化</h4>
+<p><code>xgboost</code> 提供了多种正则化参数来帮助减少模型复杂性并防止过拟合。第一个参数是 <strong>gamma</strong>，这是一个伪正则化超参数，称为拉格朗日乘子，控制给定树的复杂性。<code>gamma</code> 指定了在树的叶节点上进行进一步分割所需的最小损失减少量。当指定 <code>gamma</code> 时，<code>xgboost</code> 会将树生长到指定的最大深度，然后修剪树以找到并移除不满足指定 <code>gamma</code> 的分割。<code>gamma</code> 在 GBM 中的树变得更深时，以及当训练和测试交叉验证误差存在显著差异时，值得探索。<code>gamma</code> 的取值范围为 0−∞（0 表示无约束，较大的数字表示更高的正则化）。什么算作大的 <code>gamma</code> 值取决于损失函数，但一般来说，如果 <code>gamma</code> 有影响，1-20 之间的较低值就足够了。</p>
+<p>另外两个传统的正则化参数包括 <strong>alpha</strong> 和 <strong>lambda</strong>。<code>alpha</code> 提供 L1 正则化，<code>lambda</code> 提供 L2 正则化。将两者都设置为大于 0 会产生弹性网正则化；与 <code>gamma</code> 类似，这些参数的取值范围也是 0−∞。这些正则化参数限制了树中叶节点的权重（或影响）变得极端。</p>
+<p>这三个超参数（<code>gamma</code>、<code>alpha</code>、<code>lambda</code>）都用于约束模型复杂性并减少过拟合。虽然 <code>gamma</code> 更常用，但调参策略应该探索所有三个参数的影响。正则化使过拟合模型在训练数据上更加保守，在某些情况下，这可以改善验证误差。</p>
+</section>
+<section id="dropout" class="level4">
+<h4 class="anchored" data-anchor-id="dropout">2.5.1.2 Dropout</h4>
+<p><strong>Dropout</strong> 是减少过拟合的另一种方法，也可以描述为正则化。由 Srivastava 等人（2014a）开发的 dropout 方法已被广泛应用于深度学习中，以防止深度神经网络过拟合。Dropout 也可以用于解决 GBM 中的过拟合问题。在构建 GBM 时，集成开始时添加的前几棵树通常主导模型性能，而后面添加的树通常只改善特征空间的一小部分预测。这常常会增加过拟合的风险，而 dropout 的思想是通过在提升序列中随机丢弃树来构建集成。这通常被称为 <strong>DART</strong>（Rashmi 和 Gilad-Bachrach 2015），因为它最初是在多重加性回归树（MART）的背景下探索的；DART 指的是 <strong>Dropout Additive Regression Trees</strong>。丢弃的百分比是另一个正则化参数。</p>
+<p>通常，当 <code>gamma</code>、<code>alpha</code> 或 <code>lambda</code> 无法帮助控制过拟合时，探索 DART 超参数将是下一个最佳选择。</p>
+</section>
+</section>
+<section id="调参策略" class="level3">
+<h3 class="anchored" data-anchor-id="调参策略">2.5.2 调参策略</h3>
+<p>探索 <code>xgboost</code> 超参数的一般调参策略建立在基本和随机 GBM 调参策略的基础上：</p>
+<ol type="1">
+<li><strong>增加树的数量并调参学习率，使用早停</strong></li>
+<li><strong>调参树特定的超参数</strong></li>
+<li><strong>探索随机 GBM 属性</strong></li>
+<li><strong>如果发生严重的过拟合（例如，训练和交叉验证误差之间存在很大差异），探索正则化超参数</strong></li>
+<li><strong>如果你发现与默认设置明显不同的超参数值，请确保重新调参学习率</strong></li>
+<li><strong>获得最终的”最优”模型</strong></li>
+</ol>
+<p>使用 <code>xgboost</code> 运行 XGBoost 模型需要一些额外的<strong>数据准备</strong>。<code>xgboost</code> 要求特征输入为矩阵，响应为向量。因此，为了提供特征的矩阵输入,需要将分类变量进行数值编码（即独热编码、标签编码）。以下代码对所有分类特征进行数值标签编码，并将训练数据框转换为矩阵：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(recipes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'recipes'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stringr':
+
+    fixed</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>xgb_prep <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Sale_Price <span class="sc">~</span> ., <span class="at">data =</span> ames_train) <span class="sc">%&gt;%</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_integer</span>(<span class="fu">all_nominal</span>()) <span class="sc">%&gt;%</span> <span class="co"># 类别变量数值编码</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> ames_train, <span class="at">retain =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">juice</span>()</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(xgb_prep[<span class="fu">setdiff</span>(<span class="fu">names</span>(xgb_prep), <span class="st">"Sale_Price"</span>)]) <span class="co"># 训练数据转为矩阵</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> xgb_prep<span class="sc">$</span>Sale_Price</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>xgboost</code> 接受三种不同类型的特征矩阵：普通的 R 矩阵、来自 <code>Matrix</code> 包的稀疏矩阵，或者 <code>xgboost</code> 内部的 <code>xgb.DMatrix</code> 对象。</p>
+<p>接下来，进行了网格搜索，发现以下模型超参数表现较好。RMSE接近前面常规和随机 GBM 模型。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>ames_xgb <span class="ot">&lt;-</span> <span class="fu">xgb.cv</span>(</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> X,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> Y,</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrounds =</span> <span class="dv">6000</span>, <span class="co"># 迭代次数，树的总数</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">objective =</span> <span class="st">"reg:squarederror"</span>, <span class="co"># 目标函数</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">early_stopping_rounds =</span> <span class="dv">50</span>,  <span class="co"># 50次迭代没有任何改进则终止</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfold =</span> <span class="dv">10</span>, <span class="co"># 交叉验证折数</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> <span class="fu">list</span>(</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">eta =</span> <span class="fl">0.1</span>, <span class="co"># 梯度提升的学习速率</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_depth =</span> <span class="dv">3</span>, <span class="co"># 树的最大深度</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_child_weight =</span> <span class="dv">3</span>, <span class="co"># 叶子节点的大小</span></span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">subsample =</span> <span class="fl">0.8</span>, <span class="co"># 行子采样比例</span></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">colsample_bytree =</span> <span class="fl">1.0</span>), <span class="co"># 列子采样比例（此处不控制）</span></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="dv">0</span></span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>)  </span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 最小测试交叉验证 RMSE</span></span>
+<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(ames_xgb<span class="sc">$</span>evaluation_log<span class="sc">$</span>test_rmse_mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 23341.22</code></pre>
+</div>
+</div>
+<p>接下来，通过执行一个检查各种正则化参数（<code>gamma</code>、<code>lambda</code> 和 <code>alpha</code>）的网格搜索来评估过拟合是否限制了我们模型的性能。结果表明，最佳表现的模型使用 <code>lambda = 1</code>，而且 <code>alpha</code> 或 <code>gamma</code> 似乎没有任何一致的模式。然而，即使 <code>lambda = 1</code>，交叉验证 RMSE 也没有比之前的 XGBoost 模型有所改善。</p>
+<p>由于学习率（<code>eta</code>）较低，完整的笛卡尔网格搜索需要很长时间。这里粗略设定参数进行调试。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 超参数网格</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta =</span> <span class="fl">0.01</span>,</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_depth =</span> <span class="dv">3</span>, </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_child_weight =</span> <span class="dv">3</span>,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">subsample =</span> <span class="fl">0.5</span>, </span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">colsample_bytree =</span> <span class="fl">0.5</span>,</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">gamma =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">10</span>),</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1e-2</span>, <span class="fl">0.1</span>),</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1e-2</span>, <span class="fl">0.1</span>),</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">rmse =</span> <span class="dv">0</span>,          <span class="co"># 用于存储 RMSE 结果的位置</span></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">trees =</span> <span class="dv">0</span>          <span class="co"># 用于存储所需树数量的位置</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 网格搜索</span></span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(hyper_grid))) {</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">xgb.cv</span>(</span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> X,</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> Y,</span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">nrounds =</span> <span class="dv">4000</span>,</span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">objective =</span> <span class="st">"reg:squarederror"</span>,</span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">early_stopping_rounds =</span> <span class="dv">5</span>, </span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">nfold =</span> <span class="dv">5</span>,</span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="dv">0</span>,</span>
+<span id="cb55-26"><a href="#cb55-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">params =</span> <span class="fu">list</span>( </span>
+<span id="cb55-27"><a href="#cb55-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">eta =</span> hyper_grid<span class="sc">$</span>eta[i], </span>
+<span id="cb55-28"><a href="#cb55-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">max_depth =</span> hyper_grid<span class="sc">$</span>max_depth[i],</span>
+<span id="cb55-29"><a href="#cb55-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">min_child_weight =</span> hyper_grid<span class="sc">$</span>min_child_weight[i],</span>
+<span id="cb55-30"><a href="#cb55-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">subsample =</span> hyper_grid<span class="sc">$</span>subsample[i],</span>
+<span id="cb55-31"><a href="#cb55-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">colsample_bytree =</span> hyper_grid<span class="sc">$</span>colsample_bytree[i],</span>
+<span id="cb55-32"><a href="#cb55-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">gamma =</span> hyper_grid<span class="sc">$</span>gamma[i], </span>
+<span id="cb55-33"><a href="#cb55-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda =</span> hyper_grid<span class="sc">$</span>lambda[i], </span>
+<span id="cb55-34"><a href="#cb55-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> hyper_grid<span class="sc">$</span>alpha[i]</span>
+<span id="cb55-35"><a href="#cb55-35" aria-hidden="true" tabindex="-1"></a>    ) </span>
+<span id="cb55-36"><a href="#cb55-36" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb55-37"><a href="#cb55-37" aria-hidden="true" tabindex="-1"></a>  hyper_grid<span class="sc">$</span>rmse[i] <span class="ot">&lt;-</span> <span class="fu">min</span>(m<span class="sc">$</span>evaluation_log<span class="sc">$</span>test_rmse_mean)</span>
+<span id="cb55-38"><a href="#cb55-38" aria-hidden="true" tabindex="-1"></a>  hyper_grid<span class="sc">$</span>trees[i] <span class="ot">&lt;-</span> m<span class="sc">$</span>best_iteration</span>
+<span id="cb55-39"><a href="#cb55-39" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-40"><a href="#cb55-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-41"><a href="#cb55-41" aria-hidden="true" tabindex="-1"></a><span class="co"># 结果</span></span>
+<span id="cb55-42"><a href="#cb55-42" aria-hidden="true" tabindex="-1"></a>hyper_grid <span class="sc">%&gt;%</span></span>
+<span id="cb55-43"><a href="#cb55-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rmse <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-44"><a href="#cb55-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(rmse) <span class="sc">%&gt;%</span></span>
+<span id="cb55-45"><a href="#cb55-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 27
+Columns: 10
+$ eta              &lt;dbl&gt; 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01,…
+$ max_depth        &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…
+$ min_child_weight &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…
+$ subsample        &lt;dbl&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5…
+$ colsample_bytree &lt;dbl&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5…
+$ gamma            &lt;dbl&gt; 0, 1, 10, 0, 1, 10, 0, 1, 10, 0, 1, 10, 0, 1, 10, 0, …
+$ lambda           &lt;dbl&gt; 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10,…
+$ alpha            &lt;dbl&gt; 0.01, 0.01, 0.01, 0.00, 0.00, 0.00, 0.10, 0.10, 0.10,…
+$ rmse             &lt;dbl&gt; 23106.61, 23106.61, 23106.61, 23106.61, 23106.61, 231…
+$ trees            &lt;dbl&gt; 1144, 1144, 1144, 1144, 1144, 1144, 1144, 1144, 1144,…</code></pre>
+</div>
+</div>
+<p>一旦找到了最优超参数，就使用 <code>xgb.train</code> 或 <code>xgboost</code> 拟合最终模型。确保使用交叉验证期间找到的最优树数量。添加正则化没有带来改进，因此在最终模型中排除了它们。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 最优参数列表</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta =</span> <span class="fl">0.01</span>,  </span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_depth =</span> <span class="dv">3</span>,</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_child_weight =</span> <span class="dv">3</span>,</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">subsample =</span> <span class="fl">0.5</span>,</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">colsample_bytree =</span> <span class="fl">0.5</span>,</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda =</span> <span class="fl">0.1</span>,</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.01</span></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 训练最终模型</span></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>xgb.fit.final <span class="ot">&lt;-</span> <span class="fu">xgboost</span>(</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> params,</span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> X,</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> Y,</span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrounds =</span> <span class="dv">1144</span>,</span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">objective =</span> <span class="st">"reg:squarederror"</span>,</span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="dv">0</span></span>
+<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="特征解释-1" class="level2">
+<h2 class="anchored" data-anchor-id="特征解释-1">2.6 特征解释</h2>
+<p>测量 GBM 特征重要性和影响的方法与随机森林相同。与随机森林类似，<code>gbm</code> 和 <code>h2o</code> 包提供了<strong>基于杂质的特征重要性</strong>。<code>xgboost</code> 实际上提供了<strong>三种内置的特征重要性度量</strong>：</p>
+<ol type="1">
+<li><strong>Gain（增益）</strong>：
+<ul>
+<li>相当于随机森林中的杂质度量<br>
+</li>
+<li>是最常用的<strong>模型中心度量</strong></li>
+</ul></li>
+<li><strong>Coverage（覆盖率）</strong>：
+<ul>
+<li>量化由该特征影响的观测值的相对数量</li>
+<li>例如：如果有100个观测值、4个特征和3棵树，假设 <code>x1</code> 在 tree1、tree2 和 tree3 中分别用于决定10、5和2个观测值的叶节点；那么该度量将计算该特征的覆盖率为 <strong>10+5+2=17</strong> 个观测值</li>
+<li>对所有4个特征进行计算并表示为百分比</li>
+</ul></li>
+<li><strong>Frequency（频率）</strong>：
+<ul>
+<li>表示特定特征在模型树中出现次数的相对百分比</li>
+<li>在上述例子中，如果 <code>x1</code> 在 tree1、tree2 和 tree3 中分别用于2次、1次和3次分割；那么 <code>x1</code> 的权重为 <strong>2+1+3=6</strong></li>
+<li><code>x1</code> 的频率计算为所有特征权重中的百分比权重</li>
+</ul></li>
+</ol>
+<p>如果使用<strong>杂质（gain）度量</strong>检查最终模型中<strong>前10个最具影响力的特征</strong>，会看到与随机森林模型非常相似的结果。主要区别是<strong>不再将 Neighborhood 视为顶级影响特征</strong>，这可能是由于对分类特征进行标签编码的方式造成的。</p>
+<p>默认情况下，<code>vip::vip()</code> 使用 <strong>gain 方法</strong>进行特征重要性计算，但可以使用 <code>type</code> 参数评估其他类型。也可以使用 <code>xgboost::xgb.ggplot.importance()</code> 来绘制各种特征重要性度量，但需要先在最终模型上运行 <code>xgb.importance()</code>。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 变量重要性图</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>vip<span class="sc">::</span><span class="fu">vip</span>(xgb.fit.final) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mlforest_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>特征重要性度量对比表</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 17%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>度量类型</th>
+<th>定义</th>
+<th>计算方式</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Gain</strong></td>
+<td>每个特征分割带来的杂质减少总和</td>
+<td>所有使用该特征的分割的增益总和</td>
+<td>评估特征对预测贡献</td>
+</tr>
+<tr class="even">
+<td><strong>Coverage</strong></td>
+<td>特征影响的观测值数量</td>
+<td>影响观测值的总和/总观测值</td>
+<td>评估特征的覆盖范围</td>
+</tr>
+<tr class="odd">
+<td><strong>Frequency</strong></td>
+<td>特征在树中出现的频率</td>
+<td>特征分割次数/总分割次数</td>
+<td>评估特征的使用频率</td>
+</tr>
+</tbody>
+</table>
+<p><strong>GBM（梯度提升机）</strong> 是<strong>最具强大集成算法之一</strong>，在预测准确性上通常名列前茅。虽然它们<strong>不如许多其他机器学习算法直观</strong>，且<strong>计算需求更高</strong>，但它们是你的工具箱中<strong>不可或缺的组成部分</strong>。</p>
+<p>一些替代算法。例如：</p>
+<p><strong>LightGBM</strong> - <strong>Ke 等人（2017）</strong> 开发的梯度提升框架 - <strong>叶优先树生长</strong> vs 传统的<strong>层优先树生长</strong> - 树生长更深时，专注于<strong>扩展单个分支</strong>而非<strong>生长多个分支</strong><br>
+- 在 R 中可用</p>
+<p><strong>CatBoost</strong> - <strong>Dorogush、Ershov 和 Gulin（2018）</strong> 开发的梯度提升框架 - 专注于<strong>高效编码分类特征</strong> - 在梯度提升过程中使用专门的方法处理分类变量 - 在 R 中可用</p>
+<p>GBM 家族算法对比</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 23%">
+<col style="width: 28%">
+<col style="width: 21%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>算法</th>
+<th>树生长策略</th>
+<th>分类特征处理</th>
+<th>主要优势</th>
+<th>R 包</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>XGBoost</strong></td>
+<td>层优先</td>
+<td>需预处理</td>
+<td>正则化、早停、并行</td>
+<td><code>xgboost</code></td>
+</tr>
+<tr class="even">
+<td><strong>LightGBM</strong></td>
+<td>叶优先</td>
+<td>自动处理</td>
+<td>速度快、内存效率高</td>
+<td><code>lightgbm</code></td>
+</tr>
+<tr class="odd">
+<td><strong>CatBoost</strong></td>
+<td>对称树</td>
+<td>原生支持</td>
+<td>分类特征处理、过拟合控制</td>
+<td><code>catboost</code></td>
+</tr>
+</tbody>
+</table>
+<p>实际应用建议</p>
+<ol type="1">
+<li><p><strong>模型选择策略</strong>：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 推荐的测试顺序</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>models_to_try <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"xgboost"</span>,    <span class="co"># 通常第一选择</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"lightgbm"</span>,   <span class="co"># 速度优先</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"catboost"</span>,   <span class="co"># 分类特征多时</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"h2o_gbm"</span>     <span class="co"># 简单部署</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>性能预期</strong>：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>数据集特征</th>
+<th>推荐算法</th>
+<th>预期RMSE改善</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>中等规模</td>
+<td>XGBoost</td>
+<td>基准</td>
+</tr>
+<tr class="even">
+<td>大规模</td>
+<td>LightGBM</td>
+<td>20-50%更快</td>
+</tr>
+<tr class="odd">
+<td>分类特征多</td>
+<td>CatBoost</td>
+<td>5-15%更好</td>
+</tr>
+</tbody>
+</table></li>
+<li><p><strong>调参优先级</strong>：</p>
+<ul>
+<li><strong>第一步</strong>：学习率 + 树数量（早停）</li>
+<li><strong>第二步</strong>：树深度 + 最小子节点权重</li>
+<li><strong>第三步</strong>：随机性参数（子采样）</li>
+<li><strong>第四步</strong>：正则化参数</li>
+</ul></li>
+</ol>
+<p>总结：GBM 系列算法是现代机器学习中的先进代表算法，在 Kaggle 竞赛和工业应用中持续领先。掌握 GBM 算法能够显著提升机器学习建模能力。</p>
+<p><strong>关键要点</strong>：<br>
+- ✅ <strong>预测准确性顶尖</strong><br>
+- ✅ <strong>特征重要性可解释</strong><br>
+- ✅ <strong>多种实现可选</strong><br>
+- ⚠️ <strong>调参复杂</strong><br>
+- ⚠️ <strong>计算资源需求高</strong></p>
+</section>
+<section id="参考书籍" class="level2">
+<h2 class="anchored" data-anchor-id="参考书籍">参考书籍</h2>
+<ul>
+<li>Bradley Boehmke &amp; Brandon Greenwell，Hands-On Machine Learning with R，CRC Press, 2020.<br>
+</li>
+<li>Pang-Ning Tan 数据挖掘导论（第2版），机械工业出版社，2019.<br>
+</li>
+<li>Ian Foster等 Big Data and Social Science: Data Science Methods and Tools for Research and Practice, CRC Press, 2021.<br>
+</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
