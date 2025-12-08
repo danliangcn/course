@@ -106,3 +106,167 @@ showtext_auto()
 
 * **提交时间和方式**：两周之后，具体见数字化教学平台。
 
+
+
+
+---
+
+## 简要示例：**城市空气质量与影响因素分析**
+
+### **数据字段说明**
+
+| 变量名              | 含义                               | 类型  |
+| ---------------- | -------------------------------- | --- |
+| pm25             | 城市空气污染（PM2.5 浓度，目标变量）            | 连续型 |
+| temp             | 温度（℃）                            | 连续  |
+| humidity         | 湿度（%）                            | 连续  |
+| windspeed        | 风速（m/s）                          | 连续  |
+| rainfall         | 降雨量（mm）                          | 连续  |
+| industrial_index | 工业活动指数（反映排放强度）                   | 连续  |
+| pop_density      | 人口密度                             | 连续  |
+| green_rate       | 城市绿地率（%）                         | 连续  |
+| weekday          | 星期几（1–7）                         | 分类  |
+| region           | 城市区域类型（urban / suburban / rural） | 分类  |
+
+**机器学习任务：预测 PM2.5 浓度（回归）**
+
+适合：
+
+* 线性回归
+* 决策树回归
+* 随机森林回归
+* 模型比较
+* 特征重要性分析
+* 可视化分析
+
+---
+
+### R 代码模板
+
+以下模板包含：
+
+1. 数据加载
+2. 清洗与预处理
+3. 训练–测试集拆分
+4. 三类模型训练
+5. 模型比较
+6. 特征重要性
+7. 可视化
+
+```r
+# ================================
+# 0. 加载包
+# ================================
+library(tidyverse)
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+library(ggplot2)
+
+# ================================
+# 1. 导入数据
+# ================================
+data <- read_csv("AirQuality_PM25.csv")
+
+glimpse(data)
+
+# ================================
+# 2. 数据预处理
+# ================================
+
+# 将分类变量转换成 factor
+data <- data %>%
+  mutate(
+    weekday = factor(weekday),
+    region = factor(region)
+  )
+
+# 检查缺失
+colSums(is.na(data))
+
+# 简单缺失值处理（示例：用均值填补）
+data$rainfall[is.na(data$rainfall)] <- mean(data$rainfall, na.rm = TRUE)
+
+# ================================
+# 3. 训练集与测试集拆分
+# ================================
+set.seed(123)
+train_index <- createDataPartition(data$pm25, p = 0.75, list = FALSE)
+train <- data[train_index, ]
+test  <- data[-train_index, ]
+
+# ================================
+# 4. 模型训练
+# ================================
+
+# --- model 1: 线性回归 ---
+lm_model <- lm(pm25 ~ ., data = train)
+summary(lm_model)
+
+# 预测
+lm_pred <- predict(lm_model, newdata = test)
+
+
+# --- model 2: 决策树 ---
+tree_model <- rpart(pm25 ~ ., data = train, method = "anova")
+rpart.plot(tree_model)
+
+tree_pred <- predict(tree_model, newdata = test)
+
+
+# --- model 3: 随机森林 ---
+rf_model <- randomForest(pm25 ~ ., data = train, ntree = 500, mtry = 4)
+print(rf_model)
+
+rf_pred <- predict(rf_model, newdata = test)
+
+# ================================
+# 5. 模型评估
+# ================================
+# 定义一个 RMSE 函数
+rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+data.frame(
+  Model = c("Linear Regression", "Decision Tree", "Random Forest"),
+  RMSE = c(
+    rmse(test$pm25, lm_pred),
+    rmse(test$pm25, tree_pred),
+    rmse(test$pm25, rf_pred)
+  )
+)
+
+# ================================
+# 6. 随机森林：特征重要性
+# ================================
+importance <- importance(rf_model)
+varImpPlot(rf_model)
+
+print(importance)
+
+# ================================
+# 7. 可视化示例
+# ================================
+
+# 真实 vs 预测（随机森林）
+plot_df <- data.frame(
+  actual = test$pm25,
+  predicted = rf_pred
+)
+
+ggplot(plot_df, aes(x = actual, y = predicted)) +
+  geom_point(alpha = 0.6) +
+  geom_abline(color = "red", linetype = "dashed") +
+  labs(
+    title = "真实值 vs 预测值（随机森林）",
+    x = "真实 PM2.5",
+    y = "预测 PM2.5"
+  ) +
+  theme_minimal()
+
+```
+
+---
+
