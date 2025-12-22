@@ -1383,7 +1383,7 @@
     "href": "bigdata/spatial/spatialmodels.html",
     "title": "空间数据分析模型",
     "section": "",
-    "text": "本部分概述空间数据类型、空间数据检索、操作和可视化的 R 包，解释空间统计的理论概念，展示如何在模拟、描述和分析区域数据、地理统计数据和点模式数据，以及介绍如何应用空间计量模型。"
+    "text": "在公共管理与公共政策研究中，分析对象往往天然嵌入空间：城市、县区、社区、街区、流域、区域网络等。公共服务供给、环境污染、财政支出、社会风险、政策扩散等问题，都表现出明显的空间相关性（spatial dependence）与空间溢出（spillover effects）。\n传统计量方法通常假定观测单元相互独立（i.i.d.），这一假设在空间情境下往往被系统性违反，从而导致估计偏误或推断失效。"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#为什么要使用空间计量模型",
@@ -1396,50 +1396,50 @@
     "objectID": "bigdata/spatial/spatialmodels.html#理论基础",
     "href": "bigdata/spatial/spatialmodels.html#理论基础",
     "title": "空间数据分析模型",
-    "section": "理论基础",
-    "text": "理论基础\n\n地理学第一定律（Tobler，1970）：“一切事物都是相关的，但近的事物比远的更相关。”\n\n溢出效应：一个地区的结果受邻近地区影响\n\n战略相互依赖：个体根据邻居行为反应（如税收竞争）\n\n遗漏变量偏差：空间相关但不可观察的因素"
+    "section": "2.1 理论基础",
+    "text": "2.1 理论基础\n\n地理学第一定律（Tobler，1970）：“一切事物都是相关的，但近的事物比远的更相关。”\n\n溢出效应：一个地区的结果受邻近地区影响\n\n战略相互依赖：个体根据邻居行为反应（如地方政府在财政、环保、公共服务领域存在策略互动）\n\n遗漏变量偏差：空间上相关但不可观测的制度或社会因素\n\n网络治理结构：非地理空间（组织、功能、社会网络）同样存在“空间”结构"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#空间过程与模型匹配",
     "href": "bigdata/spatial/spatialmodels.html#空间过程与模型匹配",
     "title": "空间数据分析模型",
-    "section": "空间过程与模型匹配",
-    "text": "空间过程与模型匹配\n\n\n\n动机\n含义\n模型\n\n\n\n\ni.i.d.假设被破坏\n空间自相关误差项\nSEM\n\n\n溢出效应\n滞后因变量起作用\nSAR\n\n\n战略互动\n内生空间依赖\nSAR、SDM\n\n\n遗漏变量\n相关误差项\nSEM\n\n\n政策扩散\n间接/溢出效应\nSDM"
+    "section": "2.2 空间过程与模型匹配",
+    "text": "2.2 空间过程与模型匹配\n\n\n\n动机\n含义\n模型\n\n\n\n\ni.i.d.假设被破坏\n空间自相关误差项\nSEM\n\n\n溢出效应\n滞后因变量起作用\nSAR\n\n\n战略互动\n内生空间依赖\nSAR、SDM\n\n\n遗漏变量\n相关误差项\nSEM\n\n\n政策扩散\n间接/溢出效应\nSDM"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#实证动因---实际案例",
     "href": "bigdata/spatial/spatialmodels.html#实证动因---实际案例",
     "title": "空间数据分析模型",
-    "section": "实证动因 - 实际案例",
-    "text": "实证动因 - 实际案例\n\n城市经济学：房价、急救响应、污染\n\n公共财政：税收模仿、支出溢出\n\n区域发展：基础设施跨区域影响\n\n流行病学：疾病传播模式\n\n忽略空间效应会低估政策影响或误判显著性水平"
+    "section": "2.3 实证动因 - 实际案例",
+    "text": "2.3 实证动因 - 实际案例\n\n城市经济学：房价、急救响应、污染\n\n公共财政：税收模仿、支出溢出\n\n区域发展：基础设施跨区域影响\n\n流行病学：疾病传播模式\n\n忽略空间效应会低估政策影响或误判显著性水平"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#空间滞后",
     "href": "bigdata/spatial/spatialmodels.html#空间滞后",
     "title": "空间数据分析模型",
-    "section": "空间滞后",
-    "text": "空间滞后\n\n空间滞后是时间序列相关性的空间类比，但更为复杂。\n\n主要区别：\n\n空间滞后是多方向关系，而时间序列相关性是单方向（只能过去影响未来）。\n\n空间滞后会消耗自由度，而时间序列相关性不会。\n\n空间滞后使用预定义的空间权重矩阵（W），而时间序列相关性没有。\n\n空间滞后性可比较不同的W矩阵以获得稳健性结果。\n\n\n空间异质性？？"
+    "section": "2.4 空间滞后",
+    "text": "2.4 空间滞后\n\n空间滞后是时间序列相关性的空间类比，但更为复杂。\n\n主要区别：\n\n空间滞后是多方向关系，而时间序列相关性是单方向（只能过去影响未来）。\n\n空间滞后会消耗自由度，而时间序列相关性不会。\n\n空间滞后使用预定义的空间权重矩阵（W），而时间序列相关性没有。\n\n空间滞后性可比较不同的W矩阵以获得稳健性结果。\n\n\n空间异质性？？"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#何时考虑空间回归",
     "href": "bigdata/spatial/spatialmodels.html#何时考虑空间回归",
     "title": "空间数据分析模型",
-    "section": "何时考虑空间回归？",
-    "text": "何时考虑空间回归？\n\n每个观测值对应一个空间位置或区域\n\n一定要进行探索性空间数据分析以识别空间相关性"
+    "section": "2.5 何时考虑空间回归？",
+    "text": "2.5 何时考虑空间回归？\n\n每个观测值对应一个空间位置或区域\n\n一定要进行探索性空间数据分析以识别空间相关性"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#空间自相关指标",
     "href": "bigdata/spatial/spatialmodels.html#空间自相关指标",
     "title": "空间数据分析模型",
-    "section": "空间（自）相关指标",
-    "text": "空间（自）相关指标\n\n全局莫兰指数（Global Moran’s I）\n\n为整个研究区域提供一个值\n取值范围：-1 到 +1\n0 表示完全随机\n-1 表示完全分散（负相关，高-低/低-高）\n+1 表示完全聚集（正相关，高-高/低-低）\n\n示例：莫兰指数 = 0.3699\n局部空间自相关（LISA（Local Indicators of Spatial Autocorrelation），Anselin, 1995）\n\n为每个空间单位提供一个值\n所有观测值的LISA总和与全局空间关联指标成比例\n聚集类型：高-高 或 低-低\n异常值：高-低 或 低-高\n\n全局与局部统计可扩展到双变量空间相关\n\n双变量全局莫兰指数：一个单位中的变量是否与邻近单位的另一个变量在全局范围内空间相关\n双变量局部莫兰指数：一个单位中的变量是否与邻近单位的另一个变量在局部范围内空间聚集\n与皮尔逊相关系数不同，不仅考虑数值相关性，还考虑地理接近性\n\n示例：1960年凶杀案与失业率（全局莫兰指数，未显著，2053年）"
+    "section": "2.6 空间（自）相关指标",
+    "text": "2.6 空间（自）相关指标\n\n全局莫兰指数（Global Moran’s I）\n\n为整个研究区域提供一个值\n取值范围：-1 到 +1\n0 表示完全随机\n-1 表示完全分散（负相关，高-低/低-高）\n+1 表示完全聚集（正相关，高-高/低-低）\n\n局部空间自相关（LISA（Local Indicators of Spatial Autocorrelation），Anselin, 1995）\n\n为每个空间单位提供一个值\n所有观测值的LISA总和与全局空间关联指标成比例\n聚集类型：高-高 或 低-低\n异常值：高-低 或 低-高\n\n全局与局部统计可扩展到双变量空间相关\n\n双变量全局莫兰指数：一个单位中的变量是否与邻近单位的另一个变量在全局范围内空间相关\n双变量局部莫兰指数：一个单位中的变量是否与邻近单位的另一个变量在局部范围内空间聚集\n与皮尔逊相关系数不同，不仅考虑数值相关性，还考虑地理接近性"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#空间权重矩阵w",
     "href": "bigdata/spatial/spatialmodels.html#空间权重矩阵w",
     "title": "空间数据分析模型",
-    "section": "空间权重矩阵（W）",
-    "text": "空间权重矩阵（W）\n\n描述空间单位间的结构或连通性\n\n常为n×n稀疏矩阵，行标准化（行和为1）\n\n\n\n\n空间权重矩阵\n\n\n\n连通型矩阵\n\nRook邻接：共享边界的邻居\nQueen邻接：共享边界或角落的邻居\n示例：中心单元（E）的邻居\n\nRook：B、D、F、H\nQueen：A、B、C、D、F、G、H、I\n\n\n\n\n\n距离型矩阵：\n\n反距离权重：1/d^2\n\n距离带法：指定范围内为邻居\n\nK近邻：最近的K个单位为邻居\n\n\n\n非地理型矩阵：\n\n社交连接：谁与谁在社交网络中互动\n经济相似性：哪些公司属于同一行业或具有相似财务特征\n功能关系：组织内哪些部门在项目中合作\n共享属性：哪些个体具有相似的年龄、收入或政治观点"
+    "section": "2.2 空间权重矩阵（W）",
+    "text": "2.2 空间权重矩阵（W）\n空间计量的核心在于空间权重矩阵，用于刻画“谁与谁相关”。\n\n描述空间单位间的结构或连通性\n\n常为n×n稀疏矩阵，行标准化（行和为1）\n\n\n\n\n空间权重矩阵\n\n\n空间矩阵有不同的构建方式。\n\n2.2.1 连通型矩阵\n\nRook邻接：共享边界的邻居\nQueen邻接：共享边界或角落的邻居\n示例：中心单元（E）的邻居\n\nRook：B、D、F、H\nQueen：A、B、C、D、F、G、H、I\n\n\n\n\n\n2.2.2 距离型矩阵：\n\n反距离权重：1/d^2\n\n距离带法：指定范围内为邻居\n\nK近邻：最近的K个单位为邻居\n\n\n\n2.2.3 非地理型矩阵：\n\n社交连接：谁与谁在社交网络中互动\n经济相似性：哪些公司属于同一行业或具有相似财务特征\n功能关系：组织内哪些部门在项目中合作\n共享属性：哪些个体具有相似的年龄、收入或政治观点\n\n\n\n2.2.4 如何选择 W？\n\nW矩阵的设定具有一定的主观性\n\n不设W（即设为0）意味着假设空间独立，反而更强\n\n不同W可能导致参数估计差异（尤其在早期文献中）\n\n实证研究会有许多不同的矩阵设定，通过敏感性分析消除疑虑"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#如何选择-w",
@@ -1459,8 +1459,8 @@
     "objectID": "bigdata/spatial/spatialmodels.html#案例数据",
     "href": "bigdata/spatial/spatialmodels.html#案例数据",
     "title": "空间数据分析模型",
-    "section": "案例数据",
-    "text": "案例数据\n\n数据集：NC（spData 或 spdep 包）\n\n范围：北卡罗来纳州100个县\n\n变量：\nBIR74, BIR79：1974年和1979年的出生数\nSID74, SID79：1974年和1979年的婴儿猝死数\nNWBIR74, NWBIR79：1974年和1979年非白人母亲的出生数\nNAME, FIPS, CNTY_ID：县标识符和名称\n来源与原始出版：\n\n原始研究：Cressie, Noel. (1993). Statistics for Spatial Data. Wiley.\n由Luc Anselin等人编译，最初用于空间计量建模\n参考文献：Bivand, Roger S., Edzer J. Pebesma, and Virgilio Gómez-Rubio (2008, 2013). Applied Spatial Data Analysis with R.\n\n读取数据与呈现\n\n\nlibrary(sf)\nlibrary(spdep)\nlibrary(ggplot2)\nlibrary(leaflet)\nlibrary(spatialreg)\nlibrary(lmtest)\nlibrary(stargazer)\nlibrary(gt)\nlibrary(dplyr)\n# 载入shp文件\nnc &lt;- st_read(system.file(\"shape/nc.shp\", package=\"sf\"))\n\nReading layer `nc' from data source \n  `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sf/shape/nc.shp' \n  using driver `ESRI Shapefile'\nSimple feature collection with 100 features and 14 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: -84.32385 ymin: 33.88199 xmax: -75.45698 ymax: 36.58965\nGeodetic CRS:  NAD27\n\n# 将空间数据转换为WGS84经纬度坐标系，便于与其他通用地理数据或工具（如Leaflet、ggplot2等）兼容\nnc &lt;- st_transform(nc, crs = 4326)\n\n# 可视化\nggplot(nc) +\n  geom_sf(fill = \"lightblue\", color = \"white\") +\n  theme_minimal() +\n  labs(title = \"North Carolina Counties\")\n\n\n\n\n\n\n\n# 采用leaflet包创建交互式地图\npal &lt;- colorNumeric(\"YlGnBu\", domain = NULL)  # 可根据需要定义变量\n\nleaflet(nc) %&gt;%\n  addTiles() %&gt;%\n  addPolygons(\n    fillColor = ~pal(1),  # 可根据变量选定颜色\n    fillOpacity = 0.6,\n    color = \"black\",\n    weight = 1,\n    popup = ~paste(\"ID:\", row.names(nc))\n  )\n\n\n\n\n\n\n出生率示意图\n\n\n# 采用ggplot2绘制静态地图\n\nggplot(nc) +\n  geom_sf(aes(fill = BIR74), color = \"white\") +\n  scale_fill_viridis_c(option = \"C\", name = \"Birth Rate\") +\n  theme_minimal() +\n  labs(title = \"Choropleth of Birth Rate 1974 (Static)\")\n\n\n\n\n\n\n\n# 采取leaflet绘制交互式地图\npal &lt;- colorNumeric(palette = \"YlOrBr\", domain = nc$BIR74)\n\nleaflet(nc) %&gt;%\n  addTiles() %&gt;%\n  addPolygons(\n    fillColor = ~pal(BIR74),\n    fillOpacity = 0.7,\n    color = \"black\",\n    weight = 1,\n    popup = ~paste(\"Birth Rate:\", BIR74)\n  ) %&gt;%\n  addLegend(\"bottomright\", pal = pal, values = ~BIR74,\n            title = \"Birth Rate\")\n\n\n\n\n\n\n空间连通性\n\n\n# 创建连通加权矩阵（queen）\nnb_contig &lt;- poly2nb(nc) # 从多边形生成邻居列表\nlistw_contig &lt;- nb2listw(nb_contig, style = \"W\") # 添加按行标准化的权重\n\n# 可视化连通性\ncentroids &lt;- st_centroid(st_geometry(nc))\ncoords &lt;- st_coordinates(centroids) # 获取地理单元的中心点及其坐标\n\nnb_lines &lt;- nb2lines(nb_contig, coords = coords, as_sf = TRUE)\nst_crs(nb_lines) &lt;- st_crs(nc)  # 将邻居列表转化为空间线条数据框，并附加坐标系\n\n# 呈现邻居连通性\nggplot() +\n  geom_sf(data = nc, fill = \"grey95\", color = \"black\") +\n  geom_sf(data = nb_lines, color = \"red\", size = 0.5, alpha = 0.6) +\n  theme_minimal() +\n  labs(title = \"Spatial Contiguity Links\")\n\n\n\n\n\n\n\n\n\n全局莫兰检验和呈现\n\n\n# 莫兰检验和呈现\nmoran.test(nc$BIR74, listw = listw_contig)\n\n\n    Moran I test under randomisation\n\ndata:  nc$BIR74  \nweights: listw_contig    \n\nMoran I statistic standard deviate = 2.4055, p-value = 0.008074\nalternative hypothesis: greater\nsample estimates:\nMoran I statistic       Expectation          Variance \n      0.139319332      -0.010101010       0.003858258 \n\nmoran.plot(nc$BIR74, listw = listw_contig,\n           labels = FALSE, xlab = \"Birth Rate\",\n           ylab = \"Spatial Lag of Birth Rate\",\n           main = \"Moran Scatterplot of Birth Rate\")\n\n\n\n\n\n\n\n\n\n局部空间相关指数（LISA）的呈现\n\n\n# 利用空间权重矩阵，获取变量的空间滞后项\nnc$lag_BIR &lt;- lag.listw(listw_contig, nc$BIR74)\n\n# 基于空间权重，分别计算每个地理单元局部莫兰指数\nlocal_moran &lt;- localmoran(nc$BIR74, listw=listw_contig)\n\n# 添加局部莫兰指数的结果，包括指数统计量、标准差、显著性水平\nnc$Ii     &lt;- local_moran[, \"Ii\"]\nnc$Z_Ii   &lt;- local_moran[, \"Z.Ii\"]\nnc$p_Ii   &lt;- local_moran[, \"Pr(z != E(Ii))\"] \n\n# 划分LISA集合的类别\n# Global means\nmean_BIR &lt;- mean(nc$BIR74, na.rm = TRUE)\nmean_lag &lt;- mean(nc$lag_BIR, na.rm = TRUE)\nnc$cluster &lt;- factor(\n  ifelse(nc$BIR74 &gt; mean_BIR & nc$lag_BIR &gt; mean_lag & nc$p_Ii &lt;= 0.05, \"High-High\",\n         ifelse(nc$BIR74 &lt; mean_BIR & nc$lag_BIR &lt; mean_lag & nc$p_Ii &lt;= 0.05, \"Low-Low\",\n                ifelse(nc$BIR74 &gt; mean_BIR & nc$lag_BIR &lt; mean_lag & nc$p_Ii &lt;= 0.05, \"High-Low\",\n                       ifelse(nc$BIR74 &lt; mean_BIR & nc$lag_BIR &gt; mean_lag & nc$p_Ii &lt;= 0.05, \"Low-High\",\n                              \"Not Significant\")))),\n  levels = c(\"High-High\", \"Low-Low\", \"High-Low\", \"Low-High\", \"Not Significant\")\n)\n\n# Optional: Make sure 'cluster' is a factor with proper levels\nnc$cluster &lt;- factor(nc$cluster, levels = c(\"High-High\", \"Low-Low\", \"High-Low\", \"Low-High\", \"Not significant\"))\n\n# Define custom colors for each cluster type\ncluster_colors &lt;- c(\n  \"High-High\" = \"red\",\n  \"Low-Low\" = \"blue\",\n  \"High-Low\" = \"orange\",\n  \"Low-High\" = \"lightblue\",\n  \"Not significant\" = \"lightgray\"\n)\n\n# Plot using ggplot\nggplot(nc) +\n  geom_sf(aes(fill = cluster), color = \"white\", size = 0.2) +\n  scale_fill_manual(values = cluster_colors, name = \"LISA Cluster\") +\n  labs(title = \"LISA Cluster Map: BIR74\") +\n  theme_minimal()"
+    "section": "2.7 案例数据",
+    "text": "2.7 案例数据\n\n数据集：NC（spData 或 spdep 包）\n\n范围：北卡罗来纳州100个县\n\n变量：\nBIR74, BIR79：1974年和1979年的出生数\nSID74, SID79：1974年和1979年的婴儿猝死数\nNWBIR74, NWBIR79：1974年和1979年非白人母亲的出生数\nNAME, FIPS, CNTY_ID：县标识符和名称\n来源与原始出版：\n\n原始研究：Cressie, Noel. (1993). Statistics for Spatial Data. Wiley.\n由Luc Anselin等人编译，最初用于空间计量建模\n参考文献：Bivand, Roger S., Edzer J. Pebesma, and Virgilio Gómez-Rubio (2008, 2013). Applied Spatial Data Analysis with R.\n\n读取数据与呈现\n\n\nlibrary(sf)\nlibrary(spdep)\nlibrary(ggplot2)\nlibrary(leaflet)\nlibrary(spatialreg)\nlibrary(lmtest)\nlibrary(stargazer)\nlibrary(gt)\nlibrary(dplyr)\n# 载入shp文件\nnc &lt;- st_read(system.file(\"shape/nc.shp\", package=\"sf\"))\n\nReading layer `nc' from data source \n  `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sf/shape/nc.shp' \n  using driver `ESRI Shapefile'\nSimple feature collection with 100 features and 14 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: -84.32385 ymin: 33.88199 xmax: -75.45698 ymax: 36.58965\nGeodetic CRS:  NAD27\n\n# 将空间数据转换为WGS84经纬度坐标系，便于与其他通用地理数据或工具（如Leaflet、ggplot2等）兼容\nnc &lt;- st_transform(nc, crs = 4326)\n\n# 可视化\nggplot(nc) +\n  geom_sf(fill = \"lightblue\", color = \"white\") +\n  theme_minimal() +\n  labs(title = \"North Carolina Counties\")\n\n\n\n\n\n\n\n# 采用leaflet包创建交互式地图\npal &lt;- colorNumeric(\"YlGnBu\", domain = NULL)  # 可根据需要定义变量\n\nleaflet(nc) %&gt;%\n  addTiles() %&gt;%\n  addPolygons(\n    fillColor = ~pal(1),  # 可根据变量选定颜色\n    fillOpacity = 0.6,\n    color = \"black\",\n    weight = 1,\n    popup = ~paste(\"ID:\", row.names(nc))\n  )\n\n\n\n\n\n\n出生率示意图\n\n\n# 采用ggplot2绘制静态地图\n\nggplot(nc) +\n  geom_sf(aes(fill = BIR74), color = \"white\") +\n  scale_fill_viridis_c(option = \"C\", name = \"Birth Rate\") +\n  theme_minimal() +\n  labs(title = \"Choropleth of Birth Rate 1974 (Static)\")\n\n\n\n\n\n\n\n# 采取leaflet绘制交互式地图\npal &lt;- colorNumeric(palette = \"YlOrBr\", domain = nc$BIR74)\n\nleaflet(nc) %&gt;%\n  addTiles() %&gt;%\n  addPolygons(\n    fillColor = ~pal(BIR74),\n    fillOpacity = 0.7,\n    color = \"black\",\n    weight = 1,\n    popup = ~paste(\"Birth Rate:\", BIR74)\n  ) %&gt;%\n  addLegend(\"bottomright\", pal = pal, values = ~BIR74,\n            title = \"Birth Rate\")\n\n\n\n\n\n\n空间连通性\n\n\n# 创建连通加权矩阵（queen）\nnb_contig &lt;- poly2nb(nc) # 从多边形生成邻居列表\nlistw_contig &lt;- nb2listw(nb_contig, style = \"W\") # 添加按行标准化的权重\n\n# 可视化连通性\ncentroids &lt;- st_centroid(st_geometry(nc))\ncoords &lt;- st_coordinates(centroids) # 获取地理单元的中心点及其坐标\n\nnb_lines &lt;- nb2lines(nb_contig, coords = coords, as_sf = TRUE)\nst_crs(nb_lines) &lt;- st_crs(nc)  # 将邻居列表转化为空间线条数据框，并附加坐标系\n\n# 呈现邻居连通性\nggplot() +\n  geom_sf(data = nc, fill = \"grey95\", color = \"black\") +\n  geom_sf(data = nb_lines, color = \"red\", size = 0.5, alpha = 0.6) +\n  theme_minimal() +\n  labs(title = \"Spatial Contiguity Links\")\n\n\n\n\n\n\n\n\n\n全局莫兰检验和呈现\n\n\n# 莫兰检验和呈现\nmoran.test(nc$BIR74, listw = listw_contig)\n\n\n    Moran I test under randomisation\n\ndata:  nc$BIR74  \nweights: listw_contig    \n\nMoran I statistic standard deviate = 2.4055, p-value = 0.008074\nalternative hypothesis: greater\nsample estimates:\nMoran I statistic       Expectation          Variance \n      0.139319332      -0.010101010       0.003858258 \n\nmoran.plot(nc$BIR74, listw = listw_contig,\n           labels = FALSE, xlab = \"Birth Rate\",\n           ylab = \"Spatial Lag of Birth Rate\",\n           main = \"Moran Scatterplot of Birth Rate\")\n\n\n\n\n\n\n\n\n\n局部空间相关指数（LISA）的呈现\n\n\n# 利用空间权重矩阵，获取变量的空间滞后项\nnc$lag_BIR &lt;- lag.listw(listw_contig, nc$BIR74)\n\n# 基于空间权重，分别计算每个地理单元局部莫兰指数\nlocal_moran &lt;- localmoran(nc$BIR74, listw=listw_contig)\n\n# 添加局部莫兰指数的结果，包括指数统计量、标准差、显著性水平\nnc$Ii     &lt;- local_moran[, \"Ii\"]\nnc$Z_Ii   &lt;- local_moran[, \"Z.Ii\"]\nnc$p_Ii   &lt;- local_moran[, \"Pr(z != E(Ii))\"] \n\n# 划分LISA集合的类别\n# Global means\nmean_BIR &lt;- mean(nc$BIR74, na.rm = TRUE)\nmean_lag &lt;- mean(nc$lag_BIR, na.rm = TRUE)\nnc$cluster &lt;- factor(\n  ifelse(nc$BIR74 &gt; mean_BIR & nc$lag_BIR &gt; mean_lag & nc$p_Ii &lt;= 0.05, \"High-High\",\n         ifelse(nc$BIR74 &lt; mean_BIR & nc$lag_BIR &lt; mean_lag & nc$p_Ii &lt;= 0.05, \"Low-Low\",\n                ifelse(nc$BIR74 &gt; mean_BIR & nc$lag_BIR &lt; mean_lag & nc$p_Ii &lt;= 0.05, \"High-Low\",\n                       ifelse(nc$BIR74 &lt; mean_BIR & nc$lag_BIR &gt; mean_lag & nc$p_Ii &lt;= 0.05, \"Low-High\",\n                              \"Not Significant\")))),\n  levels = c(\"High-High\", \"Low-Low\", \"High-Low\", \"Low-High\", \"Not Significant\")\n)\n\n# Optional: Make sure 'cluster' is a factor with proper levels\nnc$cluster &lt;- factor(nc$cluster, levels = c(\"High-High\", \"Low-Low\", \"High-Low\", \"Low-High\", \"Not significant\"))\n\n# Define custom colors for each cluster type\ncluster_colors &lt;- c(\n  \"High-High\" = \"red\",\n  \"Low-Low\" = \"blue\",\n  \"High-Low\" = \"orange\",\n  \"Low-High\" = \"lightblue\",\n  \"Not significant\" = \"lightgray\"\n)\n\n# Plot using ggplot\nggplot(nc) +\n  geom_sf(aes(fill = cluster), color = \"white\", size = 0.2) +\n  scale_fill_manual(values = cluster_colors, name = \"LISA Cluster\") +\n  labs(title = \"LISA Cluster Map: BIR74\") +\n  theme_minimal()"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#基本模型规格",
@@ -1480,8 +1480,8 @@
     "objectID": "bigdata/spatial/spatialmodels.html#似然比检验likelihood-ratio-test",
     "href": "bigdata/spatial/spatialmodels.html#似然比检验likelihood-ratio-test",
     "title": "空间数据分析模型",
-    "section": "似然比检验（Likelihood Ratio Test）",
-    "text": "似然比检验（Likelihood Ratio Test）\n\n（内容被截断，可能包含大量重复的“2”）"
+    "section": "3.3 似然比检验（Likelihood Ratio Test）",
+    "text": "3.3 似然比检验（Likelihood Ratio Test）\n\n比较嵌套模型 (e.g., SDM vs SAR)\n检验统计量：\\(LR = -2(\\log L_{restricted} - \\log L_{full})\\)\n服从卡方分布\n拒绝原假设，则采用完整模型 (SDM)\n\n\n一般到特殊：SDM → SAR / SEM\n\nlibrary(spatialreg)\n\nsar_model &lt;- lagsarlm(form, data = nc, listw = listw_contig)\nsem_model &lt;- errorsarlm(form, data = nc, listw = listw_contig)\nsdm_model &lt;- lagsarlm(form, data = nc, listw = listw_contig, type = \"Durbin\")\n\nlrtest(sar_model, sdm_model) \n\nLikelihood ratio test\n\nModel 1: BIR74 ~ SID74 + NWBIR74\nModel 2: BIR74 ~ SID74 + NWBIR74\n  #Df  LogLik Df  Chisq Pr(&gt;Chisq)    \n1   5 -878.59                         \n2   7 -869.13  2 18.911  7.827e-05 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nlrtest(sem_model, sdm_model)\n\nLikelihood ratio test\n\nModel 1: BIR74 ~ SID74 + NWBIR74\nModel 2: BIR74 ~ SID74 + NWBIR74\n  #Df  LogLik Df  Chisq Pr(&gt;Chisq)\n1   5 -869.41                     \n2   7 -869.13  2 0.5554     0.7575"
   },
   {
     "objectID": "bigdata/spatial/spatialmodels.html#空间参数估计ρ-和-λ",
@@ -1993,5 +1993,54 @@
     "title": "机器学习作业",
     "section": "简要示例：城市空气质量与影响因素分析",
     "text": "简要示例：城市空气质量与影响因素分析\n\n数据字段说明\n\n\n\n\n\n\n\n\n变量名\n含义\n类型\n\n\n\n\npm25\n城市空气污染（PM2.5 浓度，目标变量）\n连续型\n\n\ntemp\n温度（℃）\n连续\n\n\nhumidity\n湿度（%）\n连续\n\n\nwindspeed\n风速（m/s）\n连续\n\n\nrainfall\n降雨量（mm）\n连续\n\n\nindustrial_index\n工业活动指数（反映排放强度）\n连续\n\n\npop_density\n人口密度\n连续\n\n\ngreen_rate\n城市绿地率（%）\n连续\n\n\nweekday\n星期几（1–7）\n分类\n\n\nregion\n城市区域类型（urban / suburban / rural）\n分类\n\n\n\n机器学习任务：预测 PM2.5 浓度（回归）\n适合：\n\n线性回归\n决策树回归\n随机森林回归\n模型比较\n特征重要性分析\n可视化分析\n\n\n\n\nR 代码模板\n以下模板包含：\n\n数据加载\n清洗与预处理\n训练–测试集拆分\n三类模型训练\n模型比较\n特征重要性\n可视化\n\n# ================================\n# 0. 加载包\n# ================================\nlibrary(tidyverse)\nlibrary(caret)\nlibrary(rpart)\nlibrary(rpart.plot)\nlibrary(randomForest)\nlibrary(ggplot2)\n\n# ================================\n# 1. 导入数据\n# ================================\ndata &lt;- read_csv(\"AirQuality_PM25.csv\")\n\nglimpse(data)\n\n# ================================\n# 2. 数据预处理\n# ================================\n\n# 将分类变量转换成 factor\ndata &lt;- data %&gt;%\n  mutate(\n    weekday = factor(weekday),\n    region = factor(region)\n  )\n\n# 检查缺失\ncolSums(is.na(data))\n\n# 简单缺失值处理（示例：用均值填补）\ndata$rainfall[is.na(data$rainfall)] &lt;- mean(data$rainfall, na.rm = TRUE)\n\n# ================================\n# 3. 训练集与测试集拆分\n# ================================\nset.seed(123)\ntrain_index &lt;- createDataPartition(data$pm25, p = 0.75, list = FALSE)\ntrain &lt;- data[train_index, ]\ntest  &lt;- data[-train_index, ]\n\n# ================================\n# 4. 模型训练\n# ================================\n\n# --- model 1: 线性回归 ---\nlm_model &lt;- lm(pm25 ~ ., data = train)\nsummary(lm_model)\n\n# 预测\nlm_pred &lt;- predict(lm_model, newdata = test)\n\n\n# --- model 2: 决策树 ---\ntree_model &lt;- rpart(pm25 ~ ., data = train, method = \"anova\")\nrpart.plot(tree_model)\n\ntree_pred &lt;- predict(tree_model, newdata = test)\n\n\n# --- model 3: 随机森林 ---\nrf_model &lt;- randomForest(pm25 ~ ., data = train, ntree = 500, mtry = 4)\nprint(rf_model)\n\nrf_pred &lt;- predict(rf_model, newdata = test)\n\n# ================================\n# 5. 模型评估\n# ================================\n# 定义一个 RMSE 函数\nrmse &lt;- function(actual, predicted) {\n  sqrt(mean((actual - predicted)^2))\n}\n\ndata.frame(\n  Model = c(\"Linear Regression\", \"Decision Tree\", \"Random Forest\"),\n  RMSE = c(\n    rmse(test$pm25, lm_pred),\n    rmse(test$pm25, tree_pred),\n    rmse(test$pm25, rf_pred)\n  )\n)\n\n# ================================\n# 6. 随机森林：特征重要性\n# ================================\nimportance &lt;- importance(rf_model)\nvarImpPlot(rf_model)\n\nprint(importance)\n\n# ================================\n# 7. 可视化示例\n# ================================\n\n# 真实 vs 预测（随机森林）\nplot_df &lt;- data.frame(\n  actual = test$pm25,\n  predicted = rf_pred\n)\n\nggplot(plot_df, aes(x = actual, y = predicted)) +\n  geom_point(alpha = 0.6) +\n  geom_abline(color = \"red\", linetype = \"dashed\") +\n  labs(\n    title = \"真实值 vs 预测值（随机森林）\",\n    x = \"真实 PM2.5\",\n    y = \"预测 PM2.5\"\n  ) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#空间数据与-shapefile",
+    "href": "bigdata/spatial/spatialmodels.html#空间数据与-shapefile",
+    "title": "空间数据分析模型",
+    "section": "1.1 空间数据与 Shapefile",
+    "text": "1.1 空间数据与 Shapefile\n空间计量分析通常结合：\n\n属性数据（如：人口、财政支出、污染排放）\n空间几何数据（点、线、面）\n\nShapefile 是最常见的空间矢量数据格式，由 .shp、.shx、.dbf 等文件组成。\n\nlibrary(sf) \nlibrary(ggplot2)\n\nnc &lt;- st_read(system.file(\"shape/nc.shp\", package=\"sf\")) \n\nReading layer `nc' from data source \n  `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sf/shape/nc.shp' \n  using driver `ESRI Shapefile'\nSimple feature collection with 100 features and 14 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: -84.32385 ymin: 33.88199 xmax: -75.45698 ymax: 36.58965\nGeodetic CRS:  NAD27\n\nnc &lt;- st_transform(nc, 4326)\n\nggplot(nc) + geom_sf(fill = \"lightblue\", color = \"white\") + theme_minimal() + labs(title = \"North Carolina Counties\")"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#基本模型形式",
+    "href": "bigdata/spatial/spatialmodels.html#基本模型形式",
+    "title": "空间数据分析模型",
+    "section": "3.1 基本模型形式",
+    "text": "3.1 基本模型形式\n\n空间误差模型（SEM）：\\(Y = \\alpha + X\\beta + \\mu, \\mu = \\rho W\\mu + \\epsilon\\)\n空间自回归模型（SAR）：\\(Y = \\alpha + \\rho WY + X\\beta + \\epsilon\\)\n空间杜宾模型（SDM）：\\(Y = \\alpha + \\rho WY + X\\beta + WX\\beta + \\epsilon\\)\n模型嵌套关系：\n\nSDM嵌套SAR和SEM模型\n使用统计检验指导简化\nSDM是最通用的（灵活的）模型"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#ols残差的空间依赖性检验",
+    "href": "bigdata/spatial/spatialmodels.html#ols残差的空间依赖性检验",
+    "title": "空间数据分析模型",
+    "section": "3.2 OLS残差的空间依赖性检验",
+    "text": "3.2 OLS残差的空间依赖性检验\n\n零假设：无空间依赖性\n两种变体：\n\nLM-lag：检验SAR模型\nLM-error：检验SEM模型\n\n当两者均显著时，使用稳健LM检验\n\n\nlibrary(lmtest)\n\nform &lt;- BIR74 ~ SID74 + NWBIR74 \nols_model &lt;- lm(form, data = nc) \nlm.RStests(ols_model, listw_contig, test = \"all\")\n\n\n    Rao's score (a.k.a Lagrange multiplier) diagnostics for spatial\n    dependence\n\ndata:  \nmodel: lm(formula = form, data = nc)\ntest weights: listw_contig\n\nRSerr = 25.91, df = 1, p-value = 3.577e-07\n\n\n    Rao's score (a.k.a Lagrange multiplier) diagnostics for spatial\n    dependence\n\ndata:  \nmodel: lm(formula = form, data = nc)\ntest weights: listw_contig\n\nRSlag = 1.7312, df = 1, p-value = 0.1883\n\n\n    Rao's score (a.k.a Lagrange multiplier) diagnostics for spatial\n    dependence\n\ndata:  \nmodel: lm(formula = form, data = nc)\ntest weights: listw_contig\n\nadjRSerr = 26.14, df = 1, p-value = 3.176e-07\n\n\n    Rao's score (a.k.a Lagrange multiplier) diagnostics for spatial\n    dependence\n\ndata:  \nmodel: lm(formula = form, data = nc)\ntest weights: listw_contig\n\nadjRSlag = 1.9608, df = 1, p-value = 0.1614\n\n\n    Rao's score (a.k.a Lagrange multiplier) diagnostics for spatial\n    dependence\n\ndata:  \nmodel: lm(formula = form, data = nc)\ntest weights: listw_contig\n\nSARMA = 27.871, df = 2, p-value = 8.869e-07\n\n\n\n\n\n检验\n原假设 H₀\n对应模型\n\n\n\n\nRSerr\n无空间误差相关\nSEM\n\n\nRSlag\n无空间滞后依赖\nSAR\n\n\nadjRSerr\n在可能存在滞后时，仍无误差相关\nSEM（稳健）\n\n\nadjRSlag\n在可能存在误差相关时，仍无滞后依赖\nSAR（稳健）\n\n\nSARMA\n同时不存在误差和滞后相关\nSAR / SEM 总检验\n\n\n\n\n\n\n检验结果组合\n含义\n推荐模型\n\n\n\n\nRSerr ✔️、RSlag ❌\n空间依赖来自误差\nSEM\n\n\nRSerr ❌、RSlag ✔️\n空间依赖来自因变量\nSAR\n\n\n两者都显著\n结构不清晰\nSDM\n\n\n两者都不显著\n无空间依赖\nOLS\n\n\n\n结论：Rao’s score 检验结果表明，OLS 模型残差中存在显著的空间相关，而空间滞后项并不显著，说明研究对象之间并不存在直接的结果变量相互影响或战略互动。相反，空间依赖更可能源于未被模型显式控制、但在空间上连续分布的背景性因素（如区域制度环境、社会经济结构或历史路径依赖），因此采用空间误差模型（SEM）更为合适。\n\n模型选择流程\n\n\n从具体到一般：\n\n拟合OLS\n对残差进行LM检验\n\nLM-lag 检测SAR\nLM-error 检测SEM\n若均显著，用R-LM检验\n\n\n若确认存在空间依赖，拟合 SDM\n\n使用 LR 检验比较 SDM 与 SAR/SEM"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#空间效应的正确解释直接效应与间接效应",
+    "href": "bigdata/spatial/spatialmodels.html#空间效应的正确解释直接效应与间接效应",
+    "title": "空间数据分析模型",
+    "section": "3.4 空间效应的正确解释：直接效应与间接效应",
+    "text": "3.4 空间效应的正确解释：直接效应与间接效应\n\n3.4.1 为什么不能直接解释回归系数？\n在 SAR / SDM 中，(Y) 通过 (WY) 产生反馈回路：\n$ (I - \\rho W)^{-1} = I + \\rho W + \\rho^2 W^2 + \\cdots $\n\n\n3.4.2 三类效应\n\n直接效应：对本地单元的平均影响\n间接效应：对相邻单元的溢出影响\n总效应：两者之和\n\n\nimpacts_sdm &lt;- impacts(sdm_model, listw = listw_contig, R = 500) \n\nsummary(impacts_sdm)\n\nImpact measures (mixed, exact):\n            Direct   Indirect      Total\nSID74   118.881175 22.2860019 141.167177\nNWBIR74   1.914751 -0.3512729   1.563478\n========================================================\nSimulation results ( variance matrix):\nDirect:\n\nIterations = 1:500\nThinning interval = 1 \nNumber of chains = 1 \nSample size per chain = 500 \n\n1. Empirical mean and standard deviation for each variable,\n   plus standard error of the mean:\n\n           Mean      SD Naive SE Time-series SE\nSID74   117.972 45.7793  2.04731        2.04731\nNWBIR74   1.919  0.2494  0.01115        0.01115\n\n2. Quantiles for each variable:\n\n          2.5%    25%     50%     75%   97.5%\nSID74   28.557 85.708 120.679 150.123 204.720\nNWBIR74  1.441  1.756   1.916   2.089   2.433\n\n========================================================\nIndirect:\n\nIterations = 1:500\nThinning interval = 1 \nNumber of chains = 1 \nSample size per chain = 500 \n\n1. Empirical mean and standard deviation for each variable,\n   plus standard error of the mean:\n\n           Mean       SD Naive SE Time-series SE\nSID74   18.4396 165.1651  7.38641        7.38641\nNWBIR74 -0.3285   0.9082  0.04062        0.04062\n\n2. Quantiles for each variable:\n\n           2.5%      25%     50%     75%   97.5%\nSID74   -308.68 -88.5761 16.4430 126.730 339.758\nNWBIR74   -2.09  -0.8843 -0.3296   0.181   1.477\n\n========================================================\nTotal:\n\nIterations = 1:500\nThinning interval = 1 \nNumber of chains = 1 \nSample size per chain = 500 \n\n1. Empirical mean and standard deviation for each variable,\n   plus standard error of the mean:\n\n           Mean      SD Naive SE Time-series SE\nSID74   136.411 189.722  8.48464        8.48464\nNWBIR74   1.591   1.036  0.04634        0.04634\n\n2. Quantiles for each variable:\n\n             2.5%     25%     50%     75%   97.5%\nSID74   -233.9912 14.2413 135.888 263.053 522.692\nNWBIR74   -0.4603  0.9807   1.577   2.256   3.609\n\n\n\n主要结论\n\nSID74 对因变量具有显著而强烈的“本地直接效应”，但其空间溢出效应高度不稳定；NWBIR74 的影响主要体现在本地，空间溢出效应弱且不显著。\n\n换句话说：\n\nSID74：强本地影响 + 不确定的跨区外溢\nNWBIR74：稳定的本地结构性影响 + 几乎没有可靠外溢\n\n\n\n三类 impact 的“直观含义”\n在 SDM / SAR 中：\n\nDirect effect（直接效应） 自变量在某一区域变化，对该区域因变量的平均影响（含反馈回路）\nIndirect effect（间接效应 / spillover） 自变量在某一区域变化，通过空间网络对其他区域因变量的平均影响\nTotal effect（总效应） Direct + Indirect\n\n注意：这些 不是回归系数，而是通过 ((I - W)^{-1}) 展开的均衡效应。\n\n\n\n“点估计”（Impact measures 表）\n            Direct     Indirect      Total\nSID74   118.88       22.29        141.17\nNWBIR74   1.91       -0.35          1.56\n1️⃣ SID74\n\n直接效应 ≈ 119（很大）\n间接效应 ≈ 22（正，但远小于直接效应）\n总效应 ≈ 141\n\n表面上看：SID74 对本地产生显著正向影响，并可能存在一定正向空间扩散。\n\n2️⃣ NWBIR74\n\n直接效应 ≈ 1.9（正）\n间接效应 ≈ −0.35（负）\n总效应 ≈ 1.56\n\n表面上看：NWBIR74 的影响几乎完全来自本地，而且外溢效应方向不稳定。\n\n\n“模拟分布和置信区间”\n（1）Direct effects：结论最稳健\nSID74（Direct）\n\n均值 ≈ 119\n95% CI：[31.6 , 210.8]\n不包含 0\n\n明确显著，且方向稳定\nNWBIR74（Direct）\n\n均值 ≈ 1.92\n95% CI：[1.43 , 2.37]\n不包含 0\n\n同样显著，且非常稳定\n结论：\n\n两个变量都对“本地结果”具有稳健影响。\n\n（2）Indirect effects：不稳定，是解释重点\nSID74（Indirect）\n\n均值 ≈ 18\n95% CI：[−276.8 , 322.0]\n大幅跨越 0\n\n这意味着：\n\n溢出效应方向不确定\n既可能正，也可能负\n对 W 的结构和网络路径高度敏感\n\nNWBIR74（Indirect）\n\n均值 ≈ −0.34\n95% CI：[−2.23 , 1.27]\n同样跨越 0\n\n完全不能认为存在稳定的空间溢出效应\n（3）Total effects：被“间接效应不确定性”拖累\nSID74（Total）\n\n均值 ≈ 138\n95% CI：[−223.9 , 503.5]\n跨越 0\n\n注意：\n\n即使 Direct 显著，Total 也可能不显著 ——因为 Indirect 太不稳定\n\nNWBIR74（Total）\n\n均值 ≈ 1.58\n95% CI：[−0.59 , 3.55]\n边缘且不显著\n\n\n\n\n统计结果解释\n\nSID74 对本地因变量具有显著而稳健的正向影响，表明该因素主要通过地方层面的机制发挥作用。然而，其空间溢出效应在统计上并不稳定，说明该影响并未通过明确、系统性的跨区域传导路径扩散至相邻地区。\n\n公共管理含义：\n\n问题更像是 “地方性风险或需求”\n而不是 “跨区政策模仿 / 战略相互依赖”\n区域协同治理的必要性有限，精准地方干预更重要\n\n\nNWBIR74 的影响主要体现在本地层面，其直接效应显著且稳定，而空间溢出效应不显著，表明该变量反映的是地方人口或社会结构特征，而非具有跨区域扩散特性的政策或行为。\n\n公共管理含义：\n\n属于 结构性、内生性强的地方特征\n不适合期待“邻近地区联动效应”\n\n\n空间杜宾模型的影响分解结果显示，SID74 与 NWBIR74 均对本地因变量产生显著且稳健的直接效应，而其空间溢出效应在统计上并不显著，且置信区间高度不稳定。该结果表明，相关影响主要通过地方层面的机制发挥作用，而未形成明确的跨区域扩散路径，这与前述 Rao’s score 检验中空间滞后效应不显著的结论相一致。"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#模型构建建议",
+    "href": "bigdata/spatial/spatialmodels.html#模型构建建议",
+    "title": "空间数据分析模型",
+    "section": "3.5 模型构建建议",
+    "text": "3.5 模型构建建议\n\n始终测试空间依赖性\n如有疑问，优先选择SDM模型，然后测试简化为SAR或SEM\n当模型不明确时，使用稳健LM测试\n谨慎解释SDM效应"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#扩展空间面板",
+    "href": "bigdata/spatial/spatialmodels.html#扩展空间面板",
+    "title": "空间数据分析模型",
+    "section": "3. 扩展：空间面板",
+    "text": "3. 扩展：空间面板\n\n双向固定效应：时间与空间\n多种空间模型规格：\n\n参考文献：Cheng and Guo (2021); Han, Xiong, Cheng, and Guo (2022); Guo and Cheng (2018)\n\n动态空间面板：\n\n因变量不仅在时间上相关，还在空间上相关\n参考文献：Cheng, Guo, and Liu (2020)\n\n空间Probit模型：\n\n二元或多项因变量\n\n空间多层次/层级模型：\n\n嵌套结构（如城市嵌入省份）\n\n社交网络分析中的空间模型"
+  },
+  {
+    "objectID": "bigdata/spatial/spatialmodels.html#用到空间分析的公共管理论文",
+    "href": "bigdata/spatial/spatialmodels.html#用到空间分析的公共管理论文",
+    "title": "空间数据分析模型",
+    "section": "用到空间分析的公共管理论文",
+    "text": "用到空间分析的公共管理论文\n\nhttps://onlinelibrary.wiley.com/doi/abs/10.1111/pbaf.12160\n\nhttps://www.tandfonline.com/doi/abs/10.1080/23276665.2022.2071305"
   }
 ]
