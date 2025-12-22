@@ -1,8 +1,8 @@
 {
-  "hash": "00c0eb86757e11b4ba945f5c179810d3",
+  "hash": "6d4d0e3b69fa5fada45b792ecde73d48",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"公共管理大数据分析\"\nauthor: \"\"\ndate: \"2025-12-08\"\nformat: \n  html:\n    toc-depth: 5\n---\n\n\n\n  \n### [课程介绍](./intro/introduction.html)\n### [R语言基础](./basics/rbasics.html)\n### [数据收集与预处理](./dataclean/dataclean.html)  \n### [数据描述与可视化](./visualization/visualization.html)  \n### [机器学习基础](./machlearn/mlbasics.html)  \n### [有监督学习：回归模型](./machlearn/regression.html)  \n### [有监督学习：决策树与装袋](./machlearn/mltrees.html)  \n### [有监督学习：随机森林与梯度提升](./machlearn/mlforest.html)  \n### [文本分析与自然语言处理](.)  \n### [空间数据分析基础](./spatial/spatialdata.html)\n### [空间数据分析模型](.)\n\n## 课程作业\n### [数据检索与选题探索](./exercises/searchq.html)\n### [数据清洗与可视化](./exercises/cleanvisual.html)\n### [机器学习](./exercises/machinelearn.html)\n\n",
+    "markdown": "---\ntitle: \"公共管理大数据分析\"\nauthor: \"\"\ndate: \"2025-12-22\"\nformat: \n  html:\n    toc-depth: 5\n---\n\n\n\n  \n### [课程介绍](./intro/introduction.html)\n### [R语言基础](./basics/rbasics.html)\n### [数据收集与预处理](./dataclean/dataclean.html)  \n### [数据描述与可视化](./visualization/visualization.html)  \n### [机器学习基础](./machlearn/mlbasics.html)  \n### [有监督学习：回归模型](./machlearn/regression.html)  \n### [有监督学习：决策树与装袋](./machlearn/mltrees.html)  \n### [有监督学习：随机森林与梯度提升](./machlearn/mlforest.html)  \n### [文本分析与自然语言处理](.)  \n### [空间数据分析基础](./spatial/spatialdata.html)\n### [空间数据分析模型](./spatial/spatialmodels.html)\n\n## 课程作业\n### [数据检索与选题探索](./exercises/searchq.html)\n### [数据清洗与可视化](./exercises/cleanvisual.html)\n### [机器学习](./exercises/machinelearn.html)\n\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
