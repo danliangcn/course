@@ -2503,14 +2503,14 @@
     "href": "bigdata/basics/rbasics.html#c.1-先采取三个简单策略",
     "title": "R、RStudio 与可重复的数据分析工作流",
     "section": "C.1 先采取三个简单策略",
-    "text": "C.1 先采取三个简单策略\n面对较大数据时，优先做到：\n\n先用小样本测试完整流程；\n优先使用成熟的向量化函数；\n避免反复创建不必要的大对象。\n\n\nsample_data &lt;- city_service |&gt;\n  slice_sample(n = 8)\n\nsample_data\n\n# A tibble: 8 × 10\n  city  region  year population_10k service_centers online_cases closed_cases\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 宁德  闽东    2024            319              47        21800        20500\n2 南平  闽北    2023            265              39        17200        15600\n3 厦门  闽南    2024            536              88        49200        48200\n4 泉州  闽南    2024            896             103        58800        55800\n5 宁德  闽东    2023            315              42        19600        18200\n6 泉州  闽南    2025            900             112        63000        60800\n7 漳州  闽南    2024            512              70        33700        31800\n8 泉州  闽南    2023            891              95        55000        51000\n# ℹ 3 more variables: satisfaction &lt;dbl&gt;, avg_response_hours &lt;dbl&gt;, pm25 &lt;dbl&gt;\n\n\n当单机内存仍然不足时，再考虑 Arrow、DuckDB、data.table、数据库、云计算或分布式计算工具。"
+    "text": "C.1 先采取三个简单策略\n面对较大数据时，优先做到：\n\n先用小样本测试完整流程；\n优先使用成熟的向量化函数；\n避免反复创建不必要的大对象。\n\n\nsample_data &lt;- city_service |&gt;\n  slice_sample(n = 8)\n\nsample_data\n\n# A tibble: 8 × 10\n  city  region  year population_10k service_centers online_cases closed_cases\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 南平  闽北    2024            267              43        18800        17400\n2 漳州  闽南    2024            512              70        33700        31800\n3 福州  闽东    2025            858             117        67000        65800\n4 宁德  闽东    2024            319              47        21800        20500\n5 厦门  闽南    2025            540              94        53000        52300\n6 漳州  闽南    2025            516              77        36900        35400\n7 泉州  闽南    2025            900             112        63000        60800\n8 厦门  闽南    2024            536              88        49200        48200\n# ℹ 3 more variables: satisfaction &lt;dbl&gt;, avg_response_hours &lt;dbl&gt;, pm25 &lt;dbl&gt;\n\n\n当单机内存仍然不足时，再考虑 Arrow、DuckDB、data.table、数据库、云计算或分布式计算工具。"
   },
   {
     "objectID": "bigdata/basics/rbasics.html#c.2-测量运行时间",
     "href": "bigdata/basics/rbasics.html#c.2-测量运行时间",
     "title": "R、RStudio 与可重复的数据分析工作流",
     "section": "C.2 测量运行时间",
-    "text": "C.2 测量运行时间\n基础函数 system.time() 可以测量一段代码的运行时间：\n\nsystem.time({\n  result &lt;- sqrt(1:100000)\n})\n\n   user  system elapsed \n      0       0       0 \n\n\nmicrobenchmark 可以多次运行同一表达式并比较时间分布：\n\nlibrary(microbenchmark)\n\nmicrobenchmark(\n  vectorized = sqrt(1:100000),\n  times = 20\n)"
+    "text": "C.2 测量运行时间\n基础函数 system.time() 可以测量一段代码的运行时间：\n\nsystem.time({\n  result &lt;- sqrt(1:100000)\n})\n\n   user  system elapsed \n  0.001   0.000   0.000 \n\n\nmicrobenchmark 可以多次运行同一表达式并比较时间分布：\n\nlibrary(microbenchmark)\n\nmicrobenchmark(\n  vectorized = sqrt(1:100000),\n  times = 20\n)"
   },
   {
     "objectID": "bigdata/basics/rbasics.html#c.3-检查对象大小",
