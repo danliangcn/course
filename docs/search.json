@@ -338,9 +338,9 @@
   {
     "objectID": "bigdata/intro/introduction.html",
     "href": "bigdata/intro/introduction.html",
-    "title": "公共管理大数据分析课程介绍",
+    "title": "公共管理大数据分析：课程介绍",
     "section": "",
-    "text": "随着数字政府、智慧城市和数据驱动治理的发展，公共管理领域面临着前所未有的数据挑战与分析需求。传统的政策分析方法已难以应对海量、多源、异构数据所承载的复杂治理问题。\n新型的“大数据”催生了一个全新的研究领域——数据科学。该领域开发了新的数据创建和收集方式，提出了新的分析技术，并提供了新的可视化和信息呈现方式。这些变化改变了公共管理研究者的工作性质，R语言和Python变得与SPSS和Stata一样，成为了公共管理研究重要的工具包。同时，研究的数据来源也在发生变化。公共管理研究越来越多地依赖“发现”数据，而非通过调查“制造”的数据；以调查数据为基础的文章在顶级学术期刊上发表的比例正在下降。此外，随着新工具的运用，研究工作流程变得更加自动化、可复制和可重现（Yarkoni等人，2019）。\n2025年3月24日，全国哲学社会科学工作办公室发布的《2025年国家社会科学基金年度项目申报公告》标志着中国STS研究发展的一个历史性里程碑。公告中，“科学技术与社会”（Science, Technology and Society，简称STS）被正式确立为一级学科条目（代码KXA-KXI）。\n本次国家社科基金共立项STS学科相关课题140项，其中重点项目9项、一般项目81项、青年项目58项、西部项目12项。从立项课题的主题分布来看，呈现出高度的时代性与聚焦性。“人工智能”，特别是 “生成式人工智能” 与 “大模型”，构成了本次立项的绝对核心议题，彰显了学术界对前沿颠覆性技术的高度敏感与积极回应。与此紧密耦合的是对 “治理”、“伦理”、“风险”与“安全” 等议题的系统性探讨，大量课题聚焦于算法偏见、数据安全、技术依赖、责任归因等复杂问题，反映出一种从技术社会影响的被动应对转向主动风险预判与伦理规制的学术范式转型。此外，研究议题广泛渗透至就业结构、教育变革、医疗健康、城市治理、农业现代化等具体社会场域，体现了STS研究深入社会肌理、服务民生的实践关怀。\n本课程旨在帮助研究生系统掌握大数据分析的基础理论、关键方法与实用工具，提升其在公共政策评估、社会治理优化、舆情研判、公共服务供给等方面的数据分析与实证研究能力，为其从事数据驱动的公共事务研究与实践奠定方法论基础，增强服务数字时代公共治理的能力。"
+    "text": "数字政府、智慧城市、平台治理和生成式人工智能的发展，使公共管理研究面对的数据来源、问题类型和研究工具都在发生变化。研究者不仅使用问卷和统计年鉴，也越来越多地接触行政记录、政策文本、政务留言、传感器数据、空间数据、网络关系数据以及互联网平台数据。\n这种变化带来的挑战并不只是“数据变大了”，而是：\n\n数据来源更加多源、异构和动态；\n数据分析对象从结构化表格扩展到文本、空间和关系数据；\n研究目标从描述现状扩展到预测、解释、因果识别和政策评估；\n分析过程越来越强调代码化、可重复和可复现；\n数据使用同时伴随隐私、偏见、算法责任和治理伦理问题。\n\n因此，本课程并不把“大数据分析”理解为单纯学习更多算法，而是把它作为一种新的公共管理研究工作方式：\n\n从公共管理问题出发，寻找合适的数据，选择适当的方法，形成可信的证据，并把分析结果转化为可以解释和沟通的公共管理知识。\n\n\n\n\n\n\n\n本课程的核心主线\n\n\n\n公共管理问题 → 数据获取 → 数据整理 → 描述与可视化 → 预测与解释 → 因果识别 → 政策沟通\n学习方法时首先问“这个方法解决什么问题”，而不是“这个方法够不够高级”。\n\n\n\n\n近年来，人工智能、大模型、数字政府、算法治理、数据安全等议题已经成为公共管理和社会科学研究的重要前沿。下面的材料可以作为观察这一变化的一个窗口。\n\n\n\n\n\n\n人工智能相关研究议题\n\n\n\n\n\n\n\n科技与社会研究词云\n\n\n\n\n\n\n\n科技与社会研究主题排序\n\n\n\n\n\n这些变化意味着，公共管理研究者需要具备的不只是传统统计分析能力，还包括数据获取、计算分析、可视化表达、算法理解以及数据伦理判断能力。"
   },
   {
     "objectID": "bigdata/intro/introduction.html#课程目的",
@@ -382,7 +382,7 @@
     "href": "bigdata/intro/introduction.html#分析大数据的方法",
     "title": "公共管理大数据分析课程介绍",
     "section": "2.2 分析大数据的方法",
-    "text": "2.2 分析大数据的方法\n总体而言，有四种解决与分析大 N（大量观测值）和大 P（大量变量）数据中相关挑战的方法。\n\n统计与机器学习\n\n为什么不直接在大数据中抽样，获取一个合理的样本，然后采用传统的统计学方法进行分析？统计推断是在收集全体数据实际上不可行或成本过高的情况下回答实证问题的有效手段。如果已经能够获取大量的数据，在预期效果较大的情况下，使用成熟的“传统”统计学方法来恰当回答实证问题可能是有意义的。如果在大数据分析中预期效果（effect size）很小，则不能简单从大型数据集抽取随机样本，只有通过足够大的样本量（large N）才能获得足够的统计功效（statistical power），从而检测出显著差异并做出可靠决策。否则，小样本可能无法区分真实效果与随机噪声，尤其当决策的影响仅在少数情况下显现时。\n例如，研究者评估某项公共健康干预措施（如全国性疫苗推广计划）对降低特定疾病发病率的影响。假设干预预期效果很小——例如，只降低发病率0.5%（effect size小），因为大多数人已通过其他方式获得免疫。如果从全国数亿条健康记录中随机抽取小样本（如10万条），统计功效不足，无法可靠检测出这0.5%的差异（p值可能不显著，看起来像零效果）。在少数高风险人群中，效果才显现（如老人或偏远地区居民）。因此，需要分析整个大 N 数据集（数亿行记录）来积累足够的统计功率，区分真实政策效果与噪声，从而为政府决策提供依据（如是否继续推广疫苗）。这种小效果常见于政策评估，如果抽样，可能会错失微弱但重要的信号，导致无效结论。但是，已有成熟的机器学习方法（例如分布式随机森林）可以更好地解决这些问题。机器学习方法及应用是本课程介绍的重点内容，帮助解决传统统计方法在分析大数据中面临的困境。\n\n编写高效代码\n\n在处理中小规模数据集时，数据分析脚本是否高效编写可能无关紧要。然而，面对大型数据集，运行脚本可能会变得不顺畅，或者完全无法顺利运行。因此，需要了解如何在 R 中编写高效快速代码。本课程会在R语言基础部分，介绍进行R语言的高效编程的原则。\n\n有效利用本地计算资源\n\n通常电脑操作系统会自动采用一些策略分配和使用可用硬件资源来完成数据分析任务。同时，一些R语言包提供了一些多核处理和虚拟内存的高效使用的策略。这些策略也有成本，只有在数据集达到一定规模后，才能节省时间。因此，研究者需要了解决定如何更有效地利用本地计算环境来加速特定分析任务。本课程会针对不同专题（可视化、文本分析、空间数据等），介绍有效利用本地计算资源针对不同类型数据完成不同分析任务的策略。\n\n扩展和分布\n\n如果在采取上述方法后，依然无法在本地完成任务，则需要考虑扩展（scale up）或分布（scale out）可用计算资源。扩展指在云端租用虚拟服务器，分布意味着协同使用多台机器（集群计算机、分布式系统）。扩展通常不需要熟悉专用软件，可以在云端更大的机器上运行与本地测试相同的脚本。分布需要熟悉一些软件组件。本课程会简要介绍如何部署扩展和利用相关软件包进行分布。\n方法选择的顺序是：能否抽样后用传统方法，是否有机器学习等新技术，代码是否高效，本地计算资源是否有效，能够利用扩展和分布的计算资源解决。\n\n解决大P问题的示例\n\n假设某电子商务平台打算根据用户和上网浏览会话特征预测购买行为（即用户在某次会话中实际购买某物的概率）。因变量 purchase 是二值变量，若购买则为 1，否则为 0。其他变量包含用户和会话信息（用户位于何处？使用哪种浏览器？等等）。\n\n# 导入数据\nga &lt;- read.csv(\"ga.csv\")\nhead(ga[, c(\"source\", \"browser\", \"city\", \"purchase\")])\n\n    source browser          city purchase\n1   google  Chrome      San Jose        1\n2 (direct)    Edge     Charlotte        1\n3 (direct)  Safari San Francisco        1\n4 (direct)  Safari   Los Angeles        1\n5 (direct)  Chrome       Chicago        1\n6 (direct)  Chrome     Sunnyvale        1\n\n# 将source变量里面的每个网站转化成二值的虚拟变量，并添加因变量purchase\nmm &lt;- cbind(ga$purchase,\n            model.matrix(purchase~source, data=ga,)[,-1])\nmm_df &lt;- as.data.frame(mm)\n# 整理变量名\nnames(mm_df) &lt;- c(\"purchase\",\n                  gsub(\"source\", \"\", names(mm_df)[-1]))\n# 运行logit回归\nmodel1 &lt;- glm(purchase ~ .,\n              data=mm_df, family=binomial)\n\nmodel1_sum &lt;- summary(model1)\n# 筛选显著的变量\npvalues &lt;- model1_sum$coefficients[,\"Pr(&gt;|z|)\"]\nvars &lt;- names(pvalues[which(pvalues&lt;0.05)][-1])\nvars\n\n [1] \"bing\"                    \"dfa\"                    \n [3] \"docs.google.com\"         \"facebook.com\"           \n [5] \"google\"                  \"google.com\"             \n [7] \"m.facebook.com\"          \"Partners\"               \n [9] \"quora.com\"               \"siliconvalley.about.com\"\n[11] \"sites.google.com\"        \"t.co\"                   \n[13] \"youtube.com\"            \n\n# 确定最终的模型\nfinalmodel &lt;- glm(purchase ~.,\n                  data = mm_df[, c(\"purchase\", vars)],\n                  family = binomial)\n\nsummary(finalmodel)$coef[,c(\"Estimate\", \"Pr(&gt;|z|)\")]\n\n                          Estimate      Pr(&gt;|z|)\n(Intercept)             -1.3831286  0.000000e+00\nbing                    -1.4646836  4.415693e-03\ndfa                     -0.1865031  1.271359e-01\ndocs.google.com         -2.0180688  4.713922e-02\nfacebook.com            -1.1663166  3.873468e-04\ngoogle                  -1.0148614 6.320540e-168\ngoogle.com              -2.9606768  3.193285e-05\nm.facebook.com          -3.6920452  2.330779e-04\nPartners                -4.3747211  3.942196e-14\nquora.com               -3.1277309  1.868612e-03\nsiliconvalley.about.com -2.2456469  1.241664e-04\nsites.google.com        -0.5968274  1.355800e-03\nt.co                    -2.0508586  4.316117e-03\nyoutube.com             -6.9935344  4.197158e-23\n\n\n在自变量数目比较多的情况下直接采用logistic回归构建预测模型会存在问题。初始模型有62个解释变量（加上截距），对系数的62个假设检验中，弃真错误概率5%，那么平均而言会错误拒绝3个“无预测效果”的原假设，尽管实际上没有预测效果。如果解释变量增加，错误数目还会增大。此外，原始变量间存在较大的相关性，添加或移除一个变量可能显著影响模型的预测能力。最终模型估计中筛选的最终变量dfa在模型中又变得不显著了。\n另一种方法是基于所有可能的协变量组合估计模型（完整的组合是2的61次方！），然后根据某种样本外预测性能指标选择最终模型。显然，这种方法计算时间会很长。\nlasso 估计提供了方便且高效的方法来获得一系列候选模型。lasso 的核心思想是在估计过程中惩罚模型复杂性，复杂性是造成模型不稳定的主要原因。然后，可以根据 k 折交叉验证的样本外预测方法，从候选模型序列中选择最终模型。下面基于 gamlr 包采用lasso 用于生成候选模型序列，基于 k 折交叉验证选择最佳模型。\n\nlibrary(gamlr)\n# 创建模型矩阵\nmm &lt;- model.matrix(purchase~source, data = ga)\n\n# 更节省内存的方式，创建稀疏矩阵（因为模型矩阵中存在大量的0）\nmm_sparse &lt;- sparse.model.matrix(purchase~source, data = ga)\n# 比较两种方式占用内存大小\nas.numeric(object.size(mm)/object.size(mm_sparse))\n\n[1] 7.524862\n\n# 运行带 k 折交叉验证 lasso 估计，通过惩罚降低模型复杂性\ncvpurchase &lt;- cv.gamlr(mm_sparse, ga$purchase, family=\"binomial\")\n\nlibrary(PRROC)\n# 采用最佳模型进行预测\n# 模型选择依据样本外偏差最小的原则，可以避免过度拟合\npred &lt;- predict(cvpurchase$gamlr, mm_sparse, type=\"response\")\n# 计算 tpr, fpr; 绘制 ROC 曲线\ncomparison &lt;- roc.curve(scores.class0 = pred,\n                        weights.class0=ga$purchase,\n                        curve=TRUE)\nplot(comparison)\n\n\n\n\n\n\n\n\n上面的例子通过稀疏矩阵节省内存使用，通过lasso估计技术提供了合理的方法选择预测模型，解决了大P问题。\n\n解决大N问题的示例\n\n线性回归是统计分析的重要方法。但在面对观测量巨大的大数据集，以最小二乘法估计回归系数可能会运行缓慢，或者无法运行。而新的算法Uluru能够替代最小二乘法，提供更有效率的解决方案。下面的例子比较两种算法的运算时间，估计的回归系数与真实值之间的差距。整个模拟数据的观测量是1千万个，分成不同大小的子样本量（没间隔50万个）来检验。\n\n\n           [,1]\n[1,]  1.9980919\n[2,]  1.4995462\n[3,]  4.0000350\n[4,] -3.4996061\n[5,]  0.5001466\n\n\n           [,1]\n[1,]  2.0319591\n[2,]  1.4982386\n[3,]  3.9973941\n[4,] -3.4999876\n[5,]  0.5010381\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n水平红线表示通过 OLS 估计的计算时间；绿色点表示通过 Uluru 算法估计的计算时间。即使对于较大的子样本，计算时间也显著低于 OLS。\n水平红线表示使用 OLS 时估计系数的大小。水平绿线表示实际系数的大小。绿色点表示 Uluru 算法在不同子样本大小下估计的同一系数大小。即使是相对较小的子样本也能提供非常接近 OLS 估计的结果。综合来看，该示例说明了适用于大数据的优化算法可以提供非常接近传统方法的结果，同时具有更高的计算效率，也更节省资源。"
+    "text": "2.2 分析大数据的方法\n总体而言，有四种解决与分析大 N（大量观测值）和大 P（大量变量）数据中相关挑战的方法。\n\n统计与机器学习\n\n为什么不直接在大数据中抽样，获取一个合理的样本，然后采用传统的统计学方法进行分析？统计推断是在收集全体数据实际上不可行或成本过高的情况下回答实证问题的有效手段。如果已经能够获取大量的数据，在预期效果较大的情况下，使用成熟的“传统”统计学方法来恰当回答实证问题可能是有意义的。如果在大数据分析中预期效果（effect size）很小，则不能简单从大型数据集抽取随机样本，只有通过足够大的样本量（large N）才能获得足够的统计功效（statistical power），从而检测出显著差异并做出可靠决策。否则，小样本可能无法区分真实效果与随机噪声，尤其当决策的影响仅在少数情况下显现时。\n例如，研究者评估某项公共健康干预措施（如全国性疫苗推广计划）对降低特定疾病发病率的影响。假设干预预期效果很小——例如，只降低发病率0.5%（effect size小），因为大多数人已通过其他方式获得免疫。如果从全国数亿条健康记录中随机抽取小样本（如10万条），统计功效不足，无法可靠检测出这0.5%的差异（p值可能不显著，看起来像零效果）。在少数高风险人群中，效果才显现（如老人或偏远地区居民）。因此，需要分析整个大 N 数据集（数亿行记录）来积累足够的统计功率，区分真实政策效果与噪声，从而为政府决策提供依据（如是否继续推广疫苗）。这种小效果常见于政策评估，如果抽样，可能会错失微弱但重要的信号，导致无效结论。但是，已有成熟的机器学习方法（例如分布式随机森林）可以更好地解决这些问题。机器学习方法及应用是本课程介绍的重点内容，帮助解决传统统计方法在分析大数据中面临的困境。\n\n编写高效代码\n\n在处理中小规模数据集时，数据分析脚本是否高效编写可能无关紧要。然而，面对大型数据集，运行脚本可能会变得不顺畅，或者完全无法顺利运行。因此，需要了解如何在 R 中编写高效快速代码。本课程会在R语言基础部分，介绍进行R语言的高效编程的原则。\n\n有效利用本地计算资源\n\n通常电脑操作系统会自动采用一些策略分配和使用可用硬件资源来完成数据分析任务。同时，一些R语言包提供了一些多核处理和虚拟内存的高效使用的策略。这些策略也有成本，只有在数据集达到一定规模后，才能节省时间。因此，研究者需要了解决定如何更有效地利用本地计算环境来加速特定分析任务。本课程会针对不同专题（可视化、文本分析、空间数据等），介绍有效利用本地计算资源针对不同类型数据完成不同分析任务的策略。\n\n扩展和分布\n\n如果在采取上述方法后，依然无法在本地完成任务，则需要考虑扩展（scale up）或分布（scale out）可用计算资源。扩展指在云端租用虚拟服务器，分布意味着协同使用多台机器（集群计算机、分布式系统）。扩展通常不需要熟悉专用软件，可以在云端更大的机器上运行与本地测试相同的脚本。分布需要熟悉一些软件组件。本课程会简要介绍如何部署扩展和利用相关软件包进行分布。\n方法选择的顺序是：能否抽样后用传统方法，是否有机器学习等新技术，代码是否高效，本地计算资源是否有效，能够利用扩展和分布的计算资源解决。\n\n解决大P问题的示例\n\n假设某电子商务平台打算根据用户和上网浏览会话特征预测购买行为（即用户在某次会话中实际购买某物的概率）。因变量 purchase 是二值变量，若购买则为 1，否则为 0。其他变量包含用户和会话信息（用户位于何处？使用哪种浏览器？等等）。\n\n# 导入数据\nga &lt;- read.csv(\"ga.csv\")\nhead(ga[, c(\"source\", \"browser\", \"city\", \"purchase\")])\n\n    source browser          city purchase\n1   google  Chrome      San Jose        1\n2 (direct)    Edge     Charlotte        1\n3 (direct)  Safari San Francisco        1\n4 (direct)  Safari   Los Angeles        1\n5 (direct)  Chrome       Chicago        1\n6 (direct)  Chrome     Sunnyvale        1\n\n# 将source变量里面的每个网站转化成二值的虚拟变量，并添加因变量purchase\nmm &lt;- cbind(ga$purchase,\n            model.matrix(purchase~source, data=ga,)[,-1])\nmm_df &lt;- as.data.frame(mm)\n# 整理变量名\nnames(mm_df) &lt;- c(\"purchase\",\n                  gsub(\"source\", \"\", names(mm_df)[-1]))\n# 运行logit回归\nmodel1 &lt;- glm(purchase ~ .,\n              data=mm_df, family=binomial)\n\nmodel1_sum &lt;- summary(model1)\n# 筛选显著的变量\npvalues &lt;- model1_sum$coefficients[,\"Pr(&gt;|z|)\"]\nvars &lt;- names(pvalues[which(pvalues&lt;0.05)][-1])\nvars\n\n [1] \"bing\"                    \"dfa\"                    \n [3] \"docs.google.com\"         \"facebook.com\"           \n [5] \"google\"                  \"google.com\"             \n [7] \"m.facebook.com\"          \"Partners\"               \n [9] \"quora.com\"               \"siliconvalley.about.com\"\n[11] \"sites.google.com\"        \"t.co\"                   \n[13] \"youtube.com\"            \n\n# 确定最终的模型\nfinalmodel &lt;- glm(purchase ~.,\n                  data = mm_df[, c(\"purchase\", vars)],\n                  family = binomial)\n\nsummary(finalmodel)$coef[,c(\"Estimate\", \"Pr(&gt;|z|)\")]\n\n                          Estimate      Pr(&gt;|z|)\n(Intercept)             -1.3831286  0.000000e+00\nbing                    -1.4646836  4.415693e-03\ndfa                     -0.1865031  1.271359e-01\ndocs.google.com         -2.0180688  4.713922e-02\nfacebook.com            -1.1663166  3.873468e-04\ngoogle                  -1.0148614 6.320540e-168\ngoogle.com              -2.9606768  3.193285e-05\nm.facebook.com          -3.6920452  2.330779e-04\nPartners                -4.3747211  3.942196e-14\nquora.com               -3.1277309  1.868612e-03\nsiliconvalley.about.com -2.2456469  1.241664e-04\nsites.google.com        -0.5968274  1.355800e-03\nt.co                    -2.0508586  4.316117e-03\nyoutube.com             -6.9935344  4.197158e-23\n\n\n在自变量数目比较多的情况下直接采用logistic回归构建预测模型会存在问题。初始模型有62个解释变量（加上截距），对系数的62个假设检验中，弃真错误概率5%，那么平均而言会错误拒绝3个“无预测效果”的原假设，尽管实际上没有预测效果。如果解释变量增加，错误数目还会增大。此外，原始变量间存在较大的相关性，添加或移除一个变量可能显著影响模型的预测能力。最终模型估计中筛选的最终变量dfa在模型中又变得不显著了。\n另一种方法是基于所有可能的协变量组合估计模型（完整的组合是2的61次方！），然后根据某种样本外预测性能指标选择最终模型。显然，这种方法计算时间会很长。\nlasso 估计提供了方便且高效的方法来获得一系列候选模型。lasso 的核心思想是在估计过程中惩罚模型复杂性，复杂性是造成模型不稳定的主要原因。然后，可以根据 k 折交叉验证的样本外预测方法，从候选模型序列中选择最终模型。下面基于 gamlr 包采用lasso 用于生成候选模型序列，基于 k 折交叉验证选择最佳模型。\n\nlibrary(gamlr)\n# 创建模型矩阵\nmm &lt;- model.matrix(purchase~source, data = ga)\n\n# 更节省内存的方式，创建稀疏矩阵（因为模型矩阵中存在大量的0）\nmm_sparse &lt;- sparse.model.matrix(purchase~source, data = ga)\n# 比较两种方式占用内存大小\nas.numeric(object.size(mm)/object.size(mm_sparse))\n\n[1] 7.524862\n\n# 运行带 k 折交叉验证 lasso 估计，通过惩罚降低模型复杂性\ncvpurchase &lt;- cv.gamlr(mm_sparse, ga$purchase, family=\"binomial\")\n\nlibrary(PRROC)\n# 采用最佳模型进行预测\n# 模型选择依据样本外偏差最小的原则，可以避免过度拟合\npred &lt;- predict(cvpurchase$gamlr, mm_sparse, type=\"response\")\n# 计算 tpr, fpr; 绘制 ROC 曲线\ncomparison &lt;- roc.curve(scores.class0 = pred,\n                        weights.class0=ga$purchase,\n                        curve=TRUE)\nplot(comparison)\n\n\n\n\n\n\n\n\n上面的例子通过稀疏矩阵节省内存使用，通过lasso估计技术提供了合理的方法选择预测模型，解决了大P问题。\n\n解决大N问题的示例\n\n线性回归是统计分析的重要方法。但在面对观测量巨大的大数据集，以最小二乘法估计回归系数可能会运行缓慢，或者无法运行。而新的算法Uluru能够替代最小二乘法，提供更有效率的解决方案。下面的例子比较两种算法的运算时间，估计的回归系数与真实值之间的差距。整个模拟数据的观测量是1千万个，分成不同大小的子样本量（没间隔50万个）来检验。\n\n\n           [,1]\n[1,]  1.9987463\n[2,]  1.4995038\n[3,]  4.0007376\n[4,] -3.5001042\n[5,]  0.4999502\n\n\n           [,1]\n[1,]  1.9668840\n[2,]  1.5039077\n[3,]  3.9997006\n[4,] -3.5014561\n[5,]  0.5013188\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n水平红线表示通过 OLS 估计的计算时间；绿色点表示通过 Uluru 算法估计的计算时间。即使对于较大的子样本，计算时间也显著低于 OLS。\n水平红线表示使用 OLS 时估计系数的大小。水平绿线表示实际系数的大小。绿色点表示 Uluru 算法在不同子样本大小下估计的同一系数大小。即使是相对较小的子样本也能提供非常接近 OLS 估计的结果。综合来看，该示例说明了适用于大数据的优化算法可以提供非常接近传统方法的结果，同时具有更高的计算效率，也更节省资源。"
   },
   {
     "objectID": "bigdata/intro/introduction.html#公共管理领域的主要数据来源",
@@ -1080,9 +1080,9 @@
   {
     "objectID": "bigdata/basics/rbasics.html",
     "href": "bigdata/basics/rbasics.html",
-    "title": "R语言基础",
+    "title": "R、RStudio 与可重复的数据分析工作流",
     "section": "",
-    "text": "install.packages(\"foreign\")\nlibrary(foreign)\n\n\n\n\nR 有一个工作目录概念，会在工作目录下查找你要求它加载的文件，也会将你要求它保存的文件存放在这里。RStudio 会在控制台顶部显示你当前的工作目录。\n如果只是单个简单代码脚本，可以在 R 内部设置工作目录。如果有多个脚本和各种格式的文件，建议建立项目文件。\n\nsetwd(\"~/Downloads/rproject/presention\")\ngetwd()\n\n\n\n\n尽可能的用脚本记录所有的操作，即从原始数据到最终的结果。避免保存中间结果，或者将环境中的变量保存下来，而是用脚本去还原。\nRStudio 会在退出时自动保存脚本编辑器的内容，并在重新打开时自动重新加载。建议在退出前将脚本保存在合适的文件夹，避免使用“Untitled1”、“Untitled2”、“Untitled3”之类的名称，而是保存为可理解的文件名。\n文件名命名原则如下：\n\n文件名应易于机器识别：避免使用空格、符号和特殊字符。不要依赖大小写来区分文件。\n文件名应该是人类可读的：使用文件名来描述文件中的内容。\n文件名应该与默认运行顺序一致：文件名以数字开头，以便按字母顺序排列使用顺序。\n\n\n01-load-data.R\n02-exploratory-analysis.R\n03-model-approach-1.R\n04-model-approach-2.R\nfig-01.png\nfig-02.png\nreport-2022-03-20.qmd\nreport-2022-04-02.qmd\nreport-draft-notes.txt\n\n将与给定项目相关的所有文件（输入数据、R 脚本、分析结果和图表）放在一个目录中更为方便。RStudio 通过项目文件进行支持。单击“文件”&gt;“新建项目”，然后按照提示步骤操作。\n新建项目后，在脚本编辑器中输入命令保存文件，运行完整的脚本，RStudio会自动将新生成的 文件保存到项目文件夹。关闭编辑器后，可以通过项目文件夹中.Rproj文件重新打开项目，继续上次的工作。"
+    "text": "本讲不是一份“R语法大全”，而是一次完整的数据分析入门。我们将围绕一份模拟的城市公共服务数据，完成从建立项目、导入数据、整理变量、分组汇总到制作图表的基本工作流。"
   },
   {
     "objectID": "bigdata/basics/rbasics.html#安装和使用包",
@@ -2042,5 +2042,523 @@
     "title": "空间数据分析模型",
     "section": "用到空间分析的公共管理论文",
     "text": "用到空间分析的公共管理论文\n\nhttps://onlinelibrary.wiley.com/doi/abs/10.1111/pbaf.12160\n\nhttps://www.tandfonline.com/doi/abs/10.1080/23276665.2022.2071305"
+  },
+  {
+    "objectID": "bigdata/index.html",
+    "href": "bigdata/index.html",
+    "title": "公共管理大数据分析",
+    "section": "",
+    "text": "欢迎来到 《公共管理大数据分析》 课程网站。\n本课程面向公共管理专业硕士研究生，重点培养学生运用数据科学方法分析公共管理与公共政策问题的能力。课程不以掌握尽可能多的算法为目标，而是强调从 公共问题出发，学习如何获取和整理数据、选择合适的分析方法、解释分析结果，并将数据证据转化为具有公共管理意义的结论。\n本网站主要用于：\n\n课前预习：了解每周核心概念与案例；\n课堂实操：获取 R 代码、数据和分析示例；\n课后复习：查阅较完整的方法说明与操作步骤；\n课程项目：逐步完成从选题、数据获取到分析与展示的完整研究过程。\n\n\n课程主线：\n公共管理问题 → 数据获取 → 数据整理 → 描述与可视化 → 预测与解释 → 因果识别 → 政策沟通"
+  },
+  {
+    "objectID": "bigdata/index.html#课程简介",
+    "href": "bigdata/index.html#课程简介",
+    "title": "公共管理大数据分析",
+    "section": "",
+    "text": "欢迎来到 《公共管理大数据分析》 课程网站。\n本课程面向公共管理专业硕士研究生，重点培养学生运用数据科学方法分析公共管理与公共政策问题的能力。课程不以掌握尽可能多的算法为目标，而是强调从 公共问题出发，学习如何获取和整理数据、选择合适的分析方法、解释分析结果，并将数据证据转化为具有公共管理意义的结论。\n本网站主要用于：\n\n课前预习：了解每周核心概念与案例；\n课堂实操：获取 R 代码、数据和分析示例；\n课后复习：查阅较完整的方法说明与操作步骤；\n课程项目：逐步完成从选题、数据获取到分析与展示的完整研究过程。\n\n\n课程主线：\n公共管理问题 → 数据获取 → 数据整理 → 描述与可视化 → 预测与解释 → 因果识别 → 政策沟通"
+  },
+  {
+    "objectID": "bigdata/index.html#课程学习模块",
+    "href": "bigdata/index.html#课程学习模块",
+    "title": "公共管理大数据分析",
+    "section": "课程学习模块",
+    "text": "课程学习模块\n\n一、基础：从公共问题到数据\n这一部分建立课程的基本数据分析工作流，重点不是单纯学习软件操作，而是形成可重复、可解释的公共管理数据分析习惯。\n\n课程介绍\nR语言基础\n数据收集与预处理\n数据描述与可视化\n\n\n\n二、预测：从统计模型到机器学习\n这一部分介绍机器学习的基本思想，并通过回归、树模型和集成学习理解预测、模型评价、过拟合与变量重要性等核心问题。\n\n机器学习基础\n有监督学习：回归模型\n有监督学习：决策树与装袋\n有监督学习：随机森林与梯度提升\n\n\n学习重点： 不只是“如何运行模型”，更要回答：\n为什么使用这个模型？模型表现如何？分析结果能够支持怎样的公共管理解释？\n\n\n\n三、公共管理计算方法\n这一部分逐步引入更具有公共管理研究特色的方法。部分专题将在本学期教学过程中持续补充和更新。\n\n文本分析与自然语言处理\n政策文件、政府工作报告、公众投诉、网络舆情和访谈材料都可以转化为可分析的文本数据。\n计划内容： 文本预处理、词频与 TF-IDF、主题分析、文本分类、Embedding 与大语言模型辅助文本分析。\n\n课程页面建设中，将随教学进度更新。\n\n\n\n空间数据分析\n公共服务供给、环境污染、人口流动和区域发展等公共管理问题往往具有明显的空间特征。\n\n空间数据分析基础\n空间数据分析模型\n\n\n\n网络分析\n政府部门协同、政策共同发文、组织合作和政策扩散等问题都可以从“关系结构”的角度进行分析。\n计划内容： 网络数据、中心性、凝聚子群、网络可视化，以及公共管理中的协同治理网络分析。\n\n课程页面建设中，将随教学进度更新。\n\n\n\n因果推断与政策评估\n预测能够回答“什么可能发生”，而公共政策研究还需要进一步回答“政策是否真正产生了影响”。\n计划内容： 反事实思维、选择偏差、DID、RDD、匹配方法与合成控制等。\n\n课程页面建设中，将随教学进度更新。"
+  },
+  {
+    "objectID": "bigdata/index.html#课程项目",
+    "href": "bigdata/index.html#课程项目",
+    "title": "公共管理大数据分析",
+    "section": "课程项目",
+    "text": "课程项目\n课程作业采用逐步推进的方式，围绕一个公共管理研究问题不断完善数据与分析方案。\n\n阶段一：问题与数据\n\n数据检索与选题探索\n\n从公共管理问题出发，寻找可用数据，明确研究问题及可能的分析路径。\n\n\n阶段二：数据与描述\n\n数据清洗与可视化\n\n完成数据整理、探索性分析和可视化，并尝试从数据中识别值得进一步分析的治理现象。\n\n\n阶段三：方法与解释\n\n机器学习\n\n使用合适的方法进行分析，并重点讨论模型表现、变量关系及其公共管理含义。\n\n后续课程项目将逐步扩展到 文本分析、空间分析、网络分析和因果推断。学生可根据自己的研究问题选择更合适的方法，而不是为了使用某一种算法而改变研究问题。"
+  },
+  {
+    "objectID": "bigdata/index.html#学习建议",
+    "href": "bigdata/index.html#学习建议",
+    "title": "公共管理大数据分析",
+    "section": "学习建议",
+    "text": "学习建议\n学习这门课时，建议始终围绕以下几个问题思考：\n\n我要回答的公共管理问题是什么？\n什么数据能够帮助回答这个问题？\n数据是怎样产生的，可能存在哪些偏差？\n我的目标是描述、预测，还是识别因果关系？\n为什么选择这种分析方法？\n结果在统计意义之外有什么公共管理或政策含义？\n分析结果能否被清楚、负责任地传达给决策者和公众？"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#为什么学习公共管理大数据分析",
+    "href": "bigdata/intro/introduction.html#为什么学习公共管理大数据分析",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "",
+    "text": "数字政府、智慧城市、平台治理和生成式人工智能的发展，使公共管理研究面对的数据来源、问题类型和研究工具都在发生变化。研究者不仅使用问卷和统计年鉴，也越来越多地接触行政记录、政策文本、政务留言、传感器数据、空间数据、网络关系数据以及互联网平台数据。\n这种变化带来的挑战并不只是“数据变大了”，而是：\n\n数据来源更加多源、异构和动态；\n数据分析对象从结构化表格扩展到文本、空间和关系数据；\n研究目标从描述现状扩展到预测、解释、因果识别和政策评估；\n分析过程越来越强调代码化、可重复和可复现；\n数据使用同时伴随隐私、偏见、算法责任和治理伦理问题。\n\n因此，本课程并不把“大数据分析”理解为单纯学习更多算法，而是把它作为一种新的公共管理研究工作方式：\n\n从公共管理问题出发，寻找合适的数据，选择适当的方法，形成可信的证据，并把分析结果转化为可以解释和沟通的公共管理知识。\n\n\n\n\n\n\n\n本课程的核心主线\n\n\n\n公共管理问题 → 数据获取 → 数据整理 → 描述与可视化 → 预测与解释 → 因果识别 → 政策沟通\n学习方法时首先问“这个方法解决什么问题”，而不是“这个方法够不够高级”。\n\n\n\n\n近年来，人工智能、大模型、数字政府、算法治理、数据安全等议题已经成为公共管理和社会科学研究的重要前沿。下面的材料可以作为观察这一变化的一个窗口。\n\n\n\n\n\n\n人工智能相关研究议题\n\n\n\n\n\n\n\n科技与社会研究词云\n\n\n\n\n\n\n\n科技与社会研究主题排序\n\n\n\n\n\n这些变化意味着，公共管理研究者需要具备的不只是传统统计分析能力，还包括数据获取、计算分析、可视化表达、算法理解以及数据伦理判断能力。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#学习目标",
+    "href": "bigdata/intro/introduction.html#学习目标",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "1.1 学习目标",
+    "text": "1.1 学习目标\n完成本课程后，学生应能够：\n\n问题与数据\n\n理解公共管理“大数据”的基本概念、来源和特征；\n将公共管理或公共政策问题转化为可分析的数据问题；\n从政府开放数据、统计数据、行政数据、网络数据等来源寻找适合的数据；\n识别数据产生过程中的缺失、偏差、代表性和测量问题。\n\n\n\n数据分析\n\n使用 R 完成数据导入、清洗、转换、探索和可视化；\n理解训练集/测试集、交叉验证、过拟合、模型评价等机器学习核心概念；\n掌握若干常用预测模型，并能够比较不同模型的表现；\n初步理解文本、空间、网络和因果推断等方法分别适用于什么类型的公共管理问题。\n\n\n\n解释与沟通\n\n区分描述（description）、预测（prediction）与因果推断（causal inference）；\n不把预测能力、相关关系直接解释为政策因果效应；\n用图表、文字和简洁的模型结果向非技术受众表达分析发现；\n讨论分析结论的政策含义、局限和适用条件。\n\n\n\n研究规范与伦理\n\n使用 Quarto 和代码建立较为可重复的分析流程；\n对数据隐私、算法偏见、可解释性和数据安全保持敏感；\n合理使用生成式人工智能辅助代码调试、学习和研究，并对最终分析结果承担验证责任。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#课堂结构",
+    "href": "bigdata/intro/introduction.html#课堂结构",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "4.1 课堂结构",
+    "text": "4.1 课堂结构\n典型的一次课程包括：\n\n问题或案例：从一个公共管理现象开始；\n概念与方法：说明为什么需要这种分析方法；\nR 演示：教师完成关键操作；\n课堂练习：学生修改代码或分析新的数据；\n解释与讨论：分析结果能够说明什么、不能说明什么；\n课程项目连接：思考这一方法是否适合自己的项目。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#软件与工具",
+    "href": "bigdata/intro/introduction.html#软件与工具",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "4.2 软件与工具",
+    "text": "4.2 软件与工具\n课程主要采用：\n\nR / RStudio：数据整理、统计分析、机器学习和可视化；\nQuarto：形成代码、结果和文字一体化的可重复分析文档；\nGit / GitHub：用于课程网站和版本管理，学生可根据需要选用；\nSQL：理解数据库查询和较大规模结构化数据的处理；\n生成式 AI 工具：辅助解释代码、排查错误、学习方法和改进表达。\n\nPython、Spark、云计算和其他工具将根据专题需要介绍，但不是本课程前期学习的主要负担。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#ai-辅助学习原则",
+    "href": "bigdata/intro/introduction.html#ai-辅助学习原则",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "4.3 AI 辅助学习原则",
+    "text": "4.3 AI 辅助学习原则\n允许并鼓励合理使用生成式人工智能辅助学习，例如：\n\n解释不理解的 R 代码；\n帮助定位报错；\n比较不同方法的基本思想；\n生成练习性代码后自行测试；\n改进图表说明或文字表达。\n\n但学生需要：\n\n对提交的代码和结果能够解释；\n对 AI 输出进行检查和验证；\n不得用 AI 生成虚构数据、虚构文献或无法复现的分析；\n在课程论文中对影响实质性分析过程的 AI 使用进行必要说明。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#成绩组成",
+    "href": "bigdata/intro/introduction.html#成绩组成",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "5.1 成绩组成",
+    "text": "5.1 成绩组成\n\n\n\n项目\n比例\n说明\n\n\n\n\n考勤与课堂参与\n10%\n出勤、课堂练习与讨论\n\n\n平时作业\n40%\n围绕期末项目逐步推进\n\n\n期末课程项目/论文\n50%\n项目展示与最终论文\n\n\n\n平时作业建议作为期末项目的不同阶段，而不是彼此独立的三份作业。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#平时作业与项目推进",
+    "href": "bigdata/intro/introduction.html#平时作业与项目推进",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "5.2 平时作业与项目推进",
+    "text": "5.2 平时作业与项目推进\n\n阶段一：研究问题与数据\n围绕一个公共管理问题：\n\n明确研究对象和研究问题；\n检索相关研究；\n寻找并说明可使用的数据；\n初步判断适合的分析方法。\n\n\n\n阶段二：数据整理与探索\n\n完成数据清洗；\n说明主要变量；\n进行探索性分析；\n制作能够说明问题的图表；\n根据数据情况调整研究问题。\n\n\n\n阶段三：方法应用与解释\n\n根据研究问题选择适当方法；\n完成模型或专题分析；\n评价分析结果；\n解释公共管理意义及方法局限。\n\n\n\n\n\n\n\nTip\n\n\n\n随着课程内容增加，学生可根据自己的研究问题选择 机器学习、文本分析、空间分析、网络分析或因果推断 等不同路径，不要求所有项目使用同一种算法。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#项目目标",
+    "href": "bigdata/intro/introduction.html#项目目标",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "6.1 项目目标",
+    "text": "6.1 项目目标\n课程项目重点考察：\n\n能否围绕一个真实的公共管理或公共政策问题，形成“问题—数据—方法—结果—解释”相互一致的分析过程。\n\n项目不是算法展示。使用复杂模型本身不会自动获得更高评价。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#选题方向",
+    "href": "bigdata/intro/introduction.html#选题方向",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "6.2 选题方向",
+    "text": "6.2 选题方向\n可以围绕以下方向，也可根据兴趣自行确定：\n\n城市治理与城市运行；\n环境治理与自然资源管理；\n公共服务供给与资源配置；\n数字政府与政府透明度；\n公众投诉、政府回应与舆情治理；\n政策文本、政府工作报告和法规文件分析；\n部门协同与治理网络；\n区域差异与空间治理；\n公共政策效果评估；\n教育、医疗、养老、交通等公共服务问题。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#论文结构建议",
+    "href": "bigdata/intro/introduction.html#论文结构建议",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "6.3 论文结构建议",
+    "text": "6.3 论文结构建议\n\n引言：研究背景、问题和意义；\n文献与分析思路：说明已有研究及本项目要回答的问题；\n数据与研究设计：数据来源、变量/文本/空间或网络对象、分析方法；\n分析结果：用必要的图表和模型结果回答研究问题；\n讨论与政策含义：解释结果，并讨论对公共管理的启示；\n结论与局限：总结发现，说明数据和方法的边界。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#基本要求",
+    "href": "bigdata/intro/introduction.html#基本要求",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "6.4 基本要求",
+    "text": "6.4 基本要求\n\n正文原则上不少于 4000 字；\n使用真实数据，并清楚说明数据来源；\n至少使用一种课程涉及的数据分析方法，并说明为什么这种方法适合研究问题；\n数据处理和分析过程应尽可能可复现；\n图表用于支持论点，不用于简单展示分析过程；\n重要表格建议采用三线表，并保持格式简洁；\n数值保留到足以清晰表达结论的精度；\n参考文献格式建议参照《公共管理学报》；\n可以将冗长程序输出、补充模型和技术细节放入附录。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#提交材料",
+    "href": "bigdata/intro/introduction.html#提交材料",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "6.5 提交材料",
+    "text": "6.5 提交材料\n电子版以“学号+姓名”命名并压缩提交，建议包括：\n\nREADME 或说明文件：说明各文件用途及项目运行方式；\n原始数据或数据获取说明；\n清洗后的分析数据（如适用）；\nR/Python 程序脚本或 Quarto 文件；\n课程论文 PDF/Word；\n其他必要的图表、空间数据或辅助材料。\n\n具体截止时间以课堂通知为准。"
+  },
+  {
+    "objectID": "bigdata/intro/introduction.html#评估标准",
+    "href": "bigdata/intro/introduction.html#评估标准",
+    "title": "公共管理大数据分析：课程介绍",
+    "section": "6.6 评估标准",
+    "text": "6.6 评估标准\n\n\n\n维度\n比例\n重点\n\n\n\n\n选题与问题意识\n20%\n问题是否明确且具有公共管理意义\n\n\n数据处理与方法应用\n30%\n数据是否可靠；方法是否适合问题\n\n\n结果分析与政策解释\n30%\n是否正确解释结果并形成有依据的讨论\n\n\n写作规范与表达\n10%\n结构、图表、文字和引用是否清楚\n\n\n创新性与完整性\n10%\n数据、问题或分析路径是否具有一定新意"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#学习目标",
+    "href": "bigdata/basics/rbasics.html#学习目标",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "学习目标",
+    "text": "学习目标\n完成本讲后，你应当能够：\n\n区分 R、RStudio 与 Quarto 的作用；\n使用 RStudio Project 和相对路径组织分析项目；\n理解对象、向量、函数、逻辑判断和缺失值等最小语法；\n使用 read_csv() 导入数据，并用 glimpse() 检查数据结构；\n使用 filter()、select()、mutate()、group_by() 和 summarise() 整理数据；\n使用 ggplot2 制作一张基本图表；\n在遇到错误时，使用帮助文档、搜索和AI工具定位问题并验证结果。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#为什么公共管理需要r",
+    "href": "bigdata/basics/rbasics.html#为什么公共管理需要r",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "1.1 为什么公共管理需要R？",
+    "text": "1.1 为什么公共管理需要R？\n公共管理研究的数据来源正在从单一的问卷和统计年鉴，扩展到行政记录、政策文本、政务热线、空间数据、网络数据和平台行为数据。R可以帮助我们把数据处理、分析、可视化和报告写作连接成一个可重复的工作流。\n在本课程中，R主要承担四类任务：\n\n整理数据：清洗变量、合并数据、处理缺失值；\n探索数据：描述分布、比较群体、识别异常；\n建立模型：回归、机器学习、文本、空间、网络和因果分析；\n沟通结果：制作图表，并用 Quarto 生成网页、报告和演示文稿。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#rrstudio与quarto分别是什么",
+    "href": "bigdata/basics/rbasics.html#rrstudio与quarto分别是什么",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "1.2 R、RStudio与Quarto分别是什么？",
+    "text": "1.2 R、RStudio与Quarto分别是什么？\n\n\n\n工具\n主要作用\n可以把它理解为\n\n\n\n\nR\n执行统计计算和数据分析的语言\n发动机\n\n\nRStudio\n编写代码、管理文件和查看结果的集成环境\n驾驶舱\n\n\nQuarto\n将文字、代码、结果与图表整合为网页或报告\n出版系统\n\n\n\n三者的关系可以概括为：\n\nflowchart LR\n  A[公共管理问题] --&gt; B[R代码]\n  B --&gt; C[分析结果]\n  C --&gt; D[Quarto网页或报告]\n  E[RStudio项目] -.组织全过程.-&gt; B\n  E -.组织全过程.-&gt; D\n\n\n\n\nflowchart LR\n  A[公共管理问题] --&gt; B[R代码]\n  B --&gt; C[分析结果]\n  C --&gt; D[Quarto网页或报告]\n  E[RStudio项目] -.组织全过程.-&gt; B\n  E -.组织全过程.-&gt; D"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#一条贯穿课程的分析主线",
+    "href": "bigdata/basics/rbasics.html#一条贯穿课程的分析主线",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "1.3 一条贯穿课程的分析主线",
+    "text": "1.3 一条贯穿课程的分析主线\n后续各专题虽然方法不同，但都遵循类似的分析过程：\n\n公共管理问题 → 数据获取 → 数据整理 → 描述与可视化 → 建模与推断 → 政策解释与沟通\n\n本讲先完成这条主线的最小版本。最终目标不是记住所有函数，而是能够独立完成一轮小型分析。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#一个研究问题一个项目",
+    "href": "bigdata/basics/rbasics.html#一个研究问题一个项目",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "2.1 一个研究问题，一个项目",
+    "text": "2.1 一个研究问题，一个项目\n建议为每个课程作业或研究问题建立一个 RStudio Project。一个简单的项目可以采用以下结构：\ncity-service-project/\n├── data/                 # 原始数据和整理后的数据\n├── R/                    # R脚本\n├── figures/              # 图表\n├── output/               # 表格和模型结果\n├── report.qmd            # 分析报告\n└── city-service-project.Rproj\n在 RStudio 中依次选择：\n\nFile → New Project → New Directory → New Project\n\n以后应通过 .Rproj 文件重新打开项目，而不是先打开某个脚本，再临时寻找数据文件。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#使用相对路径",
+    "href": "bigdata/basics/rbasics.html#使用相对路径",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "2.2 使用相对路径",
+    "text": "2.2 使用相对路径\n建立 Project 后，R会把项目根目录作为分析起点。读取文件时使用相对路径：\n\ncity_service &lt;- read_csv(\"data/city_service.csv\")\n\n不推荐在项目脚本中使用只对自己电脑有效的绝对路径：\n\n# 不推荐\nsetwd(\"/Users/your_name/Desktop/course\")\ncity_service &lt;- read_csv(\"/Users/your_name/Desktop/course/data/city_service.csv\")\n\n相对路径使同一项目更容易在不同电脑之间移动，也便于教师复现学生的分析结果。\n可以用下面的命令查看当前工作目录，但通常不需要手动修改它：\n\ngetwd()"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#用脚本记录全过程",
+    "href": "bigdata/basics/rbasics.html#用脚本记录全过程",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "2.3 用脚本记录全过程",
+    "text": "2.3 用脚本记录全过程\n不要把分析过程只保存在 Console（控制台）或 Environment（环境）中。应将从原始数据到最终结果的操作写入脚本或 .qmd 文件，使别人能够从头重新运行。\n建议的脚本命名方式如下：\n01-import-data.R\n02-clean-data.R\n03-describe-data.R\n04-model-data.R\n05-make-figures.R\n文件名应当：\n\n易于机器识别：避免空格和特殊符号；\n易于人类理解：看到文件名就知道用途；\n体现执行顺序：必要时在文件名前使用数字。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#安装包与加载包",
+    "href": "bigdata/basics/rbasics.html#安装包与加载包",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "2.4 安装包与加载包",
+    "text": "2.4 安装包与加载包\nR包是扩展R功能的工具集合。安装通常只需进行一次：\n\ninstall.packages(\"tidyverse\")\n\n每次重新启动R后，都需要加载本次分析使用的包：\n\nlibrary(tidyverse)\n\n\n\n\n\n\n\n安装与加载不要混淆\n\n\n\n\ninstall.packages() 类似“在电脑上安装软件”；\nlibrary() 类似“打开已经安装的软件”。\n\n不要把 install.packages() 写在每次都会自动执行的分析文件中。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#从第一行代码开始保持清晰",
+    "href": "bigdata/basics/rbasics.html#从第一行代码开始保持清晰",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "2.5 从第一行代码开始保持清晰",
+    "text": "2.5 从第一行代码开始保持清晰\n本课程采用三个基本代码风格：\n\n# 1. 用 &lt;- 赋值\ntarget_year &lt;- 2025\n\n# 2. 对象名采用 snake_case\npublic_service_score &lt;- 85\n\n# 3. 运算符和逗号后留空格\nmean_score &lt;- mean(c(82, 85, 90), na.rm = TRUE)\n\n这些规则不是为了形式整齐，而是为了让几周或几个月后的自己仍能读懂代码。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#把一个值保存为对象",
+    "href": "bigdata/basics/rbasics.html#把一个值保存为对象",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "3.1 把一个值保存为对象",
+    "text": "3.1 把一个值保存为对象\n赋值符号 &lt;- 可以把右侧的值保存到左侧命名的对象中。\n\ncity &lt;- \"厦门\"\nyear &lt;- 2025\nsatisfaction &lt;- 90.2\ndigital_platform &lt;- TRUE\n\ncity\n\n[1] \"厦门\"\n\nsatisfaction\n\n[1] 90.2\n\n\n这里分别创建了字符、整数、数值和逻辑对象。R区分大小写，因此 city 与 City 是两个不同的对象。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#向量同类数据的集合",
+    "href": "bigdata/basics/rbasics.html#向量同类数据的集合",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "3.2 向量：同类数据的集合",
+    "text": "3.2 向量：同类数据的集合\n向量是R中最基本的数据结构。函数 c() 可以把多个值组合为一个向量。\n\ncomplaints &lt;- c(58400, 62000, 67000)\nsatisfaction &lt;- c(84.1, 85.6, 87.3)\n\ncomplaints\n\n[1] 58400 62000 67000\n\nmean(satisfaction)\n\n[1] 85.66667\n\n\nR的许多运算可以直接作用于整个向量：\n\npopulation_10k &lt;- c(846, 852, 858)\ncomplaints_per_10000 &lt;- complaints / population_10k\n\nround(complaints_per_10000, 1)\n\n[1] 69.0 72.8 78.1\n\n\n上例中的人口单位为“万人”，所以“投诉量 ÷ 人口（万人）”直接得到每万人投诉量。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#函数与参数",
+    "href": "bigdata/basics/rbasics.html#函数与参数",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "3.3 函数与参数",
+    "text": "3.3 函数与参数\n函数接受输入并返回结果。例如：\n\nmean(satisfaction)\n\n[1] 85.66667\n\nround(mean(satisfaction), digits = 1)\n\n[1] 85.7\n\n\n\nmean() 和 round() 是函数；\n括号中的对象是函数的输入；\ndigits = 1 是参数，表示保留一位小数。\n\n本阶段不需要记住大量函数。重点是能读懂：对哪个对象，调用了什么函数，使用了哪些参数。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#逻辑判断",
+    "href": "bigdata/basics/rbasics.html#逻辑判断",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "3.4 逻辑判断",
+    "text": "3.4 逻辑判断\n逻辑表达式返回 TRUE 或 FALSE，常用于筛选数据。\n\nsatisfaction &gt; 85\n\n[1] FALSE  TRUE  TRUE\n\ncity == \"厦门\"\n\n[1] TRUE\n\ncity %in% c(\"福州\", \"厦门\", \"泉州\")\n\n[1] TRUE\n\n\n\n\n\n运算符\n含义\n\n\n\n\n==\n等于\n\n\n!=\n不等于\n\n\n&gt;、&gt;=\n大于、大于或等于\n\n\n&lt;、&lt;=\n小于、小于或等于\n\n\n&\n同时满足\n\n\n\\|\n至少满足一个\n\n\n!\n取反\n\n\n%in%\n是否包含在一组值中\n\n\n\n注意：= 常用于指定函数参数，== 用于判断两个值是否相等。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#缺失值不是0",
+    "href": "bigdata/basics/rbasics.html#缺失值不是0",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "3.5 缺失值不是0",
+    "text": "3.5 缺失值不是0\nR使用 NA 表示缺失值。缺失不等于0，也不等于“没有”。\n\nresponse_hours &lt;- c(31.2, 27.4, NA, 22.8)\n\nis.na(response_hours)\n\n[1] FALSE FALSE  TRUE FALSE\n\nmean(response_hours)\n\n[1] NA\n\nmean(response_hours, na.rm = TRUE)\n\n[1] 27.13333\n\n\n如果不明确处理缺失值，很多统计函数会返回 NA。参数 na.rm = TRUE 表示计算前移除缺失值。\n\n\n\n\n\n\n不要机械删除缺失值\n\n\n\nna.rm = TRUE 只解决计算问题，并没有解释数据为什么缺失。公共管理数据中的缺失可能来自未上报、选择性公开、系统更换或统计口径变化，应结合制度背景判断。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#数据框是什么",
+    "href": "bigdata/basics/rbasics.html#数据框是什么",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "4.1 数据框是什么？",
+    "text": "4.1 数据框是什么？\n公共管理数据通常以二维表格出现：每一行是一个观察对象，每一列是一个变量。\n\nservice_snapshot &lt;- tibble(\n  city = c(\"福州\", \"厦门\", \"泉州\"),\n  year = c(2025, 2025, 2025),\n  population_10k = c(858, 540, 900),\n  complaints = c(67000, 53000, 63000),\n  satisfaction = c(87.3, 90.2, 85.1)\n)\n\nservice_snapshot\n\n# A tibble: 3 × 5\n  city   year population_10k complaints satisfaction\n  &lt;chr&gt; &lt;dbl&gt;          &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;\n1 福州   2025            858      67000         87.3\n2 厦门   2025            540      53000         90.2\n3 泉州   2025            900      63000         85.1\n\n\n这个数据框有3行、5列：\n\n行：城市—年份观察值；\n列：城市、年份、人口、投诉量和满意度等变量；\n单元格：某个观察对象在某个变量上的取值。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#查看数据",
+    "href": "bigdata/basics/rbasics.html#查看数据",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "4.2 查看数据",
+    "text": "4.2 查看数据\n导入或创建数据后，不要立即建模。先确认数据是否符合预期。\n\nglimpse(service_snapshot)\n\nRows: 3\nColumns: 5\n$ city           &lt;chr&gt; \"福州\", \"厦门\", \"泉州\"\n$ year           &lt;dbl&gt; 2025, 2025, 2025\n$ population_10k &lt;dbl&gt; 858, 540, 900\n$ complaints     &lt;dbl&gt; 67000, 53000, 63000\n$ satisfaction   &lt;dbl&gt; 87.3, 90.2, 85.1\n\nhead(service_snapshot)\n\n# A tibble: 3 × 5\n  city   year population_10k complaints satisfaction\n  &lt;chr&gt; &lt;dbl&gt;          &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;\n1 福州   2025            858      67000         87.3\n2 厦门   2025            540      53000         90.2\n3 泉州   2025            900      63000         85.1\n\nnames(service_snapshot)\n\n[1] \"city\"           \"year\"           \"population_10k\" \"complaints\"    \n[5] \"satisfaction\"  \n\ndim(service_snapshot)\n\n[1] 3 5\n\n\n在 RStudio 中还可以使用：\n\nView(service_snapshot)\n\n建议形成固定检查习惯：\n\n行数和列数是否合理？\n变量名是否清晰？\n数值、字符、日期等类型是否正确？\n是否存在缺失值或异常值？"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#管道把多个步骤连接起来",
+    "href": "bigdata/basics/rbasics.html#管道把多个步骤连接起来",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "4.3 管道：把多个步骤连接起来",
+    "text": "4.3 管道：把多个步骤连接起来\n基础管道符 |&gt; 把左侧结果传给右侧函数，使代码可以按分析顺序从上到下阅读。\n\nservice_snapshot |&gt;\n  filter(satisfaction &gt;= 88) |&gt;\n  select(city, satisfaction)\n\n# A tibble: 1 × 2\n  city  satisfaction\n  &lt;chr&gt;        &lt;dbl&gt;\n1 厦门          90.2\n\n\n可以把它读作：\n\n从 service_snapshot 开始，然后筛选满意度不低于88的记录，然后保留城市和满意度两列。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#五个核心数据处理函数",
+    "href": "bigdata/basics/rbasics.html#五个核心数据处理函数",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "4.4 五个核心数据处理函数",
+    "text": "4.4 五个核心数据处理函数\n\n\n\n函数\n作用\n对数据的影响\n\n\n\n\nfilter()\n按条件筛选观察值\n减少行\n\n\nselect()\n选择变量\n减少列\n\n\nmutate()\n新建或修改变量\n增加或改变列\n\n\ngroup_by()\n指定分组方式\n改变后续计算单位\n\n\nsummarise()\n计算汇总统计量\n将多行压缩为摘要\n\n\n\n下一节将用一份完整的模拟数据练习这些函数。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#案例城市公共服务回应",
+    "href": "bigdata/basics/rbasics.html#案例城市公共服务回应",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "5.1 案例：城市公共服务回应",
+    "text": "5.1 案例：城市公共服务回应\n假设我们希望比较不同城市的政务热线办理效率，并讨论以下问题：\n\n哪些城市的每万人投诉量较高？\n各区域的平均满意度有何差异？\n平均回应时间缩短时，满意度是否通常更高？\n\n本讲使用一份教学模拟数据。数值仅为演示R工作流而构造，不代表任何城市的真实治理绩效，也不能用于实质性政策评价。\n主要变量如下：\n\n\n\n变量名\n含义\n单位/类型\n\n\n\n\ncity\n城市\n字符\n\n\nregion\n区域\n字符\n\n\nyear\n年份\n整数\n\n\npopulation_10k\n常住人口\n万人\n\n\nservice_centers\n便民服务中心数量\n个\n\n\nonline_cases\n政务热线受理量\n件\n\n\nclosed_cases\n按期办结量\n件\n\n\nsatisfaction\n群众满意度\n%\n\n\navg_response_hours\n平均首次回应时间\n小时\n\n\npm25\nPM2.5年均浓度\nμg/m³"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#从csv格式导入",
+    "href": "bigdata/basics/rbasics.html#从csv格式导入",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "5.2 从CSV格式导入",
+    "text": "5.2 从CSV格式导入\n为了使本网页可以独立运行，下面将模拟CSV文本直接交给 read_csv()。在实际项目中，只需把 I(simulated_city_csv) 换成文件路径，例如 \"data/city_service.csv\"。\n\nsimulated_city_csv &lt;- \"city,region,year,population_10k,service_centers,online_cases,closed_cases,satisfaction,avg_response_hours,pm25\n福州,闽东,2023,846,102,58400,55200,84.1,31.2,27.0\n福州,闽东,2024,852,109,62000,60000,85.6,27.4,25.8\n福州,闽东,2025,858,117,67000,65800,87.3,22.8,24.4\n厦门,闽南,2023,532,83,46000,44800,88.0,22.0,21.0\n厦门,闽南,2024,536,88,49200,48200,89.1,19.4,20.1\n厦门,闽南,2025,540,94,53000,52300,90.2,17.3,19.3\n泉州,闽南,2023,891,95,55000,51000,82.4,36.0,28.5\n泉州,闽南,2024,896,103,58800,55800,83.8,31.5,27.2\n泉州,闽南,2025,900,112,63000,60800,85.1,26.7,25.9\n漳州,闽南,2023,508,64,30800,28500,81.5,40.5,30.0\n漳州,闽南,2024,512,70,33700,31800,82.9,35.6,28.6\n漳州,闽南,2025,516,77,36900,35400,84.4,30.2,27.1\n南平,闽北,2023,265,39,17200,15600,80.6,48.0,24.8\n南平,闽北,2024,267,43,18800,17400,NA,43.1,23.7\n南平,闽北,2025,269,48,20900,19700,83.2,36.9,22.5\n宁德,闽东,2023,315,42,19600,18200,82.0,43.0,26.2\n宁德,闽东,2024,319,47,21800,20500,83.5,37.8,24.9\n宁德,闽东,2025,323,53,24400,23300,85.0,31.6,23.6\"\n\ncity_service &lt;- read_csv(\n  I(simulated_city_csv),\n  na = c(\"NA\", \"\"),\n  show_col_types = FALSE\n)\n\n真实项目中的常见写法是：\n\ncity_service &lt;- read_csv(\n  \"data/city_service.csv\",\n  na = c(\"NA\", \"\", \"-\"),\n  show_col_types = FALSE\n)"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#导入后立即检查",
+    "href": "bigdata/basics/rbasics.html#导入后立即检查",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "5.3 导入后立即检查",
+    "text": "5.3 导入后立即检查\n\nglimpse(city_service)\n\nRows: 18\nColumns: 10\n$ city               &lt;chr&gt; \"福州\", \"福州\", \"福州\", \"厦门\", \"厦门\", \"厦门\", \"泉…\n$ region             &lt;chr&gt; \"闽东\", \"闽东\", \"闽东\", \"闽南\", \"闽南\", \"闽南\", \"闽…\n$ year               &lt;dbl&gt; 2023, 2024, 2025, 2023, 2024, 2025, 2023, 2024, 202…\n$ population_10k     &lt;dbl&gt; 846, 852, 858, 532, 536, 540, 891, 896, 900, 508, 5…\n$ service_centers    &lt;dbl&gt; 102, 109, 117, 83, 88, 94, 95, 103, 112, 64, 70, 77…\n$ online_cases       &lt;dbl&gt; 58400, 62000, 67000, 46000, 49200, 53000, 55000, 58…\n$ closed_cases       &lt;dbl&gt; 55200, 60000, 65800, 44800, 48200, 52300, 51000, 55…\n$ satisfaction       &lt;dbl&gt; 84.1, 85.6, 87.3, 88.0, 89.1, 90.2, 82.4, 83.8, 85.…\n$ avg_response_hours &lt;dbl&gt; 31.2, 27.4, 22.8, 22.0, 19.4, 17.3, 36.0, 31.5, 26.…\n$ pm25               &lt;dbl&gt; 27.0, 25.8, 24.4, 21.0, 20.1, 19.3, 28.5, 27.2, 25.…\n\nhead(city_service)\n\n# A tibble: 6 × 10\n  city  region  year population_10k service_centers online_cases closed_cases\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 福州  闽东    2023            846             102        58400        55200\n2 福州  闽东    2024            852             109        62000        60000\n3 福州  闽东    2025            858             117        67000        65800\n4 厦门  闽南    2023            532              83        46000        44800\n5 厦门  闽南    2024            536              88        49200        48200\n6 厦门  闽南    2025            540              94        53000        52300\n# ℹ 3 more variables: satisfaction &lt;dbl&gt;, avg_response_hours &lt;dbl&gt;, pm25 &lt;dbl&gt;\n\ndim(city_service)\n\n[1] 18 10\n\n\n检查满意度变量中的缺失值：\n\ncity_service |&gt;\n  filter(is.na(satisfaction))\n\n# A tibble: 1 × 10\n  city  region  year population_10k service_centers online_cases closed_cases\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 南平  闽北    2024            267              43        18800        17400\n# ℹ 3 more variables: satisfaction &lt;dbl&gt;, avg_response_hours &lt;dbl&gt;, pm25 &lt;dbl&gt;\n\n\n\n\n\n\n\n\n数据不是事实本身\n\n\n\n热线受理量既受治理问题数量影响，也受人口规模、平台可及性、公众投诉习惯和渠道整合方式影响。因此，受理量较高不能直接解释为“治理更差”。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#选择分析需要的变量",
+    "href": "bigdata/basics/rbasics.html#选择分析需要的变量",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "6.1 选择分析需要的变量",
+    "text": "6.1 选择分析需要的变量\n\nservice_core &lt;- city_service |&gt;\n  select(\n    city,\n    region,\n    year,\n    population_10k,\n    online_cases,\n    closed_cases,\n    satisfaction,\n    avg_response_hours\n  )\n\nservice_core\n\n# A tibble: 18 × 8\n   city  region  year population_10k online_cases closed_cases satisfaction\n   &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n 1 福州  闽东    2023            846        58400        55200         84.1\n 2 福州  闽东    2024            852        62000        60000         85.6\n 3 福州  闽东    2025            858        67000        65800         87.3\n 4 厦门  闽南    2023            532        46000        44800         88  \n 5 厦门  闽南    2024            536        49200        48200         89.1\n 6 厦门  闽南    2025            540        53000        52300         90.2\n 7 泉州  闽南    2023            891        55000        51000         82.4\n 8 泉州  闽南    2024            896        58800        55800         83.8\n 9 泉州  闽南    2025            900        63000        60800         85.1\n10 漳州  闽南    2023            508        30800        28500         81.5\n11 漳州  闽南    2024            512        33700        31800         82.9\n12 漳州  闽南    2025            516        36900        35400         84.4\n13 南平  闽北    2023            265        17200        15600         80.6\n14 南平  闽北    2024            267        18800        17400         NA  \n15 南平  闽北    2025            269        20900        19700         83.2\n16 宁德  闽东    2023            315        19600        18200         82  \n17 宁德  闽东    2024            319        21800        20500         83.5\n18 宁德  闽东    2025            323        24400        23300         85  \n# ℹ 1 more variable: avg_response_hours &lt;dbl&gt;"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#筛选2025年的观察值",
+    "href": "bigdata/basics/rbasics.html#筛选2025年的观察值",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "6.2 筛选2025年的观察值",
+    "text": "6.2 筛选2025年的观察值\n\nservice_2025 &lt;- service_core |&gt;\n  filter(year == 2025)\n\nservice_2025\n\n# A tibble: 6 × 8\n  city  region  year population_10k online_cases closed_cases satisfaction\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 福州  闽东    2025            858        67000        65800         87.3\n2 厦门  闽南    2025            540        53000        52300         90.2\n3 泉州  闽南    2025            900        63000        60800         85.1\n4 漳州  闽南    2025            516        36900        35400         84.4\n5 南平  闽北    2025            269        20900        19700         83.2\n6 宁德  闽东    2025            323        24400        23300         85  \n# ℹ 1 more variable: avg_response_hours &lt;dbl&gt;\n\n\n组合多个筛选条件时，可以使用 & 或用逗号分隔：\n\nservice_core |&gt;\n  filter(\n    year == 2025,\n    satisfaction &gt;= 85\n  )\n\n# A tibble: 4 × 8\n  city  region  year population_10k online_cases closed_cases satisfaction\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 福州  闽东    2025            858        67000        65800         87.3\n2 厦门  闽南    2025            540        53000        52300         90.2\n3 泉州  闽南    2025            900        63000        60800         85.1\n4 宁德  闽东    2025            323        24400        23300         85  \n# ℹ 1 more variable: avg_response_hours &lt;dbl&gt;"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#新建有公共管理含义的指标",
+    "href": "bigdata/basics/rbasics.html#新建有公共管理含义的指标",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "6.3 新建有公共管理含义的指标",
+    "text": "6.3 新建有公共管理含义的指标\n直接比较投诉总量可能受到城市人口规模影响。可以计算每万人投诉量和按期办结率：\n\nservice_indicators &lt;- service_core |&gt;\n  mutate(\n    complaints_per_10000 = online_cases / population_10k,\n    closure_rate = closed_cases / online_cases * 100\n  )\n\nservice_indicators |&gt;\n  select(\n    city,\n    year,\n    complaints_per_10000,\n    closure_rate\n  ) |&gt;\n  head()\n\n# A tibble: 6 × 4\n  city   year complaints_per_10000 closure_rate\n  &lt;chr&gt; &lt;dbl&gt;                &lt;dbl&gt;        &lt;dbl&gt;\n1 福州   2023                 69.0         94.5\n2 福州   2024                 72.8         96.8\n3 福州   2025                 78.1         98.2\n4 厦门   2023                 86.5         97.4\n5 厦门   2024                 91.8         98.0\n6 厦门   2025                 98.1         98.7\n\n\nmutate() 不会自动修改原始对象。只有把结果重新赋值给对象，新的变量才会被保存。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#按区域分组汇总",
+    "href": "bigdata/basics/rbasics.html#按区域分组汇总",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "6.4 按区域分组汇总",
+    "text": "6.4 按区域分组汇总\n\nregion_summary &lt;- service_indicators |&gt;\n  filter(year == 2025) |&gt;\n  group_by(region) |&gt;\n  summarise(\n    cities = n(),\n    avg_satisfaction = mean(satisfaction, na.rm = TRUE),\n    avg_response_hours = mean(avg_response_hours, na.rm = TRUE),\n    avg_closure_rate = mean(closure_rate, na.rm = TRUE),\n    .groups = \"drop\"\n  ) |&gt;\n  arrange(desc(avg_satisfaction))\n\nregion_summary\n\n# A tibble: 3 × 5\n  region cities avg_satisfaction avg_response_hours avg_closure_rate\n  &lt;chr&gt;   &lt;int&gt;            &lt;dbl&gt;              &lt;dbl&gt;            &lt;dbl&gt;\n1 闽南        3             86.6               24.7             97.0\n2 闽东        2             86.2               27.2             96.9\n3 闽北        1             83.2               36.9             94.3\n\n\n逐行阅读这段代码：\n\n从新建了指标的数据开始；\n只保留2025年；\n将城市按区域分组；\n计算城市数量、平均满意度、平均回应时间和平均办结率；\n取消分组，并按平均满意度从高到低排列。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#汇总结果不等于因果结论",
+    "href": "bigdata/basics/rbasics.html#汇总结果不等于因果结论",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "6.5 汇总结果不等于因果结论",
+    "text": "6.5 汇总结果不等于因果结论\n假如我们观察到回应时间短的城市满意度更高，只能说二者在这份数据中存在关联，不能直接断言：\n\n缩短回应时间必然导致满意度提高。\n\n城市财政能力、问题复杂度、平台使用群体和调查方式都可能同时影响回应时间与满意度。因果判断需要更合适的研究设计，这将在课程后续的政策评估部分讨论。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#用柱状图比较城市",
+    "href": "bigdata/basics/rbasics.html#用柱状图比较城市",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "7.1 用柱状图比较城市",
+    "text": "7.1 用柱状图比较城市\n\nservice_2025_plot &lt;- service_indicators |&gt;\n  filter(year == 2025) |&gt;\n  mutate(\n    city = forcats::fct_reorder(city, satisfaction)\n  )\n\nggplot(\n  service_2025_plot,\n  aes(x = city, y = satisfaction)\n) +\n  geom_col(fill = \"#2C7FB8\", width = 0.72) +\n  coord_flip() +\n  labs(\n    title = \"2025年模拟城市公共服务满意度\",\n    x = NULL,\n    y = \"满意度（%）\",\n  ) \n\n\n\n\n\n\n\n\n这段图表代码包含三个基本部分：\n\nggplot() 指定数据与横纵轴变量；\ngeom_col() 指定用柱形表达数值；\nlabs() 和 theme_minimal() 设置标题、标签与外观。\n\n本讲不要求掌握 ggplot2 的全部语法。重点是确认你已经能够从数据对象生成一张可以解释的图。后续“数据描述与可视化”专题会系统介绍图形选择与视觉设计。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#用散点图探索两个变量的关系",
+    "href": "bigdata/basics/rbasics.html#用散点图探索两个变量的关系",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "7.2 用散点图探索两个变量的关系",
+    "text": "7.2 用散点图探索两个变量的关系\n\nggplot(\n  city_service,\n  aes(x = avg_response_hours, y = satisfaction, color = region)\n) +\n  geom_point(size = 3, alpha = 0.8, na.rm = TRUE) +\n  geom_smooth(method = \"lm\", se = FALSE, color = \"grey40\", na.rm = TRUE) +\n  labs(\n    title = \"平均回应时间与群众满意度\",\n    subtitle = \"相关关系不等于因果关系\",\n    x = \"平均首次回应时间（小时）\",\n    y = \"满意度（%）\",\n    color = \"区域\"\n  ) \n\n\n\n\n\n\n\n\n解释图表时至少回答三个问题：\n\n图中最明显的模式是什么？\n哪些观察值偏离了整体模式？\n这种模式还可能由哪些变量或制度因素解释？"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#先阅读错误信息",
+    "href": "bigdata/basics/rbasics.html#先阅读错误信息",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "8.1 先阅读错误信息",
+    "text": "8.1 先阅读错误信息\nR报错并不意味着分析失败，而是在告诉你：代码、对象或数据与函数的预期不一致。\n\n\n\n错误类型\n常见原因\n首先检查\n\n\n\n\n找不到对象\n对象尚未创建或名称拼错\nEnvironment与变量名\n\n\n找不到函数\n相应R包未加载\nlibrary() 是否运行\n\n\n找不到文件\n路径错误或项目打开位置不对\nProject与相对路径\n\n\n非数值参数\n数值列被读取为字符\nglimpse() 输出\n\n\n括号或引号错误\n代码未闭合\n报错行及其上一行\n\n\n\n排错时建议保留完整错误信息，并从报错位置附近的小段代码开始检查。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#使用r自带帮助",
+    "href": "bigdata/basics/rbasics.html#使用r自带帮助",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "8.2 使用R自带帮助",
+    "text": "8.2 使用R自带帮助\n\n?mean\n?read_csv\nhelp.search(\"missing values\")\n\n如果不知道函数属于哪个包，可以搜索函数名和错误信息，也可以查看包的官方文档或示例。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#使用ai辅助但必须验证",
+    "href": "bigdata/basics/rbasics.html#使用ai辅助但必须验证",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "8.3 使用AI辅助，但必须验证",
+    "text": "8.3 使用AI辅助，但必须验证\nAI适合帮助解释报错、逐行说明代码、提出排查顺序和生成小规模示例。一个较完整的提问应包含：\n我在R中使用下面的代码分析城市公共服务数据。\n请先解释错误原因，再给出最小修改，不要重写整个程序。\n\n[粘贴可复现的代码]\n\n[粘贴完整错误信息]\n\n数据结构如下：\n[粘贴 glimpse(data) 的输出]\n建议遵循以下流程：\n\n提供分析目标、代码、错误信息和必要的数据结构；\n要求AI解释“为什么”，而不只是给出一段新代码；\n在小数据上重新运行；\n检查行数、变量类型、缺失值和关键统计量；\n用帮助文档或其他可靠来源核对关键参数。\n\n\n\n\n\n\n\n能运行不等于分析正确\n\n\n\nAI可能生成不存在的函数、误解变量含义，或在没有研究设计依据时作出因果解释。研究者必须对数据处理过程、模型选择和实质性结论负责。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#建立最小可复现示例",
+    "href": "bigdata/basics/rbasics.html#建立最小可复现示例",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "8.4 建立最小可复现示例",
+    "text": "8.4 建立最小可复现示例\n如果完整数据和代码很复杂，先缩小问题：\n\nsmall_example &lt;- city_service |&gt;\n  select(city, year, satisfaction) |&gt;\n  slice_head(n = 6)\n\nsmall_example\n\n# A tibble: 6 × 3\n  city   year satisfaction\n  &lt;chr&gt; &lt;dbl&gt;        &lt;dbl&gt;\n1 福州   2023         84.1\n2 福州   2024         85.6\n3 福州   2025         87.3\n4 厦门   2023         88  \n5 厦门   2024         89.1\n6 厦门   2025         90.2\n\n\n最小可复现示例应包含：\n\n能触发问题的最少数据；\n能触发问题的最少代码；\n期望结果与实际结果；\n完整错误或警告信息。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#任务",
+    "href": "bigdata/basics/rbasics.html#任务",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "9.1 任务",
+    "text": "9.1 任务\n使用 city_service 完成下列分析：\n\n只保留2024年和2025年的数据；\n计算每万人投诉量和按期办结率；\n按年份分组，计算平均满意度和平均回应时间；\n将结果按年份升序排列；\n制作一张图，比较两个年份的平均满意度；\n用2—3句话解释结果，并指出至少一个不能从图中直接推出的结论。\n\n建议先独立完成，再展开参考代码。\n\n\n参考代码\n\n\nyear_summary &lt;- city_service |&gt;\n  filter(year %in% c(2024, 2025)) |&gt;\n  mutate(\n    complaints_per_10000 = online_cases / population_10k,\n    closure_rate = closed_cases / online_cases * 100\n  ) |&gt;\n  group_by(year) |&gt;\n  summarise(\n    avg_satisfaction = mean(satisfaction, na.rm = TRUE),\n    avg_response_hours = mean(avg_response_hours, na.rm = TRUE),\n    avg_complaints_per_10000 = mean(complaints_per_10000),\n    avg_closure_rate = mean(closure_rate),\n    .groups = \"drop\"\n  ) |&gt;\n  arrange(year)\n\nyear_summary\n\n# A tibble: 2 × 5\n   year avg_satisfaction avg_response_hours avg_complaints_per_10000\n  &lt;dbl&gt;            &lt;dbl&gt;              &lt;dbl&gt;                    &lt;dbl&gt;\n1  2024             85.0               32.5                     72.5\n2  2025             85.9               27.6                     78.5\n# ℹ 1 more variable: avg_closure_rate &lt;dbl&gt;\n\nggplot(year_summary, aes(x = factor(year), y = avg_satisfaction)) +\n  geom_col(fill = \"#2C7FB8\", width = 0.6) +\n  geom_text(\n    aes(label = round(avg_satisfaction, 1)),\n    vjust = -0.4\n  ) +\n  labs(\n    title = \"模拟城市的平均公共服务满意度\",\n    subtitle = \"2024—2025年\",\n    x = \"年份\",\n    y = \"平均满意度（%）\"\n  ) +\n  coord_cartesian(ylim = c(0, 100))"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#本讲小结",
+    "href": "bigdata/basics/rbasics.html#本讲小结",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "9.2 本讲小结",
+    "text": "9.2 本讲小结\n本讲最重要的不是单个函数，而是下面这条可重复的工作流：\n\nlibrary(tidyverse)\n\ncity_service &lt;- read_csv(\"data/city_service.csv\")\n\nresult &lt;- city_service |&gt;\n  filter(year == 2025) |&gt;\n  mutate(\n    complaints_per_10000 = online_cases / population_10k\n  ) |&gt;\n  group_by(region) |&gt;\n  summarise(\n    avg_complaints = mean(complaints_per_10000, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\nggplot(result, aes(x = region, y = avg_complaints)) +\n  geom_col()\n\n当你能够说明每一步“输入什么、改变什么、输出什么”时，就已经建立了后续课程所需的R基础。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#a.1-数值运算",
+    "href": "bigdata/basics/rbasics.html#a.1-数值运算",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "A.1 数值运算",
+    "text": "A.1 数值运算\n\n2 + 2\n\n[1] 4\n\n9 - 4\n\n[1] 5\n\n6 * 12\n\n[1] 72\n\n86 / 4\n\n[1] 21.5\n\n2^8\n\n[1] 256\n\nlog(12)\n\n[1] 2.484907\n\nexp(2)\n\n[1] 7.389056\n\n\n括号会改变运算顺序：\n\n2 / 9^2\n\n[1] 0.02469136\n\n(2 / 9)^2\n\n[1] 0.04938272"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#a.2-创建序列与提取元素",
+    "href": "bigdata/basics/rbasics.html#a.2-创建序列与提取元素",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "A.2 创建序列与提取元素",
+    "text": "A.2 创建序列与提取元素\n\nyears &lt;- 2020:2025\nyears\n\n[1] 2020 2021 2022 2023 2024 2025\n\nseq(from = 2020, to = 2030, by = 2)\n\n[1] 2020 2022 2024 2026 2028 2030\n\nrep(\"试点城市\", times = 3)\n\n[1] \"试点城市\" \"试点城市\" \"试点城市\"\n\nyears[1]\n\n[1] 2020\n\nyears[2:4]\n\n[1] 2021 2022 2023"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#a.3-矩阵",
+    "href": "bigdata/basics/rbasics.html#a.3-矩阵",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "A.3 矩阵",
+    "text": "A.3 矩阵\n矩阵要求所有元素属于同一基本类型，在部分统计计算和机器学习算法中仍然常见。\n\nservice_matrix &lt;- matrix(\n  c(84.1, 85.6, 87.3, 88.0, 89.1, 90.2),\n  nrow = 2,\n  byrow = TRUE\n)\n\nservice_matrix\n\n     [,1] [,2] [,3]\n[1,] 84.1 85.6 87.3\n[2,] 88.0 89.1 90.2\n\nservice_matrix[1, 2]\n\n[1] 85.6\n\nservice_matrix[, 2]\n\n[1] 85.6 89.1\n\nservice_matrix + service_matrix\n\n      [,1]  [,2]  [,3]\n[1,] 168.2 171.2 174.6\n[2,] 176.0 178.2 180.4\n\nservice_matrix * service_matrix\n\n        [,1]    [,2]    [,3]\n[1,] 7072.81 7327.36 7621.29\n[2,] 7744.00 7938.81 8136.04\n\nservice_matrix %*% t(service_matrix)\n\n         [,1]     [,2]\n[1,] 22021.46 22902.22\n[2,] 22902.22 23818.85"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#a.4-自定义函数",
+    "href": "bigdata/basics/rbasics.html#a.4-自定义函数",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "A.4 自定义函数",
+    "text": "A.4 自定义函数\n当同一计算需要反复使用时，可以把它写成函数。下面的函数计算每万人指标：\n\ncalc_per_10000 &lt;- function(count, population_10k) {\n  count / population_10k\n}\n\ncalc_per_10000(\n  count = 67000,\n  population_10k = 858\n)\n\n[1] 78.08858\n\n\n一个好的函数通常应当：\n\n只完成一个明确任务；\n使用有含义的函数名和参数名；\n返回可检查的结果；\n用小规模输入进行测试。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#a.5-条件执行",
+    "href": "bigdata/basics/rbasics.html#a.5-条件执行",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "A.5 条件执行",
+    "text": "A.5 条件执行\nif 与 else 适合根据单个逻辑条件选择不同操作：\n\nclosure_rate &lt;- 98.2\n\nif (closure_rate &gt;= 95) {\n  service_level &lt;- \"达到目标\"\n} else {\n  service_level &lt;- \"需要改进\"\n}\n\nservice_level\n\n[1] \"达到目标\"\n\n\n对向量进行分类时，可以使用 if_else() 或 case_when()：\n\ncity_service |&gt;\n  mutate(\n    response_level = case_when(\n      avg_response_hours &lt;= 24 ~ \"24小时内\",\n      avg_response_hours &lt;= 36 ~ \"24—36小时\",\n      TRUE ~ \"36小时以上\"\n    )\n  ) |&gt;\n  count(response_level)\n\n# A tibble: 3 × 2\n  response_level     n\n  &lt;chr&gt;          &lt;int&gt;\n1 24—36小时          8\n2 24小时内           4\n3 36小时以上         6"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#a.6-循环",
+    "href": "bigdata/basics/rbasics.html#a.6-循环",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "A.6 循环",
+    "text": "A.6 循环\n循环适合重复执行结构相同的操作：\n\nfor (current_year in 2023:2025) {\n  message(\"正在处理：\", current_year)\n}\n\n在数据分析中，许多逐行或分组任务可以用向量化函数、group_by() 或 purrr::map() 更清晰地完成。使用循环前应先判断是否已有成熟函数。\n下面演示一个带预分配的循环：\n\nyears &lt;- 2023:2025\nmean_satisfaction &lt;- numeric(length(years))\n\nfor (i in seq_along(years)) {\n  mean_satisfaction[i] &lt;- city_service |&gt;\n    filter(year == years[i]) |&gt;\n    summarise(value = mean(satisfaction, na.rm = TRUE)) |&gt;\n    pull(value)\n}\n\ntibble(year = years, mean_satisfaction = mean_satisfaction)\n\n# A tibble: 3 × 2\n   year mean_satisfaction\n  &lt;int&gt;             &lt;dbl&gt;\n1  2023              83.1\n2  2024              85.0\n3  2025              85.9"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.1-对象命名",
+    "href": "bigdata/basics/rbasics.html#b.1-对象命名",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.1 对象命名",
+    "text": "B.1 对象命名\n对象名称应具有描述性，推荐使用 snake_case：\n\n# 推荐\naverage_response_hours &lt;- 24.5\n\n# 不推荐\narh &lt;- 24.5\nAverage.Response.Hours &lt;- 24.5\n\n简短名称看似节省输入时间，却会增加后续阅读、调试和团队协作的成本。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.2-空格与缩进",
+    "href": "bigdata/basics/rbasics.html#b.2-空格与缩进",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.2 空格与缩进",
+    "text": "B.2 空格与缩进\n除幂符号 ^ 外，运算符两侧通常留空格；逗号后留空格；函数名与左括号之间不留空格。\n\n# 推荐\nadjusted_score &lt;- (satisfaction + closure_rate) / 2\nmean(x, na.rm = TRUE)\n\n# 不推荐\nadjusted_score&lt;-(satisfaction+closure_rate)/2\nmean (x,na.rm=TRUE)\n\n管道中的每个主要步骤单独一行：\n\ncity_service |&gt;\n  filter(year == 2025) |&gt;\n  mutate(\n    closure_rate = closed_cases / online_cases * 100\n  ) |&gt;\n  arrange(desc(closure_rate))"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.3-注释与脚本分段",
+    "href": "bigdata/basics/rbasics.html#b.3-注释与脚本分段",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.3 注释与脚本分段",
+    "text": "B.3 注释与脚本分段\n注释应优先解释“为什么这样做”，而不是逐字重复代码。\n\n# 数据导入 --------------------------------------\n\n# 2024年更换了热线系统，单独标记以便敏感性分析\n\n# 数据描述 --------------------------------------\n\n# 模型分析 --------------------------------------\n\nRStudio 中可使用 Cmd/Ctrl + Shift + R 创建脚本分段标题。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.4-控制列类型与识别导入问题",
+    "href": "bigdata/basics/rbasics.html#b.4-控制列类型与识别导入问题",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.4 控制列类型与识别导入问题",
+    "text": "B.4 控制列类型与识别导入问题\nCSV文件不保存变量类型信息，readr 会根据数据内容推测列类型。现实数据中的特殊缺失标记可能使数值列被误判为字符。\n\nsimple_csv &lt;- \"indicator\n10\n.\n20\n30\"\n\nwrong_type &lt;- read_csv(\n  I(simple_csv),\n  show_col_types = FALSE\n)\n\nwrong_type\n\n# A tibble: 4 × 1\n  indicator\n  &lt;chr&gt;    \n1 10       \n2 .        \n3 20       \n4 30       \n\n\n可以明确指定缺失值和列类型：\n\ncorrect_type &lt;- read_csv(\n  I(simple_csv),\n  na = \".\",\n  col_types = cols(\n    indicator = col_double()\n  )\n)\n\ncorrect_type\n\n# A tibble: 4 × 1\n  indicator\n      &lt;dbl&gt;\n1        10\n2        NA\n3        20\n4        30\n\n\n如果强制指定类型后出现解析问题，可以检查：\n\nproblems(correct_type)\n\nreadr 常用列类型包括 col_logical()、col_double()、col_integer()、col_character()、col_factor()、col_date() 和 col_datetime()。 col_number() 可以忽略货币符号等非数字字符，col_skip() 可以跳过不需要的列。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.5-清理变量名与解析数值",
+    "href": "bigdata/basics/rbasics.html#b.5-清理变量名与解析数值",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.5 清理变量名与解析数值",
+    "text": "B.5 清理变量名与解析数值\n真实数据经常包含空格、大小写混合或中文标点等不规范列名。可以先检查，再决定是否批量清理：\n\nraw_data &lt;- raw_data |&gt;\n  janitor::clean_names()\n\n字符变量中的数字可以用 parse_number() 提取：\n\nparse_number(c(\"85分\", \"满意度90.5%\", \"缺失\"))\n\n[1] 85.0 90.5   NA\nattr(,\"problems\")\n# A tibble: 1 × 4\n    row   col expected actual\n  &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt; \n1     3    NA a number 缺失  \n\n\n分类变量可以根据建模需要转换为因子：\n\ncity_service |&gt;\n  mutate(region = factor(region)) |&gt;\n  glimpse()\n\nRows: 18\nColumns: 10\n$ city               &lt;chr&gt; \"福州\", \"福州\", \"福州\", \"厦门\", \"厦门\", \"厦门\", \"泉…\n$ region             &lt;fct&gt; 闽东, 闽东, 闽东, 闽南, 闽南, 闽南, 闽南, 闽南, 闽…\n$ year               &lt;dbl&gt; 2023, 2024, 2025, 2023, 2024, 2025, 2023, 2024, 202…\n$ population_10k     &lt;dbl&gt; 846, 852, 858, 532, 536, 540, 891, 896, 900, 508, 5…\n$ service_centers    &lt;dbl&gt; 102, 109, 117, 83, 88, 94, 95, 103, 112, 64, 70, 77…\n$ online_cases       &lt;dbl&gt; 58400, 62000, 67000, 46000, 49200, 53000, 55000, 58…\n$ closed_cases       &lt;dbl&gt; 55200, 60000, 65800, 44800, 48200, 52300, 51000, 55…\n$ satisfaction       &lt;dbl&gt; 84.1, 85.6, 87.3, 88.0, 89.1, 90.2, 82.4, 83.8, 85.…\n$ avg_response_hours &lt;dbl&gt; 31.2, 27.4, 22.8, 22.0, 19.4, 17.3, 36.0, 31.5, 26.…\n$ pm25               &lt;dbl&gt; 27.0, 25.8, 24.4, 21.0, 20.1, 19.3, 28.5, 27.2, 25.…"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.6-从多个文件中读取数据",
+    "href": "bigdata/basics/rbasics.html#b.6-从多个文件中读取数据",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.6 从多个文件中读取数据",
+    "text": "B.6 从多个文件中读取数据\n如果多个CSV文件具有相同列结构，可以一次导入并记录来源：\n\nservice_files &lt;- list.files(\n  \"data/monthly\",\n  pattern = \"service-.*\\\\.csv$\",\n  full.names = TRUE\n)\n\nmonthly_service &lt;- read_csv(\n  service_files,\n  id = \"source_file\"\n)\n\n批量合并前，应先确认各文件的变量名、列类型、统计口径和时间范围一致。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#b.7-写出数据与保存r对象",
+    "href": "bigdata/basics/rbasics.html#b.7-写出数据与保存r对象",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "B.7 写出数据与保存R对象",
+    "text": "B.7 写出数据与保存R对象\n将整理后的通用表格写成CSV：\n\nwrite_csv(\n  service_indicators,\n  \"output/city_service_clean.csv\"\n)\n\n如果需要保留R对象中的因子、日期或嵌套结构，可以使用RDS：\n\nwrite_rds(\n  service_indicators,\n  \"output/city_service_clean.rds\"\n)\n\nservice_indicators &lt;- read_rds(\n  \"output/city_service_clean.rds\"\n)"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.1-先采取三个简单策略",
+    "href": "bigdata/basics/rbasics.html#c.1-先采取三个简单策略",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.1 先采取三个简单策略",
+    "text": "C.1 先采取三个简单策略\n面对较大数据时，优先做到：\n\n先用小样本测试完整流程；\n优先使用成熟的向量化函数；\n避免反复创建不必要的大对象。\n\n\nsample_data &lt;- city_service |&gt;\n  slice_sample(n = 8)\n\nsample_data\n\n# A tibble: 8 × 10\n  city  region  year population_10k service_centers online_cases closed_cases\n  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;\n1 宁德  闽东    2024            319              47        21800        20500\n2 南平  闽北    2023            265              39        17200        15600\n3 厦门  闽南    2024            536              88        49200        48200\n4 泉州  闽南    2024            896             103        58800        55800\n5 宁德  闽东    2023            315              42        19600        18200\n6 泉州  闽南    2025            900             112        63000        60800\n7 漳州  闽南    2024            512              70        33700        31800\n8 泉州  闽南    2023            891              95        55000        51000\n# ℹ 3 more variables: satisfaction &lt;dbl&gt;, avg_response_hours &lt;dbl&gt;, pm25 &lt;dbl&gt;\n\n\n当单机内存仍然不足时，再考虑 Arrow、DuckDB、data.table、数据库、云计算或分布式计算工具。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.2-测量运行时间",
+    "href": "bigdata/basics/rbasics.html#c.2-测量运行时间",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.2 测量运行时间",
+    "text": "C.2 测量运行时间\n基础函数 system.time() 可以测量一段代码的运行时间：\n\nsystem.time({\n  result &lt;- sqrt(1:100000)\n})\n\n   user  system elapsed \n      0       0       0 \n\n\nmicrobenchmark 可以多次运行同一表达式并比较时间分布：\n\nlibrary(microbenchmark)\n\nmicrobenchmark(\n  vectorized = sqrt(1:100000),\n  times = 20\n)"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.3-检查对象大小",
+    "href": "bigdata/basics/rbasics.html#c.3-检查对象大小",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.3 检查对象大小",
+    "text": "C.3 检查对象大小\n\nservice_character &lt;- rep(c(\"满意\", \"一般\", \"不满意\"), 10000)\nservice_factor &lt;- factor(service_character)\n\nobject.size(service_character)\n\n240224 bytes\n\nobject.size(service_factor)\n\n120640 bytes\n\n\n因子有时比大量重复字符串节省内存，但是否使用因子应同时考虑建模与解释需要。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.4-使用性能分析工具定位瓶颈",
+    "href": "bigdata/basics/rbasics.html#c.4-使用性能分析工具定位瓶颈",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.4 使用性能分析工具定位瓶颈",
+    "text": "C.4 使用性能分析工具定位瓶颈\nprofvis 可以显示各段代码的运行时间和内存占用。下面示例不在网页渲染时自动执行：\n\nlibrary(profvis)\n\nprofvis({\n  x &lt;- 1:10000\n  z &lt;- 1.5\n\n  multiplication &lt;- function(x, z) {\n    result &lt;- c()\n    for (i in seq_along(x)) {\n      result &lt;- c(result, x[i] * z)\n    }\n    result\n  }\n\n  result_loop &lt;- multiplication(x, z)\n  result_vectorized &lt;- x * z\n})"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.5-预先分配内存",
+    "href": "bigdata/basics/rbasics.html#c.5-预先分配内存",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.5 预先分配内存",
+    "text": "C.5 预先分配内存\n在循环中不断增长对象，会触发重复的内存分配。已知输出长度时，应先创建足够长度的对象。\n\n# 较慢：循环中持续增长对象\nsqrt_vector &lt;- function(x) {\n  output &lt;- c()\n  for (i in seq_along(x)) {\n    output &lt;- c(output, sqrt(x[i]))\n  }\n  output\n}\n\n# 较快：预先分配输出长度\nsqrt_vector_faster &lt;- function(x) {\n  output &lt;- numeric(length(x))\n  for (i in seq_along(x)) {\n    output[i] &lt;- sqrt(x[i])\n  }\n  output\n}"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.6-优先使用向量化函数",
+    "href": "bigdata/basics/rbasics.html#c.6-优先使用向量化函数",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.6 优先使用向量化函数",
+    "text": "C.6 优先使用向量化函数\n许多R函数可以直接作用于向量，通常比逐元素循环更简洁：\n\nsqrt_vector_fastest &lt;- function(x) {\n  sqrt(x)\n}\n\nx &lt;- 1:10\nsqrt_vector_faster(x)\n\n [1] 1.000000 1.414214 1.732051 2.000000 2.236068 2.449490 2.645751 2.828427\n [9] 3.000000 3.162278\n\nsqrt_vector_fastest(x)\n\n [1] 1.000000 1.414214 1.732051 2.000000 2.236068 2.449490 2.645751 2.828427\n [9] 3.000000 3.162278\n\n\n如果没有合适的基础向量化函数，可以考虑 purrr::map() 系列函数或其他经过优化的包。但代码是否更快应以测量结果为准。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.7-理解对象复制",
+    "href": "bigdata/basics/rbasics.html#c.7-理解对象复制",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.7 理解对象复制",
+    "text": "C.7 理解对象复制\nR通常采用“修改时复制”的机制。初始赋值可能让两个名称指向同一对象，修改其中一个对象后才发生复制。\n\na &lt;- runif(10000)\nb &lt;- a\n\nlobstr::obj_addr(a)\nlobstr::obj_addr(b)\n\na[1] &lt;- 0\n\nlobstr::obj_addr(a)\nlobstr::obj_addr(b)\n\n处理大型数据时，应避免为了方便而创建大量完整副本。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.8-释放不再使用的对象",
+    "href": "bigdata/basics/rbasics.html#c.8-释放不再使用的对象",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.8 释放不再使用的对象",
+    "text": "C.8 释放不再使用的对象\n可以删除不再需要的大型中间对象，并请求R进行垃圾回收：\n\n# 仅作演示，不在网页渲染时创建大型对象\nlarge_vector &lt;- runif(10^8)\n\nrm(large_vector)\ngc()\n\n通常不必频繁手动调用 gc()。更重要的是设计清晰的工作流，避免同时保留多个大型中间版本。"
+  },
+  {
+    "objectID": "bigdata/basics/rbasics.html#c.9-必要时采用更高效的工具",
+    "href": "bigdata/basics/rbasics.html#c.9-必要时采用更高效的工具",
+    "title": "R、RStudio 与可重复的数据分析工作流",
+    "section": "C.9 必要时采用更高效的工具",
+    "text": "C.9 必要时采用更高效的工具\nR的部分核心函数由C、C++或Fortran等编译型语言实现。面对真正的大规模数据，可以优先选择底层实现高效的工具，例如 data.table；如果数据无法全部载入内存，可以考虑 Arrow、DuckDB 或数据库查询。\n工具选择应遵循由简到繁的顺序：\n\n能否先明确问题并减少不必要的变量和记录？\n能否用抽样数据开发和测试代码？\n能否使用向量化函数或更高效的数据结构？\n能否让 Arrow、DuckDB 或数据库只读取所需数据？\n最后再考虑扩展硬件、云计算或分布式系统。"
   }
 ]
