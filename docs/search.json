@@ -4,7 +4,7 @@
     "href": "bigdata/dataclean/dataclean.html",
     "title": "数据获取与预处理",
     "section": "",
-    "text": "本部分介绍数据导入与获取、数据转化和清理。"
+    "text": "公共管理数据很少是“下载后直接分析”的整洁表格。字段的形成往往受到行政流程、业务系统和填报行为的共同影响。因此，本讲不追求罗列所有文件格式，而是完成一条可重复的分析链：\n\n明确问题 → 获取数据 → 审核质量 → 清理转换 → 合并验证 → 保存记录\n\n本讲使用某市 12345 政务热线模拟数据。它不对应任何真实城市或个人，专门加入了常见的脏数据问题，便于课堂练习。\n\n\n完成本讲后，你应该能够：\n\n根据研究问题判断需要什么数据，并记录数据来源与口径；\n导入 CSV、Excel 和统计软件数据，先审核再清理；\n处理不规范变量名、类型错误、特殊缺失值、重复记录和类别不一致；\n使用键值连接两张表，并检查连接结果；\n用程序化规则验证数据，输出可复现的清理结果；\n解释数据质量问题背后的制度含义，而不只是“把 NA 删除”。\n\n\n\n\n\n\n\n课堂原则\n\n\n\n每完成一个步骤，都回答两个问题：\n\n这段代码改变了什么？\n这种改变会怎样影响公共管理结论？"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#文本文件",
@@ -2560,5 +2560,222 @@
     "title": "R、RStudio 与可重复的数据分析工作流",
     "section": "C.9 必要时采用更高效的工具",
     "text": "C.9 必要时采用更高效的工具\nR的部分核心函数由C、C++或Fortran等编译型语言实现。面对真正的大规模数据，可以优先选择底层实现高效的工具，例如 data.table；如果数据无法全部载入内存，可以考虑 Arrow、DuckDB 或数据库查询。\n工具选择应遵循由简到繁的顺序：\n\n能否先明确问题并减少不必要的变量和记录？\n能否用抽样数据开发和测试代码？\n能否使用向量化函数或更高效的数据结构？\n能否让 Arrow、DuckDB 或数据库只读取所需数据？\n最后再考虑扩展硬件、云计算或分布式系统。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#本讲要解决的问题",
+    "href": "bigdata/dataclean/dataclean.html#本讲要解决的问题",
+    "title": "数据获取与预处理",
+    "section": "",
+    "text": "公共管理数据很少是“下载后直接分析”的整洁表格。字段的形成往往受到行政流程、业务系统和填报行为的共同影响。因此，本讲不追求罗列所有文件格式，而是完成一条可重复的分析链：\n\n明确问题 → 获取数据 → 审核质量 → 清理转换 → 合并验证 → 保存记录\n\n本讲使用某市 12345 政务热线模拟数据。它不对应任何真实城市或个人，专门加入了常见的脏数据问题，便于课堂练习。\n\n\n完成本讲后，你应该能够：\n\n根据研究问题判断需要什么数据，并记录数据来源与口径；\n导入 CSV、Excel 和统计软件数据，先审核再清理；\n处理不规范变量名、类型错误、特殊缺失值、重复记录和类别不一致；\n使用键值连接两张表，并检查连接结果；\n用程序化规则验证数据，输出可复现的清理结果；\n解释数据质量问题背后的制度含义，而不只是“把 NA 删除”。\n\n\n\n\n\n\n\n课堂原则\n\n\n\n每完成一个步骤，都回答两个问题：\n\n这段代码改变了什么？\n这种改变会怎样影响公共管理结论？"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#分钟检索练习",
+    "href": "bigdata/dataclean/dataclean.html#分钟检索练习",
+    "title": "数据获取与预处理",
+    "section": "1.1 3 分钟检索练习",
+    "text": "1.1 3 分钟检索练习\n不运行代码，先独立写出答案。\n\nfilter()、select()、mutate() 分别改变数据的什么部分？\nNA 与字符串 \"未评价\" 有什么区别？\n为什么课程项目应使用相对路径，而不是 setwd()？\n如果同一个区县有两种写法，分组汇总会出现什么结果？\n\n\n\n参考答案\n\n\nfilter() 选择行，select() 选择列，mutate() 新建或修改列。\nNA 是 R 能识别的缺失值；\"未评价\" 是普通文本，必须先判断其业务含义再转换。\n相对路径能让项目在不同电脑上保持可运行。\nR 会把它们视为不同类别，导致区县数量和汇总结果错误。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#从研究问题倒推数据",
+    "href": "bigdata/dataclean/dataclean.html#从研究问题倒推数据",
+    "title": "数据获取与预处理",
+    "section": "2.1 从研究问题倒推数据",
+    "text": "2.1 从研究问题倒推数据\n假设研究问题是：\n\n哪些类型、哪些区县的热线诉求回应较慢？回应速度与市民满意度之间有什么关系？\n\n至少需要以下信息：\n\n\n\n分析概念\n可能的业务字段\n需要核查的问题\n\n\n\n\n诉求发生\n提交时间、渠道\n提交时间还是受理时间？\n\n\n地理位置\n区县、街道\n按居住地还是事发地记录？\n\n\n问题类型\n事项类型\n分类规则是否曾经调整？\n\n\n政府回应\n首次回应、办结时间\n自动回复算不算回应？\n\n\n处理结果\n办结状态\n“办结”是否等于问题解决？\n\n\n公众评价\n满意度\n谁会评价？未评价意味着什么？\n\n\n\n数据清理不是纯技术步骤。字段口径决定了我们最终能够提出多强的结论。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#数据来源选择",
+    "href": "bigdata/dataclean/dataclean.html#数据来源选择",
+    "title": "数据获取与预处理",
+    "section": "2.2 数据来源选择",
+    "text": "2.2 数据来源选择\n公共管理研究常见的数据来源包括：\n\n\n\n\n\n\n\n\n\n来源\n优势\n主要风险\n课堂建议\n\n\n\n\n政府开放数据\n权威、连续\n口径变化、更新滞后\n先读元数据\n\n\n行政业务记录\n细粒度、过程性强\n制度性筛选、隐私风险\n明确生成流程\n\n\n调查数据\n可测量态度和感知\n抽样与回应偏差\n检查问卷和权重\n\n\n网页与平台数据\n更新快、内容丰富\n合规性、代表性、页面变化\n保存来源与抓取日期\n\n\nAPI / 数据库\n自动化、可扩展\n权限、配额、查询错误\n先小规模测试\n\n\n\n\n\n\n\n\n\n数据来源记录卡\n\n\n\n每组选择一个课程项目候选数据源，记录：数据提供者、链接或文件位置、覆盖时间、分析单位、关键变量、更新频率、许可与隐私限制，以及它能回答和不能回答的问题。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#建立可复现的项目目录",
+    "href": "bigdata/dataclean/dataclean.html#建立可复现的项目目录",
+    "title": "数据获取与预处理",
+    "section": "3.1 建立可复现的项目目录",
+    "text": "3.1 建立可复现的项目目录\n建议一个研究问题对应一个 RStudio Project：\nhotline-project/\n├── data/\n│   ├── raw/          # 原始文件，只读保存\n│   └── processed/    # 清理后的数据\n├── R/                # 清理与分析脚本\n├── figures/\n├── output/\n├── report.qmd\n└── hotline-project.Rproj\n不要修改 data/raw/ 中的原始文件。所有修改都写入脚本，并把结果另存到 data/processed/。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#常见文件格式",
+    "href": "bigdata/dataclean/dataclean.html#常见文件格式",
+    "title": "数据获取与预处理",
+    "section": "3.2 常见文件格式",
+    "text": "3.2 常见文件格式\n\n# CSV / TSV\nhotline &lt;- readr::read_csv(\"data/raw/hotline.csv\")\nhotline &lt;- readr::read_tsv(\"data/raw/hotline.tsv\")\n\n# Excel：需要 readxl 包\nhotline &lt;- readxl::read_excel(\n  \"data/raw/hotline.xlsx\",\n  sheet = \"案件明细\"\n)\n\n# Stata / SPSS / SAS：需要 haven 包\nsurvey &lt;- haven::read_dta(\"data/raw/survey.dta\")\nsurvey &lt;- haven::read_sav(\"data/raw/survey.sav\")\nsurvey &lt;- haven::read_sas(\"data/raw/survey.sas7bdat\")\n\n导入真实文件时，先保留原始列为字符型，完成审计后再转换，能够避免日期或编号被软件自动误判。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#课堂案例导入模拟热线数据",
+    "href": "bigdata/dataclean/dataclean.html#课堂案例导入模拟热线数据",
+    "title": "数据获取与预处理",
+    "section": "3.3 课堂案例：导入模拟热线数据",
+    "text": "3.3 课堂案例：导入模拟热线数据\n下面把一段 CSV 文本当作原始文件读入，使本页面在没有外部数据文件时也能完整运行。\n\nraw_hotline_csv &lt;- \"案件编号,提交时间,区县,事项类型,首次回应,办结状态,办结时间,满意度,渠道\nC001,2025-03-01 08:30,思明区,环境卫生,2小时,已办结,2025-03-02 10:00,满意,电话\nC002,2025/3/1 09:10,湖里区 ,交通出行,1天,办结,2025/3/4 15:20,很满意,微信\nC003,02-03-2025 10:20,集美区,公共服务,48 小时,处理中,,未评价,网站\nC004,2025-03-02 14:00,海沧区,市容环境,6小时,已办结,2025-03-03 09:30,一般,电话\nC005,2025/3/3 07:50,同安区,交通,24小时,已办结,2025/3/6 11:00,不满意,微信\nC006,2025-03-03 11:40,翔安区,环境 卫生,3小时,已办结,2025-03-04 16:20,满意,电话\nC006,2025-03-03 11:40,翔安区,环境 卫生,3小时,已办结,2025-03-04 16:20,满意,电话\nC007,2025/3/4 08:05,思明,公共服务,未回应,未办结,,-99,网站\nC008,2025-03-04 13:25,湖里区,交通出行,18小时,已办结,2025-03-05 18:00,一般,电话\nC009,05-03-2025 09:35,集美区,市容环境,2天,已办结,2025-03-08 09:00,满意,微信\nC010,2025-03-05 16:10,海沧区,公共 服务,5小时,处理中,,-,网站\nC011,2025/3/6 10:00,同安,交通,30小时,已办结,2025/3/9 12:00,不满意,电话\nC012,2025-03-06 12:15,翔安区,环境卫生,4小时,已办结,2025-03-07 08:20,很满意,微信\nC013,2025-03-07 09:00,思明区,公共服务,7小时,已办结,2025-03-08 14:00,满意,电话\nC014,2025/3/7 15:30,湖里区,市容环境,12小时,已办结,2025/3/10 09:10,一般,网站\nC015,08-03-2025 08:45,集美区,交通出行,1天,处理中,2025-03-07 12:00,未评价,微信\nC016,2025-03-08 10:10,海沧区,环境卫生,26小时,已办结,2025-03-11 10:00,不满意,电话\nC017,2025/3/9 11:20,同安区,公共服务,8小时,已办结,2025/3/10 16:40,满意,网站\nC018,2025-03-09 14:15,翔安,交通,36小时,已办结,2025-03-12 08:30,一般,电话\nC019,2025-03-10 08:00,思明区,市容环境,2小时,已办结,2025-03-10 18:00,很满意,微信\nC020,2025/3/10 09:40,湖里区,公共 服务,4小时,已办结,2025/3/11 13:00,满意,电话\nC021,11-03-2025 10:30,集美区,环境卫生,50小时,已办结,2025-03-15 09:20,不满意,网站\nC022,2025-03-11 13:05,海沧区,交通出行,10小时,已办结,2025-03-12 18:00,满意,微信\nC023,2025/3/12 09:15,同安区,市容环境,6小时,已办结,2025/3/13 15:00,很满意,电话\nC024,2025-03-12 15:45,翔安区,公共服务,20小时,处理中,,未评价,网站\"\n\nhotline_raw &lt;- read_csv(\n  I(raw_hotline_csv),\n  col_types = cols(.default = col_character())\n)\n# 完整读入输入内容，不做解释；默认全部读成文本数据，比较稳妥\nglimpse(hotline_raw)\n\nRows: 25\nColumns: 9\n$ 案件编号 &lt;chr&gt; \"C001\", \"C002\", \"C003\", \"C004\", \"C005\", \"C006\", \"C006\", \"C007…\n$ 提交时间 &lt;chr&gt; \"2025-03-01 08:30\", \"2025/3/1 09:10\", \"02-03-2025 10:20\", \"20…\n$ 区县     &lt;chr&gt; \"思明区\", \"湖里区\", \"集美区\", \"海沧区\", \"同安区\", \"翔安区\", \"翔安区\", \"思明\", \"湖里区\",…\n$ 事项类型 &lt;chr&gt; \"环境卫生\", \"交通出行\", \"公共服务\", \"市容环境\", \"交通\", \"环境 卫生\", \"环境 卫生\", \"公共服务…\n$ 首次回应 &lt;chr&gt; \"2小时\", \"1天\", \"48 小时\", \"6小时\", \"24小时\", \"3小时\", \"3小时\", \"未回应\", \"18…\n$ 办结状态 &lt;chr&gt; \"已办结\", \"办结\", \"处理中\", \"已办结\", \"已办结\", \"已办结\", \"已办结\", \"未办结\", \"已办结\",…\n$ 办结时间 &lt;chr&gt; \"2025-03-02 10:00\", \"2025/3/4 15:20\", NA, \"2025-03-03 09:30\",…\n$ 满意度   &lt;chr&gt; \"满意\", \"很满意\", \"未评价\", \"一般\", \"不满意\", \"满意\", \"满意\", \"-99\", \"一般\", \"满意…\n$ 渠道     &lt;chr&gt; \"电话\", \"微信\", \"网站\", \"电话\", \"微信\", \"电话\", \"电话\", \"网站\", \"电话\", \"微信\", \"…\n\n\n\n\n\n\n\n\n预测—运行—解释—修改\n\n\n\n运行上面的代码前，先预测 提交时间 会是什么类型。运行后用 glimpse() 验证，再解释为什么本例主动把所有字段读成字符型。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第一眼检查",
+    "href": "bigdata/dataclean/dataclean.html#第一眼检查",
+    "title": "数据获取与预处理",
+    "section": "4.1 第一眼检查",
+    "text": "4.1 第一眼检查\n\ndim(hotline_raw)\n\n[1] 25  9\n\nnames(hotline_raw)\n\n[1] \"案件编号\" \"提交时间\" \"区县\"     \"事项类型\" \"首次回应\" \"办结状态\" \"办结时间\"\n[8] \"满意度\"   \"渠道\"    \n\nhead(hotline_raw, 4)\n\n\n  \n\n\n# 每列可见的不同取值数量\nhotline_raw |&gt;\n# 对所有的变量统计不同的值的个数，并总结成一行\n  summarise(across(everything(), n_distinct)) |&gt;\n# 整理结果，从宽格式转换为长格式\n  pivot_longer(everything(), names_to = \"variable\", values_to = \"n_unique\")\n\n\n  \n\n\n\n不要一打开数据就连续写 mutate()。先检查：\n\n行和列是否符合预期；\n编号能否唯一识别案件；\n日期和数值是否被读成正确类型；\n类别是否有空格、错别字或不同口径；\n缺失值用了哪些符号；\n是否存在重复记录和逻辑矛盾。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#分钟脏数据诊断",
+    "href": "bigdata/dataclean/dataclean.html#分钟脏数据诊断",
+    "title": "数据获取与预处理",
+    "section": "4.2 12 分钟脏数据诊断",
+    "text": "4.2 12 分钟脏数据诊断\n四人一组，不修改数据，只完成“问题—证据—风险”表。\n\n\n\n发现的问题\n用什么证据确认\n不处理会造成什么后果\n\n\n\n\n例如：区县写法不一致\ncount(区县)\n同一区县被拆成多组\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n下面的代码能帮助诊断。\n\nhotline_raw |&gt; count(区县, sort = TRUE)\n\n\n  \n\n\nhotline_raw |&gt; count(事项类型, sort = TRUE)\n\n\n  \n\n\nhotline_raw |&gt; count(满意度, sort = TRUE)\n\n\n  \n\n\n# 检查重复编号\nhotline_raw |&gt;\n  count(案件编号, name = \"n\") |&gt;\n  filter(n &gt; 1)\n\n\n  \n\n\n\n\n\n至少应该发现的六类问题\n\n\n日期格式不一致；\n区县名称有空格或省略“区”；\n事项类型存在空格和近义类别；\n首次回应同时使用“小时”“天”和文本编码；\n满意度用 -99、-、未评价 表示缺失；\nC006 重复，且 C015 的办结时间早于提交时间。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#生成可复查的数据质量摘要",
+    "href": "bigdata/dataclean/dataclean.html#生成可复查的数据质量摘要",
+    "title": "数据获取与预处理",
+    "section": "4.3 生成可复查的数据质量摘要",
+    "text": "4.3 生成可复查的数据质量摘要\n\nspecial_missing &lt;- c(\"\", \"-\", \"-99\", \"未评价\", \"未回应\")\n\nquality_audit &lt;- tibble(\n  variable = names(hotline_raw),\n# 数数每列有多少个缺失值\n    missing_or_special = map_int(\n    hotline_raw,\n    ~ sum(is.na(.x) | .x %in% special_missing)\n  ),\n# 数数每列有多少个不同的取值\n  n_unique = map_int(hotline_raw, n_distinct)\n)\n\nquality_audit"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第一步把变量名改成稳定的英文名称",
+    "href": "bigdata/dataclean/dataclean.html#第一步把变量名改成稳定的英文名称",
+    "title": "数据获取与预处理",
+    "section": "5.1 第一步：把变量名改成稳定的英文名称",
+    "text": "5.1 第一步：把变量名改成稳定的英文名称\n\nhotline_step1 &lt;- hotline_raw |&gt;\n  rename(\n    case_id = 案件编号,\n    submitted_raw = 提交时间,\n    district_raw = 区县,\n    issue_raw = 事项类型,\n    response_raw = 首次回应,\n    status_raw = 办结状态,\n    closed_raw = 办结时间,\n    satisfaction_raw = 满意度,\n    channel = 渠道\n  ) |&gt;\n# 找到所有的字符型变量，每列执行空格清理工作\n  mutate(across(where(is.character), str_squish))\n\nnames(hotline_step1)\n\n[1] \"case_id\"          \"submitted_raw\"    \"district_raw\"     \"issue_raw\"       \n[5] \"response_raw\"     \"status_raw\"       \"closed_raw\"       \"satisfaction_raw\"\n[9] \"channel\"         \n\n\n英文变量名便于写代码；中文变量标签可以在表格和图形阶段再添加。str_squish() 会去掉首尾空格，并把连续空格压缩为一个。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第二步识别特殊缺失值",
+    "href": "bigdata/dataclean/dataclean.html#第二步识别特殊缺失值",
+    "title": "数据获取与预处理",
+    "section": "5.2 第二步：识别特殊缺失值",
+    "text": "5.2 第二步：识别特殊缺失值\n\nhotline_step2 &lt;- hotline_step1 |&gt;\n  mutate(\n    response_raw = replace(\n      response_raw,\n      response_raw %in% c(\"\", \"-\", \"未回应\"),\n      NA_character_\n    ),\n    closed_raw = replace(\n      closed_raw,\n      closed_raw %in% c(\"\", \"-\"),\n      NA_character_\n    ),\n    satisfaction_raw = replace(\n      satisfaction_raw,\n      satisfaction_raw %in% c(\"\", \"-\", \"-99\", \"未评价\"),\n      NA_character_\n    )\n  )\n\nhotline_step2 |&gt; count(satisfaction_raw, sort = TRUE)\n\n\n  \n\n\n\n\n\n\n\n\n\n不要把所有特殊编码机械地转成 NA\n\n\n\n先读数据字典。某些系统中 -99 可能代表“不适用”，而不是“漏填”。不同原因的缺失值可能需要先保留为不同类别，再决定如何分析。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第三步统一行政区与事项类别",
+    "href": "bigdata/dataclean/dataclean.html#第三步统一行政区与事项类别",
+    "title": "数据获取与预处理",
+    "section": "5.3 第三步：统一行政区与事项类别",
+    "text": "5.3 第三步：统一行政区与事项类别\n\nhotline_step3 &lt;- hotline_step2 |&gt;\n  mutate(\n    district = case_when(\n      district_raw %in% c(\"思明\", \"思明区\") ~ \"思明区\",\n      district_raw %in% c(\"湖里\", \"湖里区\") ~ \"湖里区\",\n      district_raw %in% c(\"集美\", \"集美区\") ~ \"集美区\",\n      district_raw %in% c(\"海沧\", \"海沧区\") ~ \"海沧区\",\n      district_raw %in% c(\"同安\", \"同安区\") ~ \"同安区\",\n      district_raw %in% c(\"翔安\", \"翔安区\") ~ \"翔安区\",\n# 如果都没有匹配则保留原值\n      TRUE ~ district_raw\n    ),\n    issue_type = case_when(\n      issue_raw %in% c(\"环境卫生\", \"环境 卫生\", \"市容环境\") ~ \"市容环境\",\n      issue_raw %in% c(\"交通\", \"交通出行\") ~ \"交通出行\",\n      issue_raw %in% c(\"公共服务\", \"公共 服务\") ~ \"公共服务\",\n      TRUE ~ issue_raw\n    ),\n    status = recode(\n      status_raw,\n      \"办结\" = \"已办结\",\n      \"未办结\" = \"处理中\"\n    )\n  )\n\nhotline_step3 |&gt; count(district)\n\n\n  \n\n\nhotline_step3 |&gt; count(issue_type)\n\n\n  \n\n\n\n实际项目不要凭感觉合并类别。应保存映射表，并让熟悉业务口径的人确认。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第四步转换日期时长和满意度",
+    "href": "bigdata/dataclean/dataclean.html#第四步转换日期时长和满意度",
+    "title": "数据获取与预处理",
+    "section": "5.4 第四步：转换日期、时长和满意度",
+    "text": "5.4 第四步：转换日期、时长和满意度\n\nhotline_step4 &lt;- hotline_step3 |&gt;\n  mutate(\n    \n    # 将 submitted_raw 从字符型文本解析为真正的日期时间变量\n    submitted_at = parse_date_time(\n      submitted_raw,\n      \n      # orders 指定可能出现的日期时间格式\n      # \"ymd HM\"：年-月-日 时:分，例如 2026-09-28 14:30\n      # \"Ymd HM\"：紧凑格式，例如 20260928 14:30\n      # \"dmy HM\"：日-月-年 时:分，例如 28-09-2026 14:30\n      orders = c(\"ymd HM\", \"Ymd HM\", \"dmy HM\"),\n      \n      # 指定时区为中国标准时间\n      tz = \"Asia/Shanghai\"\n    ),\n    \n    \n    # 将 closed_raw 同样解析为日期时间变量\n    closed_at = parse_date_time(\n      closed_raw,\n      orders = c(\"ymd HM\", \"Ymd HM\", \"dmy HM\"),\n      tz = \"Asia/Shanghai\"\n    ),\n    \n    \n    # 将 response_raw 中不同单位的回应时长统一换算成“小时”\n    response_hours = case_when(\n      \n      # 如果 response_raw 中包含“天”\n      # parse_number() 提取其中的数字，再乘以24换算成小时\n      # 例如 \"2天\" -&gt; 2 * 24 = 48小时\n      str_detect(response_raw, \"天\") ~\n        parse_number(response_raw) * 24,\n      \n      # 如果包含“小时”，直接提取数字\n      # 例如 \"6小时\" -&gt; 6\n      str_detect(response_raw, \"小时\") ~\n        parse_number(response_raw),\n      \n      # 其他无法识别的情况设为数值型缺失值 NA\n      TRUE ~ NA_real_\n    ),\n    \n    \n    # 将文字型满意度转成数值评分\n    satisfaction_score = recode(\n      satisfaction_raw,\n      \"不满意\" = 1,\n      \"一般\" = 2,\n      \"满意\" = 3,\n      \"很满意\" = 4,\n      \n      # 没有匹配上述四种情况的值，一律设为数值型 NA\n      .default = NA_real_\n    )\n  )\n\n\n# 从清洗后的数据中选择4个变量\nhotline_step4 |&gt;\n  select(\n    case_id,\n    submitted_at,\n    response_hours,\n    satisfaction_score\n  ) |&gt;\n  \n  # 只查看前6行，快速检查转换结果是否正常\n  head()\n\n\n  \n\n\n\n\n\n\n\n\n\n停下来解释\n\n\n\n为什么不能直接对 \"2小时\" 和 \"1天\" 求平均？为什么满意度编码为 1–4 后，也不一定适合直接解释为等距量表？"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#重复记录不能直接一删了之",
+    "href": "bigdata/dataclean/dataclean.html#重复记录不能直接一删了之",
+    "title": "数据获取与预处理",
+    "section": "6.1 重复记录不能直接“一删了之”",
+    "text": "6.1 重复记录不能直接“一删了之”\n\nduplicate_cases &lt;- hotline_step4 |&gt;\n  \n  # 按 case_id 统计每个案件编号出现了多少次\n  # 新增一列 duplicate_n，记录该 case_id 的出现次数\n  add_count(case_id, name = \"duplicate_n\") |&gt;\n  \n  # 只保留出现次数大于1的案件\n  # 也就是筛选出重复的 case_id\n  filter(duplicate_n &gt; 1) |&gt;\n  \n  # 按 case_id 排序，方便把同一个案件的重复记录放在一起查看\n  arrange(case_id)\n\n# 查看重复案件\nduplicate_cases\n\n\n  \n\n\n\n重复可能来自重复录入、案件重开、合并工单或数据拼接。必须先确认 case_id 是否真的应该唯一。本例的两条 C006 完全相同，所以保留一条。\n\n# 按 case_id 去除重复案件\nhotline_unique &lt;- hotline_step4 |&gt;\n  \n  # distinct() 用来删除重复记录\n  # case_id 表示以案件编号作为判断重复的依据\n  # .keep_all = TRUE 表示保留该案件对应的其他所有变量\n  distinct(case_id, .keep_all = TRUE)\n\n\n# 查看去重前的数据总行数\nnrow(hotline_step4)\n\n[1] 25\n\n# 查看去重后的数据总行数\nnrow(hotline_unique)\n\n[1] 24"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#检查范围与时间逻辑",
+    "href": "bigdata/dataclean/dataclean.html#检查范围与时间逻辑",
+    "title": "数据获取与预处理",
+    "section": "6.2 检查范围与时间逻辑",
+    "text": "6.2 检查范围与时间逻辑\n\ninvalid_records &lt;- hotline_unique |&gt;\n  mutate(\n    \n    # 检查回应时间是否异常：\n    # 小于0小时，或者大于30天（24*30=720小时），都标记为 TRUE\n    invalid_response =\n      response_hours &lt; 0 |\n      response_hours &gt; 24 * 30,\n    \n    \n    # 检查时间逻辑是否异常：\n    # 只有 closed_at 不是缺失值时才检查；\n    # 如果办结时间早于提交时间，则标记为 TRUE\n    invalid_time =\n      !is.na(closed_at) &\n      closed_at &lt; submitted_at,\n    \n    \n    # 检查满意度分数是否异常：\n    # 只有 satisfaction_score 不是 NA 时才检查；\n    # 如果分数不在1到4之间，则标记为 TRUE\n    invalid_score =\n      !is.na(satisfaction_score) &\n      !between(satisfaction_score, 1, 4)\n  ) |&gt;\n  \n  # 只要三个异常条件中任意一个为 TRUE，\n  # 就把这条记录筛选出来\n  filter(\n    invalid_response |\n    invalid_time |\n    invalid_score\n  ) |&gt;\n  \n  # 只保留检查异常时需要看的变量\n  select(\n    case_id,\n    submitted_at,\n    closed_at,\n    response_hours,\n    \n    # 选择所有变量名以 \"invalid_\" 开头的变量\n    starts_with(\"invalid_\")\n  )\n\n# 查看所有异常记录\ninvalid_records\n\n\n  \n\n\n\n本例将逻辑错误记录为待核查问题，而不是擅自改写时间。真实研究中应回查原系统或业务人员；无法核实时，再制定透明的处理规则。\n\nhotline_clean &lt;- hotline_unique |&gt;\n  \n  # anti_join()：删除在 invalid_records 中出现过的案件\n  # by = \"case_id\" 表示按照 case_id 进行匹配\n  # 如果某个 case_id 出现在 invalid_records 中，就从 hotline_unique 中排除\n  anti_join(invalid_records, by = \"case_id\") |&gt;\n  \n  # 只保留后续分析需要的变量\n  # 同时也相当于把之前 *_raw 等中间清洗变量去掉\n  select(\n    case_id,\n    submitted_at,\n    district,\n    issue_type,\n    response_hours,\n    status,\n    closed_at,\n    satisfaction_score,\n    channel\n  )\n\n# 查看最终清洗数据的数据结构\nglimpse(hotline_clean)\n\nRows: 23\nColumns: 9\n$ case_id            &lt;chr&gt; \"C001\", \"C002\", \"C003\", \"C004\", \"C005\", \"C006\", \"C0…\n$ submitted_at       &lt;dttm&gt; 2025-03-01 08:30:00, 2025-03-01 09:10:00, 2025-03-…\n$ district           &lt;chr&gt; \"思明区\", \"湖里区\", \"集美区\", \"海沧区\", \"同安区\", \"翔安区\", \"思明区\", \"湖…\n$ issue_type         &lt;chr&gt; \"市容环境\", \"交通出行\", \"公共服务\", \"市容环境\", \"交通出行\", \"市容环境\", \"公共…\n$ response_hours     &lt;dbl&gt; 2, 24, 48, 6, 24, 3, NA, 18, 48, 5, 30, 4, 7, 12, 2…\n$ status             &lt;chr&gt; \"已办结\", \"已办结\", \"处理中\", \"已办结\", \"已办结\", \"已办结\", \"处理中\", \"已…\n$ closed_at          &lt;dttm&gt; 2025-03-02 10:00:00, 2025-03-04 15:20:00, NA, 2025…\n$ satisfaction_score &lt;dbl&gt; 3, 4, NA, 2, 1, 3, NA, 2, 3, NA, 1, 4, 3, 2, 1, 3, …\n$ channel            &lt;chr&gt; \"电话\", \"微信\", \"网站\", \"电话\", \"微信\", \"电话\", \"网站\", \"电话\", \"微信…"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#缺失模式",
+    "href": "bigdata/dataclean/dataclean.html#缺失模式",
+    "title": "数据获取与预处理",
+    "section": "7.1 缺失模式",
+    "text": "7.1 缺失模式\n\nmissing_summary &lt;- hotline_clean |&gt;\n  \n  # 对所有变量分别计算缺失比例\n  # is.na(.x) 会得到 TRUE/FALSE\n  # mean() 会把 TRUE 当作1、FALSE当作0\n  # 所以平均值就是“缺失值占全部观测的比例”\n  summarise(\n    across(\n      everything(),\n      ~ mean(is.na(.x))\n    )\n  ) |&gt;\n  \n  # 将“宽格式”转换成长格式\n  # 原来的变量名放到 variable 列\n  # 各变量对应的缺失率放到 missing_rate 列\n  pivot_longer(\n    everything(),\n    names_to = \"variable\",\n    values_to = \"missing_rate\"\n  ) |&gt;\n  \n  # 按 missing_rate 从高到低排序\n  # desc() 表示 descending，即降序\n  arrange(desc(missing_rate))\n\n# 查看各变量的缺失率\nmissing_summary"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#制度性缺失",
+    "href": "bigdata/dataclean/dataclean.html#制度性缺失",
+    "title": "数据获取与预处理",
+    "section": "7.2 制度性缺失",
+    "text": "7.2 制度性缺失\n满意度缺失可能是：\n\n案件尚未办结，所以暂时不能评价；\n市民没有主动评价；\n某些渠道不支持评价；\n系统迁移时字段丢失。\n\n因此，“有满意度的案件”未必代表全部案件。只分析已评价案件，可能系统性排除处理较慢或使用特定渠道的人群。\n\nhotline_clean |&gt;\n  \n  # 新建 evaluated 变量：\n  # satisfaction_score 不是 NA → TRUE，表示“已评价”\n  # satisfaction_score 是 NA     → FALSE，表示“未评价”\n  mutate(\n    evaluated = !is.na(satisfaction_score)\n  ) |&gt;\n  \n  # 按 status 和 evaluated 两个变量组合计数\n  # n 表示每种组合有多少条记录\n  count(status, evaluated) |&gt;\n  \n  # 按 status 分组\n  # 后面的比例计算会在每一种 status 内部分别进行\n  group_by(status) |&gt;\n  \n  # 计算每个 status 内，“已评价/未评价”各自所占比例\n  # n 是当前这一类的数量\n  # sum(n) 是当前 status 下的总案件数\n  mutate(\n    rate = n / sum(n)\n  ) |&gt;\n  \n  # 取消分组，避免后续操作继续受到 status 分组影响\n  ungroup()\n\n\n  \n\n\n\n\n\n\n\n\n\n本讲不要求插补\n\n\n\n对这份行政过程数据，当前重点是描述缺失、解释缺失机制并做敏感性判断。均值插补或 KNN 插补不会自动消除偏差，且可能制造虚假的精确性。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#区县人口表",
+    "href": "bigdata/dataclean/dataclean.html#区县人口表",
+    "title": "数据获取与预处理",
+    "section": "8.1 区县人口表",
+    "text": "8.1 区县人口表\n计算可比较的投诉率，需要连接人口数据。下面仍使用模拟数据。\n\npopulation &lt;- tribble(\n  ~district, ~population,\n  \"思明区\", 1068000,\n  \"湖里区\", 1036000,\n  \"集美区\", 1091000,\n  \"海沧区\",  618000,\n  \"同安区\",  912000,\n  \"翔安区\",  642000\n)\n\npopulation\n\n\n  \n\n\n\n连接前先确认右表的键唯一。\n\npopulation |&gt;\n  count(district) |&gt;\n  filter(n &gt; 1)\n\n\n  \n\n\n\n如果结果不是 0 行，就不能直接进行多对一连接。\n\ndistrict_summary &lt;- hotline_clean |&gt;\n  \n  # 按 district 统计投诉案件数量\n  # name = \"complaints\" 表示把计数列命名为 complaints\n  count(district, name = \"complaints\") |&gt;\n  \n  # 把各区的人口数据 population 合并进来\n  # by = \"district\" 表示按照 district 这个共同变量进行匹配\n  # left_join() 会保留左边 district_summary 中的所有区\n  left_join(population, by = \"district\") |&gt;\n  \n  # 计算每万人投诉数\n  # complaints / population 先得到“人均投诉率”\n  # 再乘以10000，得到“每万人投诉数”\n  mutate(\n    complaints_per_10000 =\n      complaints / population * 10000\n  )\n\n# 查看结果\ndistrict_summary\n\n\n  \n\n\n\n连接后必须检查有没有未匹配的键。\n\nhotline_clean |&gt;\n  \n  # 只保留 district 这一列的不同取值\n  # 也就是得到热线数据中实际出现过的所有区县名称\n  distinct(district) |&gt;\n  \n  # 保留那些“在 population 中匹配不到”的 district\n  anti_join(\n    population,\n    by = \"district\"\n  )\n\n\n  \n\n\n\n结果为 0 行，说明热线表中的区县都在人口表中找到匹配。注意：这里的投诉率只用于演示，小样本并不代表真实行政统计。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#汇总为区县-事项长表",
+    "href": "bigdata/dataclean/dataclean.html#汇总为区县-事项长表",
+    "title": "数据获取与预处理",
+    "section": "9.1 汇总为“区县 × 事项”长表",
+    "text": "9.1 汇总为“区县 × 事项”长表\n\ndistrict_issue_long &lt;- hotline_clean |&gt;\n  count(district, issue_type, name = \"n\")\n\ndistrict_issue_long"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#转换成宽表",
+    "href": "bigdata/dataclean/dataclean.html#转换成宽表",
+    "title": "数据获取与预处理",
+    "section": "9.2 转换成宽表",
+    "text": "9.2 转换成宽表\n\ndistrict_issue_wide &lt;- district_issue_long |&gt;\n  pivot_wider(\n    names_from = issue_type,\n    values_from = n,\n    values_fill = 0\n  )\n\ndistrict_issue_wide\n\n\n  \n\n\n\n宽表适合展示，长表通常更适合分组、作图和建模。转换前必须先说清楚：一行究竟代表一个案件、一个区县，还是一个“区县 × 月份 × 事项”。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#程序化验证",
+    "href": "bigdata/dataclean/dataclean.html#程序化验证",
+    "title": "数据获取与预处理",
+    "section": "10.1 程序化验证",
+    "text": "10.1 程序化验证\n\n# 预先定义允许出现的6个行政区\nexpected_districts &lt;- c(\n  \"思明区\", \"湖里区\", \"集美区\",\n  \"海沧区\", \"同安区\", \"翔安区\"\n)\n\n# stopifnot() 用来进行一组逻辑检查\n# 只有所有条件都为 TRUE，代码才会继续运行\n# 只要有一个条件为 FALSE，就会报错并停止\nstopifnot(\n  \n  # 检查1：case_id 不能有重复\n  # anyDuplicated() 返回第一个重复值的位置\n  # 如果没有重复，返回0\n  # 因此前面加 !，就是要求“没有重复”\n  !anyDuplicated(hotline_clean$case_id),\n  \n  \n  # 检查2：district 中的所有值\n  # 都必须属于预先规定的 expected_districts\n  all(\n    hotline_clean$district %in% expected_districts\n  ),\n  \n  \n  # 检查3：response_hours 要么是 NA，\n  # 要么必须大于等于0\n  all(\n    is.na(hotline_clean$response_hours) |\n      hotline_clean$response_hours &gt;= 0\n  ),\n  \n  \n  # 检查4：satisfaction_score 要么是 NA，\n  # 要么必须位于1到4之间\n  all(\n    is.na(hotline_clean$satisfaction_score) |\n      between(hotline_clean$satisfaction_score, 1, 4)\n  ),\n  \n  \n  # 检查5：hotline_clean 中的所有 district\n  # 都必须能够在 population 数据中找到匹配\n  # anti_join() 找出匹配不到的 district\n  # 如果结果为0行，说明全部匹配成功\n  nrow(\n    anti_join(\n      distinct(hotline_clean, district),\n      population,\n      by = \"district\"\n    )\n  ) == 0\n)\n\n# 如果上面的所有检查都通过，\n# 才会运行到这一句\n\"全部数据质量检查已通过。\"\n\n[1] \"全部数据质量检查已通过。\"\n\n\n测试的作用不是证明数据“绝对正确”，而是把我们的最低质量要求写成可以重复执行的规则。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#保存数据审计表和清理日志",
+    "href": "bigdata/dataclean/dataclean.html#保存数据审计表和清理日志",
+    "title": "数据获取与预处理",
+    "section": "10.2 保存数据、审计表和清理日志",
+    "text": "10.2 保存数据、审计表和清理日志\n\ndir.create(\"data/processed\", recursive = TRUE, showWarnings = FALSE)\ndir.create(\"output\", recursive = TRUE, showWarnings = FALSE)\n\nwrite_csv(hotline_clean, \"data/processed/hotline_clean.csv\")\nwrite_csv(quality_audit, \"output/hotline_quality_audit.csv\")\nwrite_csv(invalid_records, \"output/hotline_records_to_review.csv\")\n\n# RDS 能保留日期等 R 对象类型\nsaveRDS(hotline_clean, \"data/processed/hotline_clean.rds\")\n\n建议同时维护清理日志：\n\ncleaning_log &lt;- tribble(\n  ~step, ~problem, ~decision, ~evidence,\n  1, \"特殊缺失编码\", \"-99、-、未评价转为 NA\", \"数据字典与频数表\",\n  2, \"区县名称不一致\", \"统一为正式行政区名\", \"类别映射表\",\n  3, \"重复案件 C006\", \"确认完全重复后保留一条\", \"逐字段比较\",\n  4, \"C015 时间倒置\", \"列入待核查表，暂不分析\", \"办结时间早于提交时间\"\n)\n\ncleaning_log\n\n\n  \n\n\n\n最终应保留三类产物：\n\n原始数据：从不覆盖；\n清理后的分析数据；\n能解释每项处理决定的脚本、审计表与日志。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#练习一渐隐式代码补全25-分钟",
+    "href": "bigdata/dataclean/dataclean.html#练习一渐隐式代码补全25-分钟",
+    "title": "数据获取与预处理",
+    "section": "11.1 练习一：渐隐式代码补全（25 分钟）",
+    "text": "11.1 练习一：渐隐式代码补全（25 分钟）\n目标：计算每种事项的平均回应时间与满意度缺失率。先独立完成，再与同桌比较。\n\nissue_summary &lt;- hotline_clean |&gt;\n  # TODO 1：按事项类型分组\n  __________(issue_type) |&gt;\n  # TODO 2：计算案件数、平均回应时间、满意度缺失率\n  __________(\n    n = __________,\n    mean_response = mean(__________, na.rm = TRUE),\n    missing_satisfaction = mean(is.na(__________))\n  ) |&gt;\n  # TODO 3：按平均回应时间从高到低排列\n  __________(desc(mean_response))\n\n\n\n完成后查看参考答案\n\n\nissue_summary &lt;- hotline_clean |&gt;\n  group_by(issue_type) |&gt;\n  summarise(\n    n = n(),\n    mean_response = mean(response_hours, na.rm = TRUE),\n    missing_satisfaction = mean(is.na(satisfaction_score)),\n    .groups = \"drop\"\n  ) |&gt;\n  arrange(desc(mean_response))\n\nissue_summary\n\n\n  \n\n\n\n解释时必须说明：样本很小；平均值可能受极端值影响；满意度缺失并非随机；这些是描述性结果，不是因果效应。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#即时自检10-分钟",
+    "href": "bigdata/dataclean/dataclean.html#即时自检10-分钟",
+    "title": "数据获取与预处理",
+    "section": "11.2 即时自检（10 分钟）",
+    "text": "11.2 即时自检（10 分钟）\n把你的结果放入下面的自动检查。出现错误时，先读错误信息，再回到代码定位。\n\nstopifnot(\n  all(c(\"issue_type\", \"n\", \"mean_response\",\n        \"missing_satisfaction\") %in% names(issue_summary)),\n  sum(issue_summary$n) == nrow(hotline_clean),\n  all(between(issue_summary$missing_satisfaction, 0, 1))\n)"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#练习二两人结对排错25-分钟",
+    "href": "bigdata/dataclean/dataclean.html#练习二两人结对排错25-分钟",
+    "title": "数据获取与预处理",
+    "section": "11.3 练习二：两人结对排错（25 分钟）",
+    "text": "11.3 练习二：两人结对排错（25 分钟）\n角色 A 负责运行、描述错误；角色 B 负责解释、提出最小修改。每解决一个错误交换角色。下面代码含有多处问题。\n\nwrong_summary &lt;- hotline_clean |&gt;\n  filter(status = \"已办结\") |&gt;\n  group_by(district) |&gt;\n  summarize(\n    cases = n,\n    avg_response = mean(response_hours),\n    satisfaction_rate = satisfaction_score &gt;= 3\n  ) |&gt;\n  left_join(population, by = \"district_name\") |&gt;\n  mutate(rate = cases / population)\n\n你需要依次判断：\n\n是语法错误、对象错误，还是统计定义错误？\n修改后结果的单位是什么？\nNA 会怎样影响结果？\n连接键是否存在并唯一？\n\n\n\n排错参考\n\n\ncorrect_summary &lt;- hotline_clean |&gt;\n  filter(status == \"已办结\") |&gt;\n  group_by(district) |&gt;\n  summarise(\n    cases = n(),\n    avg_response = mean(response_hours, na.rm = TRUE),\n    satisfaction_rate = mean(\n      satisfaction_score &gt;= 3,\n      na.rm = TRUE\n    ),\n    .groups = \"drop\"\n  ) |&gt;\n  left_join(population, by = \"district\") |&gt;\n  mutate(cases_per_10000 = cases / population * 10000)\n\ncorrect_summary\n\n\n  \n\n\n\n即便代码能运行，satisfaction_rate 仍只反映已评价案件，需要在报告中说明分母和选择偏差。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#练习三独立迁移30-分钟",
+    "href": "bigdata/dataclean/dataclean.html#练习三独立迁移30-分钟",
+    "title": "数据获取与预处理",
+    "section": "11.4 练习三：独立迁移（30 分钟）",
+    "text": "11.4 练习三：独立迁移（30 分钟）\n不要照抄前面的完整流水线。独立完成以下任务：\n\n找出各渠道的案件数与满意度缺失率；\n比较办结与处理中的案件回应时间；\n找出回应超过 24 小时的案件；\n写一句不超过 80 字的结果解释，并写一句限制；\n添加至少一个 stopifnot() 检查你的结果。\n\n\nchannel_summary &lt;- hotline_clean |&gt;\n  # 从这里开始\n  ..."
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#数据可行性卡",
+    "href": "bigdata/dataclean/dataclean.html#数据可行性卡",
+    "title": "数据获取与预处理",
+    "section": "12.1 数据可行性卡",
+    "text": "12.1 数据可行性卡\n下课后为自己的课程项目填写一张卡片：\n\n\n\n项目\n你的回答\n\n\n\n\n初步研究问题\n\n\n\n数据提供者与链接/位置\n\n\n\n数据覆盖时间\n\n\n\n一行代表什么\n\n\n\n主键或连接键\n\n\n\n关键结果变量\n\n\n\n可能的缺失与选择偏差\n\n\n\n隐私、许可或伦理限制\n\n\n\n本周能完成的最小任务\n\n\n\n\n这张卡直接进入后续作业“数据源探索与研究问题发现”，避免课后从零开始。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#退出卡",
+    "href": "bigdata/dataclean/dataclean.html#退出卡",
+    "title": "数据获取与预处理",
+    "section": "12.2 退出卡",
+    "text": "12.2 退出卡\n独立提交，不与同桌讨论：\n\n今天最容易混淆的一个概念是什么？\n写出一个清理后必须运行的质量检查。\n你的项目数据最可能出现哪一种偏差？\n希望演示的操作。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#指定-csv-列类型",
+    "href": "bigdata/dataclean/dataclean.html#指定-csv-列类型",
+    "title": "数据获取与预处理",
+    "section": "14.1 指定 CSV 列类型",
+    "text": "14.1 指定 CSV 列类型\n\nhotline &lt;- read_csv(\n  \"data/raw/hotline.csv\",\n  na = c(\"\", \"NA\", \"-\", \"-99\"),\n  col_types = cols(\n    case_id = col_character(),\n    submitted_at = col_datetime(format = \"%Y-%m-%d %H:%M:%S\"),\n    district = col_character(),\n    response_hours = col_double()\n  )\n)\n\nproblems(hotline)"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#批量读取结构相同的文件",
+    "href": "bigdata/dataclean/dataclean.html#批量读取结构相同的文件",
+    "title": "数据获取与预处理",
+    "section": "14.2 批量读取结构相同的文件",
+    "text": "14.2 批量读取结构相同的文件\n\nfiles &lt;- list.files(\n  \"data/raw/monthly\",\n  pattern = \"\\\\.csv$\",\n  full.names = TRUE\n)\n\nhotline_all &lt;- files |&gt;\n  set_names() |&gt;\n  map_dfr(\n    read_csv,\n    .id = \"source_file\",\n    show_col_types = FALSE\n  )\n\n批量合并前应先抽查各文件的字段名、类型与统计口径是否一致。"
   }
 ]
