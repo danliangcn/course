@@ -417,7 +417,7 @@
     "href": "bigdata/visualization/visualization.html",
     "title": "数据描述与可视化",
     "section": "",
-    "text": "可视化数据之前，需要准备数据，包括导入数据并进行清洗。\n\n\nR 几乎可以导入任何格式的数据，包括文本、Excel、SPSS和STATA等统计软件等。\n\n\nreadr包提供了将分隔文本文件导入 R 数据框的函数选择。\n\nlibrary(readr)\n\n# 导入逗号分割的数据\n#cgss2017 &lt;- read_csv(\"cgss2017.csv\")\n\n# 导入制表符分割的数据\n#cgss2017 &lt;- read_tsv(\"cgss2017.txt\")\n\n\n\n\nreadxl包可以从 Excel 文件导入数据，支持 xls 和 xlsx 格式。\n\nlibrary(readxl)\n\n# 从excel工作表导入数据\n#cgss2017 &lt;- read_excel(\"cgss2017.xlsx\", sheet=1)\n\n由于excel文件可以包含多个工作表，因此您可以使用sheet选项指定所需的工作表。默认值为sheet=1。\n\n\n\nhaven包提供了从各种统计包导入数据的功能。示例采用的CGSS2015子数据集\n\nlibrary(haven)\n\n# 导入stata数据\n#cgss2017 &lt;- read_dta(\"cgss2017.dta\")\n\n# 导入SPSS数据\ncgss &lt;- read_sav(\"cgss2015subset.sav\")\n\n# 导入SAS数据\n#cgss2017 &lt;- read_sas(\"cgss2017.sas7bdat\")\n\n\n\n\n\n数据清理是数据分析中最耗时的任务。以下列出了最重要的步骤。虽然方法有很多，但使用dplyr和tidyr包是最快捷、最容易学习的方法之一。\n\n\n\n包\n函数\n用途\n\n\n\n\ndplyr\nselect\n选择变量/列\n\n\ndplyr\nfilter\n选择观察值/行\n\n\ndplyr\nmutate\n转换或重新编码变量\n\n\ndplyr\nsummarize\n汇总数据\n\n\ndplyr\ngroup_by\n识别需要进一步处理的子组\n\n\ntidyr\ngather\n将宽格式数据集转换为长格式\n\n\ntidyr\nspread\n将长格式数据集转换为宽格式\n\n\n\n\n\n该select函数从数据集选取指定的变量或列。\n\nlibrary(dplyr)\n\n# 从数据框cgss中选择变量id，sex和age构成新数据集\nnewdata &lt;- select(cgss, id, sex, age)\n\n# 选择变量id以及hp1与hp4之间的所有变量 \nnewdata &lt;- select(cgss, id, hp1:hp4)\n\n# 选择除了edu和lnincome以外的所有变量\nnewdata &lt;- select(cgss, -edu, -lnincome)\n\n\n\n\n该filter函数选择符合特定条件的观测（行）。可以使用&(AND) 和|(OR) 逻辑符号组合多个条件。\n\nlibrary(dplyr)\n\n# 为了方便展示，将带有值标签的变量转换为因子(使用值标签作为取值)   \ncgss &lt;- cgss %&gt;% mutate(across(where(is.labelled), as_factor))\n\n# 选择女性观测\nnewdata &lt;- filter(cgss, sex == \"女\")\n\n# 选择来自山东的女性\nnewdata &lt;- filter(cgss, sex == \"女\" & province == \"山东省\")\n\n# 选择来自东北三省的观测\nnewdata &lt;- filter(cgss, \n                  province == \"辽宁省\" | \n                  province == \"吉林省\" | \n                  province == \"黑龙江省\")\n\n# 更简洁的代码\nnewdata &lt;- filter(cgss, \n                  province %in% \n                    c(\"辽宁省\", \"吉林省\", \"黑龙江省\"))\n\n\n\n\nmutate函数可以创建新变量或转换现有变量。\n\nlibrary(dplyr)\n\n# 将身高从厘米转化成英寸，将体重从斤转化成磅 \nnewdata &lt;- mutate(cgss, \n                  height = height * 0.394,\n                  weight   = (weight/2) * 2.205)\n\n# 如果收入高于8万元，则变量incomecat取值为\"高\"，否则取值为\"低\"\n\nnewdata &lt;- mutate(cgss, \n                  incomecat = ifelse(income &gt; 80000, \n                                     \"高\", \n                                     \"低\"))\n                  \n# 将教育程度不是初中、普通高中、中专的转化为其他类别\nnewdata &lt;- mutate(cgss, \n                  edu = ifelse(edu %in% \n                                     c(\"初中\", \"普通高中\", \"中专\"),\n                                     edu,\n                                     \"其他\"))\n                  \n# 将身高大于200或小于75设定为缺失值\nnewdata &lt;- mutate(cgss, \n                  height = ifelse(height &lt; 75 | height &gt; 200,\n                                     NA,\n                                     height))\n\n\n\n\nsummarize函数可用于描述性统计的数据汇总。可与by_group函数结合使用，用于按组计算统计值。na.rm=TRUE选项用于在计算平均值之前删除缺失值。\n\nlibrary(dplyr)\n\n# 计算身高和体重的平均值\nnewdata &lt;- summarize(cgss, \n                     mean_ht = mean(height, na.rm=TRUE), \n                     mean_weight = mean(weight, na.rm=TRUE))\nnewdata\n\n# A tibble: 1 × 2\n  mean_ht mean_weight\n    &lt;dbl&gt;       &lt;dbl&gt;\n1    164.        122.\n\n# 分性别组计算身高和体重的平均值\nnewdata &lt;- group_by(cgss, sex)\nnewdata &lt;- summarize(newdata, \n                     mean_ht = mean(height, na.rm=TRUE), \n                     mean_wt = mean(weight, na.rm=TRUE))\nnewdata\n\n# A tibble: 2 × 3\n  sex   mean_ht mean_wt\n  &lt;fct&gt;   &lt;dbl&gt;   &lt;dbl&gt;\n1 男       170.    133.\n2 女       159.    113.\n\n\n\n\n\ndplyr和tidyr软件包允许使用管道运算符以紧凑的格式编写代码%&gt;%，运算符%&gt;%将左边的结果传递给右边的函数的第一个参数。例如：\n\nlibrary(dplyr)\n\nnewdata &lt;- filter(cgss, \n                  sex == \"女\")\nnewdata &lt;- group_by(newdata, province)\nnewdata &lt;- summarize(newdata, \n                     mean_ht = mean(height, na.rm = TRUE))\n\n# 采用管道操作符更简洁，也更符合人类思维\nnewdata &lt;- cgss %&gt;%\n  filter(sex == \"女\") %&gt;%\n  group_by(province) %&gt;%\n  summarize(mean_ht = mean(height, na.rm = TRUE))\n\n\n\n\n在 R 中，日期值以字符的形式输入。例如，记录 3 个人出生日期的简单数据集。\n\ndf &lt;- data.frame(\n  dob = c(\"11/10/1963\", \"Jan-23-91\", \"12:1:2001\")\n)\n\nstr(df) \n\n'data.frame':   3 obs. of  1 variable:\n $ dob: chr  \"11/10/1963\" \"Jan-23-91\" \"12:1:2001\"\n\n\n将字符变量转换为日期变量的方法有很多。最简单的方法之一是使用lubridate包中提供的函数。这些函数包括ymd、dmy和 ，mdy分别用于导入年-月-日、日-月-年和月-日-年的格式。\n\nlibrary(lubridate)\n# 将dob变量值从字符转化为日期型数据\ndf$dob &lt;- mdy(df$dob)\nstr(df)\n\n'data.frame':   3 obs. of  1 variable:\n $ dob: Date, format: \"1963-11-10\" \"1991-01-23\" ...\n\n\n这些值在R的内部记录为自 1970 年 1 月 1日以来的天数，可以方便地执行日期运算，提取日期元素（月、日、年），重新格式化（例如，1963年10月11日）。 日期变量对于制作时间相关图表非常重要。\n\n\n\n有些图表要求数据为宽格式，而有些图表则要求数据为长格式，示例如下。\n将宽数据集转换为长数据集\n\nlibrary(tidyr)\nwide_data &lt;- data.frame(id = c(\"01\", \"02\", \"03\"),\n                        name = c(\"张三\", \"李四\", \"王五\"),\n                        sex = c(\"男\", \"男\", \"女\"),\n                        height = c(70, 72, 62),\n                        weight = c(180, 195, 130))\nknitr::kable(wide_data, caption = \"宽数据\")\n\n\n宽数据\n\n\nid\nname\nsex\nheight\nweight\n\n\n\n\n01\n张三\n男\n70\n180\n\n\n02\n李四\n男\n72\n195\n\n\n03\n王五\n女\n62\n130\n\n\n\n\nlong_data &lt;- pivot_longer(wide_data,\n                          cols = c(\"height\", \"weight\"),\n                          names_to = \"variable\", \n                          values_to =\"value\")\n\n将长数据转化为宽数据\n\nlibrary(tidyr)\nknitr::kable(long_data, caption = \"长数据\")\n\n\n长数据\n\n\nid\nname\nsex\nvariable\nvalue\n\n\n\n\n01\n张三\n男\nheight\n70\n\n\n01\n张三\n男\nweight\n180\n\n\n02\n李四\n男\nheight\n72\n\n\n02\n李四\n男\nweight\n195\n\n\n03\n王五\n女\nheight\n62\n\n\n03\n王五\n女\nweight\n130\n\n\n\n\nwide_data &lt;- pivot_wider(long_data,\n                         names_from = \"variable\",\n                         values_from = \"value\")\n\n\n\n\n真实数据很可能包含缺失值。处理缺失数据有三种基本方法：特征选择、列删除和插补。ggplot2包中的msleep数据集描述了哺乳动物的睡眠习惯，并且在多个变量上存在缺失值。\n\n特征选择 在特征选择中，可以删除包含太多缺失值的变量（列）。\n\n\ndata(msleep, package=\"ggplot2\")\n\n# 每个变量中缺失值的比例\npctmiss &lt;- colSums(is.na(msleep))/nrow(msleep)\nround(pctmiss, 2)\n\n        name        genus         vore        order conservation  sleep_total \n        0.00         0.00         0.08         0.00         0.35         0.00 \n   sleep_rem  sleep_cycle        awake      brainwt       bodywt \n        0.27         0.61         0.00         0.33         0.00 \n\n\n61% 的 sleep_cycle 值缺失。可以决定将其删除。\n\n按列删除\n整行删除包含缺失值的观测。\n\n\nnewdata &lt;- select(msleep, genus, vore, conservation)\nnewdata &lt;- na.omit(newdata)\n\n\n补值\n插补涉及用“合理”的猜测值（假设缺失值不存在时的值）来替换缺失值。有几种方法，详见VIM、mice、Amelia和missForest等包。这里将使用VIMkNN()包中的函数，用插补值替换缺失值。\n\n\n# 用5个最近邻的值插补缺失值\nlibrary(VIM)\nnewdata &lt;- kNN(msleep, k=5)\n\n基本上，对于每个有缺失值的案例，都会选择k个最相似的、没有缺失值的案例。如果缺失值为数值型，则使用这k 个案例的中位数作为插补值。如果缺失值为类别值，则使用这k 个案例中出现频率最高的值。该过程会迭代所有观测和变量，直到结果收敛（趋于稳定）。\n重要提示：缺失值可能会对研究结果造成偏差（有时甚至非常严重）。如果有大量缺失数据，在删除观测或填补缺失值之前，要慎重考虑其合理性。"
+    "text": "数据可视化不仅是“把数据画出来”，而是把公共管理问题、统计证据和政策沟通连接起来。本讲围绕一份模拟的某市 12345 政务热线数据，完成以下过程：\n\n明确问题 → 判断变量 → 选择图形 → 完成图形 → 检查误导 → 解释结果\n\n\n\n\n\n\n\n课堂原则：一图一问一结论\n\n\n\n每张图都必须回答一个明确问题，并附上一句主要发现和一句限制。图形漂亮不等于证据可靠。\n\n\n\n\n完成本讲后，你应该能够：\n\n根据研究问题和变量类型选择合适的图形；\n理解 ggplot2 的数据、映射、几何对象、刻度、标签和主题；\n绘制并解释条形图、点图、直方图、箱线图、散点图和折线图；\n使用分组、切片和误差线表达比较与不确定性；\n识别坐标轴、分母、颜色、缺失值和因果表述造成的误导；\n输出一份可直接用于课程项目的“三图一表”简报。"
   },
   {
     "objectID": "bigdata/visualization/visualization.html#数据准备",
@@ -2678,7 +2678,7 @@
     "href": "bigdata/dataclean/dataclean.html#缺失模式",
     "title": "数据获取与预处理",
     "section": "7.1 缺失模式",
-    "text": "7.1 缺失模式\n\nmissing_summary &lt;- hotline_clean |&gt;\n  \n  # 对所有变量分别计算缺失比例\n  # is.na(.x) 会得到 TRUE/FALSE\n  # mean() 会把 TRUE 当作1、FALSE当作0\n  # 所以平均值就是“缺失值占全部观测的比例”\n  summarise(\n    across(\n      everything(),\n      ~ mean(is.na(.x))\n    )\n  ) |&gt;\n  \n  # 将“宽格式”转换成长格式\n  # 原来的变量名放到 variable 列\n  # 各变量对应的缺失率放到 missing_rate 列\n  pivot_longer(\n    everything(),\n    names_to = \"variable\",\n    values_to = \"missing_rate\"\n  ) |&gt;\n  \n  # 按 missing_rate 从高到低排序\n  # desc() 表示 descending，即降序\n  arrange(desc(missing_rate))\n\n# 查看各变量的缺失率\nmissing_summary"
+    "text": "7.1 缺失模式\n\nmissing_summary &lt;- hotline_clean |&gt;\n  \n  # 对所有变量分别计算缺失比例\n  # is.na(.x) 会得到 TRUE/FALSE\n  # mean() 会把 TRUE 当作1、FALSE当作0\n  # 所以平均值就是“缺失值占全部观测的比例”\n  summarise(\n    across(\n      everything(),\n      ~ mean(is.na(.x))\n    )\n  ) |&gt;\n  \n  # 将“宽格式”转换成长格式\n  # 原来的变量名放到 variable 列\n  # 各变量对应的缺失率放到 missing_rate 列\n  pivot_longer(\n    everything(),\n    names_to = \"variable\",\n    values_to = \"missing_rate\"\n  ) |&gt;\n  \n  # 按 missing_rate 从高到低排序\n  # desc() 表示 descending，即降序\n  arrange(desc(missing_rate))\n\n# 查看各变量的缺失率\nmissing_summary\n\n\n  \n\n\n\n除了缺失比例，课堂分析时还应同时保留缺失数量。数量可以帮助判断问题规模，比例则便于比较行数不同的数据集。\n\nmissing_audit &lt;- hotline_clean |&gt;\n  summarise(\n    across(\n      everything(),\n\n      # 对每一列同时计算两个指标：\n      # n_missing   = 缺失值的数量\n      # pct_missing = 缺失值占全部记录的比例\n      list(\n        n_missing = ~ sum(is.na(.x)),\n        pct_missing = ~ mean(is.na(.x))\n      )\n    )\n  ) |&gt;\n\n  # summarise() 会生成一行、很多列的宽表，\n  # 例如 satisfaction_score_n_missing。\n  # 这里将它转成长表，便于检查和后续绘图。\n  pivot_longer(\n    everything(),\n    names_to = c(\"variable\", \".value\"),\n\n    # 正则表达式把列名最后的\n    # _n_missing 或 _pct_missing 拆分为指标名称。\n    names_pattern = \"(.*)_(n_missing|pct_missing)\"\n  ) |&gt;\n\n  # 优先显示缺失率较高的变量。\n  arrange(desc(pct_missing))\n\nmissing_audit\n\n\n  \n\n\n\n\n\n\n\n\n\n怎样理解这段 across() 代码？\n\n\n\nacross(everything(), ...) 表示对所有变量重复同样的计算；.x 表示当前正在处理的那一列。is.na(.x) 返回一组 TRUE/FALSE，sum() 统计缺失个数，mean() 计算缺失比例。"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#制度性缺失",
@@ -2699,14 +2699,14 @@
     "href": "bigdata/dataclean/dataclean.html#汇总为区县-事项长表",
     "title": "数据获取与预处理",
     "section": "9.1 汇总为“区县 × 事项”长表",
-    "text": "9.1 汇总为“区县 × 事项”长表\n\ndistrict_issue_long &lt;- hotline_clean |&gt;\n  count(district, issue_type, name = \"n\")\n\ndistrict_issue_long"
+    "text": "9.1 汇总为“区县 × 事项”长表\n\ndistrict_issue_long &lt;- hotline_clean |&gt;\n\n  # 按区县和事项类型组合计数。\n  # 结果中的一行代表一个“区县 × 事项类型”组合。\n  count(district, issue_type, name = \"n\")\n\ndistrict_issue_long"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#转换成宽表",
     "href": "bigdata/dataclean/dataclean.html#转换成宽表",
     "title": "数据获取与预处理",
     "section": "9.2 转换成宽表",
-    "text": "9.2 转换成宽表\n\ndistrict_issue_wide &lt;- district_issue_long |&gt;\n  pivot_wider(\n    names_from = issue_type,\n    values_from = n,\n    values_fill = 0\n  )\n\ndistrict_issue_wide\n\n\n  \n\n\n\n宽表适合展示，长表通常更适合分组、作图和建模。转换前必须先说清楚：一行究竟代表一个案件、一个区县，还是一个“区县 × 月份 × 事项”。"
+    "text": "9.2 转换成宽表\n\ndistrict_issue_wide &lt;- district_issue_long |&gt;\n  pivot_wider(\n\n    # issue_type 的不同取值将变成新的列名。\n    names_from = issue_type,\n\n    # 每个新单元格填写该组合对应的案件数 n。\n    values_from = n,\n\n    # 某区县没有某类案件时，用0而不是 NA 填充。\n    values_fill = 0\n  )\n\ndistrict_issue_wide\n\n\n  \n\n\n\n宽表适合展示，长表通常更适合分组、作图和建模。下面把宽表重新转回长表。\n\ndistrict_issue_long_again &lt;- district_issue_wide |&gt;\n  pivot_longer(\n\n    # district 是识别区县的变量，不参与展开；\n    # 其余事项类型列全部转为行。\n    cols = -district,\n\n    # 原来的列名保存到 issue_type。\n    names_to = \"issue_type\",\n\n    # 原来单元格中的案件数保存到 n。\n    values_to = \"n\"\n  )\n\ndistrict_issue_long_again\n\n\n  \n\n\n\n转换前必须先说清楚：一行究竟代表一个案件、一个区县，还是一个“区县 × 月份 × 事项”。pivot_wider() 和 pivot_longer() 改变的是数据布局，不应改变信息本身。"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#程序化验证",
@@ -2726,56 +2726,385 @@
     "objectID": "bigdata/dataclean/dataclean.html#练习一渐隐式代码补全25-分钟",
     "href": "bigdata/dataclean/dataclean.html#练习一渐隐式代码补全25-分钟",
     "title": "数据获取与预处理",
-    "section": "11.1 练习一：渐隐式代码补全（25 分钟）",
-    "text": "11.1 练习一：渐隐式代码补全（25 分钟）\n目标：计算每种事项的平均回应时间与满意度缺失率。先独立完成，再与同桌比较。\n\nissue_summary &lt;- hotline_clean |&gt;\n  # TODO 1：按事项类型分组\n  __________(issue_type) |&gt;\n  # TODO 2：计算案件数、平均回应时间、满意度缺失率\n  __________(\n    n = __________,\n    mean_response = mean(__________, na.rm = TRUE),\n    missing_satisfaction = mean(is.na(__________))\n  ) |&gt;\n  # TODO 3：按平均回应时间从高到低排列\n  __________(desc(mean_response))\n\n\n\n完成后查看参考答案\n\n\nissue_summary &lt;- hotline_clean |&gt;\n  group_by(issue_type) |&gt;\n  summarise(\n    n = n(),\n    mean_response = mean(response_hours, na.rm = TRUE),\n    missing_satisfaction = mean(is.na(satisfaction_score)),\n    .groups = \"drop\"\n  ) |&gt;\n  arrange(desc(mean_response))\n\nissue_summary\n\n\n  \n\n\n\n解释时必须说明：样本很小；平均值可能受极端值影响；满意度缺失并非随机；这些是描述性结果，不是因果效应。"
+    "section": "12.1 练习一：渐隐式代码补全（25 分钟）",
+    "text": "12.1 练习一：渐隐式代码补全（25 分钟）\n目标：计算每种事项的平均回应时间与满意度缺失率。先独立完成，再与同桌比较。\n\nissue_summary &lt;- hotline_clean |&gt;\n  # TODO 1：按事项类型分组\n  __________(issue_type) |&gt;\n  # TODO 2：计算案件数、平均回应时间、满意度缺失率\n  __________(\n    n = __________,\n    mean_response = mean(__________, na.rm = TRUE),\n    missing_satisfaction = mean(is.na(__________))\n  ) |&gt;\n  # TODO 3：按平均回应时间从高到低排列\n  __________(desc(mean_response))\n\n\n\n完成后查看参考答案\n\n\nissue_summary &lt;- hotline_clean |&gt;\n  group_by(issue_type) |&gt;\n  summarise(\n    n = n(),\n    mean_response = mean(response_hours, na.rm = TRUE),\n    missing_satisfaction = mean(is.na(satisfaction_score)),\n    .groups = \"drop\"\n  ) |&gt;\n  arrange(desc(mean_response))\n\nissue_summary\n\n\n  \n\n\n\n解释时必须说明：样本很小；平均值可能受极端值影响；满意度缺失并非随机；这些是描述性结果，不是因果效应。"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#即时自检10-分钟",
     "href": "bigdata/dataclean/dataclean.html#即时自检10-分钟",
     "title": "数据获取与预处理",
-    "section": "11.2 即时自检（10 分钟）",
-    "text": "11.2 即时自检（10 分钟）\n把你的结果放入下面的自动检查。出现错误时，先读错误信息，再回到代码定位。\n\nstopifnot(\n  all(c(\"issue_type\", \"n\", \"mean_response\",\n        \"missing_satisfaction\") %in% names(issue_summary)),\n  sum(issue_summary$n) == nrow(hotline_clean),\n  all(between(issue_summary$missing_satisfaction, 0, 1))\n)"
+    "section": "12.2 即时自检（10 分钟）",
+    "text": "12.2 即时自检（10 分钟）\n把你的结果放入下面的自动检查。出现错误时，先读错误信息，再回到代码定位。\n\nstopifnot(\n  all(c(\"issue_type\", \"n\", \"mean_response\",\n        \"missing_satisfaction\") %in% names(issue_summary)),\n  sum(issue_summary$n) == nrow(hotline_clean),\n  all(between(issue_summary$missing_satisfaction, 0, 1))\n)"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#练习二两人结对排错25-分钟",
     "href": "bigdata/dataclean/dataclean.html#练习二两人结对排错25-分钟",
     "title": "数据获取与预处理",
-    "section": "11.3 练习二：两人结对排错（25 分钟）",
-    "text": "11.3 练习二：两人结对排错（25 分钟）\n角色 A 负责运行、描述错误；角色 B 负责解释、提出最小修改。每解决一个错误交换角色。下面代码含有多处问题。\n\nwrong_summary &lt;- hotline_clean |&gt;\n  filter(status = \"已办结\") |&gt;\n  group_by(district) |&gt;\n  summarize(\n    cases = n,\n    avg_response = mean(response_hours),\n    satisfaction_rate = satisfaction_score &gt;= 3\n  ) |&gt;\n  left_join(population, by = \"district_name\") |&gt;\n  mutate(rate = cases / population)\n\n你需要依次判断：\n\n是语法错误、对象错误，还是统计定义错误？\n修改后结果的单位是什么？\nNA 会怎样影响结果？\n连接键是否存在并唯一？\n\n\n\n排错参考\n\n\ncorrect_summary &lt;- hotline_clean |&gt;\n  filter(status == \"已办结\") |&gt;\n  group_by(district) |&gt;\n  summarise(\n    cases = n(),\n    avg_response = mean(response_hours, na.rm = TRUE),\n    satisfaction_rate = mean(\n      satisfaction_score &gt;= 3,\n      na.rm = TRUE\n    ),\n    .groups = \"drop\"\n  ) |&gt;\n  left_join(population, by = \"district\") |&gt;\n  mutate(cases_per_10000 = cases / population * 10000)\n\ncorrect_summary\n\n\n  \n\n\n\n即便代码能运行，satisfaction_rate 仍只反映已评价案件，需要在报告中说明分母和选择偏差。"
+    "section": "12.3 练习二：两人结对排错（25 分钟）",
+    "text": "12.3 练习二：两人结对排错（25 分钟）\n角色 A 负责运行、描述错误；角色 B 负责解释、提出最小修改。每解决一个错误交换角色。下面代码含有多处问题。\n\nwrong_summary &lt;- hotline_clean |&gt;\n  filter(status = \"已办结\") |&gt;\n  group_by(district) |&gt;\n  summarize(\n    cases = n,\n    avg_response = mean(response_hours),\n    satisfaction_rate = satisfaction_score &gt;= 3\n  ) |&gt;\n  left_join(population, by = \"district_name\") |&gt;\n  mutate(rate = cases / population)\n\n你需要依次判断：\n\n是语法错误、对象错误，还是统计定义错误？\n修改后结果的单位是什么？\nNA 会怎样影响结果？\n连接键是否存在并唯一？\n\n\n\n排错参考\n\n\ncorrect_summary &lt;- hotline_clean |&gt;\n  filter(status == \"已办结\") |&gt;\n  group_by(district) |&gt;\n  summarise(\n    cases = n(),\n    avg_response = mean(response_hours, na.rm = TRUE),\n    satisfaction_rate = mean(\n      satisfaction_score &gt;= 3,\n      na.rm = TRUE\n    ),\n    .groups = \"drop\"\n  ) |&gt;\n\n  # 明确要求人口表中的 district 必须唯一，\n  # 避免重复键让汇总结果意外增加行数。\n  left_join(\n    population,\n    by = \"district\",\n    relationship = \"many-to-one\"\n  ) |&gt;\n\n  # 将案件总量除以人口，并转换成每万人案件数。\n  mutate(cases_per_10000 = cases / population * 10000)\n\ncorrect_summary\n\n\n  \n\n\n\n即便代码能运行，satisfaction_rate 仍只反映已评价案件，需要在报告中说明分母和选择偏差。"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#练习三独立迁移30-分钟",
     "href": "bigdata/dataclean/dataclean.html#练习三独立迁移30-分钟",
     "title": "数据获取与预处理",
-    "section": "11.4 练习三：独立迁移（30 分钟）",
-    "text": "11.4 练习三：独立迁移（30 分钟）\n不要照抄前面的完整流水线。独立完成以下任务：\n\n找出各渠道的案件数与满意度缺失率；\n比较办结与处理中的案件回应时间；\n找出回应超过 24 小时的案件；\n写一句不超过 80 字的结果解释，并写一句限制；\n添加至少一个 stopifnot() 检查你的结果。\n\n\nchannel_summary &lt;- hotline_clean |&gt;\n  # 从这里开始\n  ..."
+    "section": "12.4 练习三：独立迁移（30 分钟）",
+    "text": "12.4 练习三：独立迁移（30 分钟）\n不要照抄前面的完整流水线。独立完成以下任务：\n\n找出各渠道的案件数与满意度缺失率；\n比较办结与处理中的案件回应时间；\n找出回应超过 24 小时的案件；\n写一句不超过 80 字的结果解释，并写一句限制；\n添加至少一个 stopifnot() 检查你的结果。\n\n\nchannel_summary &lt;- hotline_clean |&gt;\n  # 从这里开始\n  ..."
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#数据可行性卡",
     "href": "bigdata/dataclean/dataclean.html#数据可行性卡",
     "title": "数据获取与预处理",
-    "section": "12.1 数据可行性卡",
-    "text": "12.1 数据可行性卡\n下课后为自己的课程项目填写一张卡片：\n\n\n\n项目\n你的回答\n\n\n\n\n初步研究问题\n\n\n\n数据提供者与链接/位置\n\n\n\n数据覆盖时间\n\n\n\n一行代表什么\n\n\n\n主键或连接键\n\n\n\n关键结果变量\n\n\n\n可能的缺失与选择偏差\n\n\n\n隐私、许可或伦理限制\n\n\n\n本周能完成的最小任务\n\n\n\n\n这张卡直接进入后续作业“数据源探索与研究问题发现”，避免课后从零开始。"
+    "section": "13.1 数据可行性卡",
+    "text": "13.1 数据可行性卡\n下课前为自己的课程项目填写一张卡片：\n\n\n\n项目\n你的回答\n\n\n\n\n初步研究问题\n\n\n\n数据提供者与链接/位置\n\n\n\n数据覆盖时间\n\n\n\n一行代表什么\n\n\n\n主键或连接键\n\n\n\n关键结果变量\n\n\n\n可能的缺失与选择偏差\n\n\n\n隐私、许可或伦理限制\n\n\n\n本周能完成的最小任务\n\n\n\n\n这张卡直接进入后续作业“数据源探索与研究问题发现”，避免课后从零开始。"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#退出卡",
     "href": "bigdata/dataclean/dataclean.html#退出卡",
     "title": "数据获取与预处理",
-    "section": "12.2 退出卡",
-    "text": "12.2 退出卡\n独立提交，不与同桌讨论：\n\n今天最容易混淆的一个概念是什么？\n写出一个清理后必须运行的质量检查。\n你的项目数据最可能出现哪一种偏差？\n希望演示的操作。"
+    "section": "13.2 退出卡",
+    "text": "13.2 退出卡\n独立提交，不与同桌讨论：\n\n今天最容易混淆的一个概念是什么？\n写出一个清理后必须运行的质量检查。\n你的项目数据最可能出现哪一种偏差？\n希望演示的操作。"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#指定-csv-列类型",
     "href": "bigdata/dataclean/dataclean.html#指定-csv-列类型",
     "title": "数据获取与预处理",
-    "section": "14.1 指定 CSV 列类型",
-    "text": "14.1 指定 CSV 列类型\n\nhotline &lt;- read_csv(\n  \"data/raw/hotline.csv\",\n  na = c(\"\", \"NA\", \"-\", \"-99\"),\n  col_types = cols(\n    case_id = col_character(),\n    submitted_at = col_datetime(format = \"%Y-%m-%d %H:%M:%S\"),\n    district = col_character(),\n    response_hours = col_double()\n  )\n)\n\nproblems(hotline)"
+    "section": "15.1 指定 CSV 列类型",
+    "text": "15.1 指定 CSV 列类型\n\nhotline &lt;- read_csv(\n  \"data/raw/hotline.csv\",\n  na = c(\"\", \"NA\", \"-\", \"-99\"),\n  col_types = cols(\n    case_id = col_character(),\n    submitted_at = col_datetime(format = \"%Y-%m-%d %H:%M:%S\"),\n    district = col_character(),\n    response_hours = col_double()\n  )\n)\n\nproblems(hotline)"
   },
   {
     "objectID": "bigdata/dataclean/dataclean.html#批量读取结构相同的文件",
     "href": "bigdata/dataclean/dataclean.html#批量读取结构相同的文件",
     "title": "数据获取与预处理",
-    "section": "14.2 批量读取结构相同的文件",
-    "text": "14.2 批量读取结构相同的文件\n\nfiles &lt;- list.files(\n  \"data/raw/monthly\",\n  pattern = \"\\\\.csv$\",\n  full.names = TRUE\n)\n\nhotline_all &lt;- files |&gt;\n  set_names() |&gt;\n  map_dfr(\n    read_csv,\n    .id = \"source_file\",\n    show_col_types = FALSE\n  )\n\n批量合并前应先抽查各文件的字段名、类型与统计口径是否一致。"
+    "section": "15.2 批量读取结构相同的文件",
+    "text": "15.2 批量读取结构相同的文件\n\n# 列出 monthly 文件夹下所有以 .csv 结尾的文件。\n# full.names = TRUE 返回包含文件夹的完整相对路径，\n# 后续 read_csv() 才能直接找到这些文件。\nfiles &lt;- list.files(\n  \"data/raw/monthly\",\n  pattern = \"\\\\.csv$\",\n  full.names = TRUE\n)\n\n# 先只读取每个文件的表头，不读取实际数据，\n# 用于比较各月份文件的字段是否一致。\nfile_schema &lt;- map_dfr(\n  files,\n  function(file_path) {\n    header &lt;- read_csv(\n      file_path,\n      n_max = 0,\n      show_col_types = FALSE\n    )\n\n    tibble(\n      source_file = basename(file_path),\n      columns = paste(names(header), collapse = \" | \")\n    )\n  }\n)\n\nfile_schema\n\n# 逐个读取文件并按行合并。\nhotline_all &lt;- files |&gt;\n\n  # 用文件路径给向量命名；map_dfr() 可以把名称保存到 source_file。\n  set_names() |&gt;\n\n  # map_dfr() 对每个路径运行 read_csv()，\n  # 然后把所有数据按行合并成一个数据框。\n  map_dfr(\n    read_csv,\n    .id = \"source_file\",\n    show_col_types = FALSE\n  ) |&gt;\n\n  # 只保留文件名，并从文件名中提取四位年份。\n  # 例如 hotline_2024_03.csv -&gt; year = 2024。\n  mutate(\n    source_file = basename(source_file),\n    year = str_extract(source_file, \"20\\\\d{2}\") |&gt;\n      as.integer()\n  )\n\n# 合并后重新检查数据结构和各文件贡献的行数。\nglimpse(hotline_all)\nhotline_all |&gt; count(source_file, year)\n\n批量合并前应检查各文件的字段名、类型与统计口径是否一致。字段名相同并不代表口径相同，例如“办结时间”的定义可能在不同年份发生变化，因此还需要阅读数据字典和制度说明。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#按缺失原因选择处理方式",
+    "href": "bigdata/dataclean/dataclean.html#按缺失原因选择处理方式",
+    "title": "数据获取与预处理",
+    "section": "7.3 按缺失原因选择处理方式",
+    "text": "7.3 按缺失原因选择处理方式\n不能仅根据缺失比例决定删除或插补。应先判断缺失是怎样产生的。\n\n\n\n\n\n\n\n\n缺失情形\n热线数据中的例子\n优先处理方式\n\n\n\n\n暂时性缺失\n案件尚未办结，没有办结时间\n保留，并结合案件状态解释\n\n\n主动未回应\n市民没有填写满意度\n报告未评价比例，分析选择偏差\n\n\n不适用\n未办结案件不存在办结时长\n保留为结构性缺失，不应机械插补\n\n\n录入遗漏\n本应填写但系统中为空\n回查原始记录或业务系统\n\n\n渠道性缺失\n某些渠道没有评价入口\n分渠道比较缺失率\n\n\n少量随机缺失\n个别连续变量偶然漏填\n根据分析目的考虑删除、插补或敏感性分析\n\n\n\n下面检查满意度缺失是否集中在特定渠道。如果缺失比例明显不同，就不能简单地假设满意度是随机缺失的。\n\nmissing_by_channel &lt;- hotline_clean |&gt;\n\n  # 按数据来源渠道分组。\n  group_by(channel) |&gt;\n\n  # 在每个渠道内部计算案件数和满意度缺失情况。\n  summarise(\n    n_cases = n(),\n    n_missing_satisfaction = sum(is.na(satisfaction_score)),\n    pct_missing_satisfaction = mean(is.na(satisfaction_score)),\n    .groups = \"drop\"\n  ) |&gt;\n\n  # 按缺失比例从高到低排列，方便比较。\n  arrange(desc(pct_missing_satisfaction))\n\nmissing_by_channel\n\n\n  \n\n\n\n\n\n\n\n\n\n线性插值并不是通用的缺失处理方法\n\n\n\n线性插值主要适用于具有明确时间顺序、缺口较短且变化相对平滑的连续变量，例如逐日空气质量。普通横截面调查、热线满意度和制度性缺失通常不适合直接进行线性插值。该方法将在时间序列部分结合具体情境演示。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#准备一张故意存在问题的人口表",
+    "href": "bigdata/dataclean/dataclean.html#准备一张故意存在问题的人口表",
+    "title": "数据获取与预处理",
+    "section": "8.1 准备一张故意存在问题的人口表",
+    "text": "8.1 准备一张故意存在问题的人口表\n为了演示真实连接中常见的问题，下面的人口表故意加入了：\n\n重复的“湖里区”；\n与热线表写法不同的“翔安”；\n热线表中不存在的“试验区”。\n\n\npopulation_raw &lt;- tribble(\n  ~district, ~population,\n  \"思明区\", 1068000,\n  \"湖里区\", 1036000,\n  \"湖里区\", 1036000,\n  \"集美区\", 1091000,\n  \"海沧区\",  618000,\n  \"同安区\",  912000,\n  \"翔安\",    642000,\n  \"试验区\",  200000\n)\n\npopulation_raw"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第一步检查连接键及其唯一性",
+    "href": "bigdata/dataclean/dataclean.html#第一步检查连接键及其唯一性",
+    "title": "数据获取与预处理",
+    "section": "8.2 第一步：检查连接键及其唯一性",
+    "text": "8.2 第一步：检查连接键及其唯一性\n连接前先回答三个问题：连接键是否缺失、是否唯一、两张表中的写法是否一致。\n\n# 检查热线表中的 district：\n# 一共有多少行、多少个不同区县、多少个区县缺失值。\nhotline_key_audit &lt;- hotline_clean |&gt;\n  summarise(\n    n_rows = n(),\n    n_distinct_keys = n_distinct(district),\n    n_missing_keys = sum(is.na(district))\n  ) |&gt;\n  mutate(dataset = \"hotline_clean\", .before = 1)\n\n# 对人口表进行同样的检查。\npopulation_key_audit &lt;- population_raw |&gt;\n  summarise(\n    n_rows = n(),\n    n_distinct_keys = n_distinct(district),\n    n_missing_keys = sum(is.na(district))\n  ) |&gt;\n  mutate(dataset = \"population_raw\", .before = 1)\n\n# 把两张审计结果纵向合并，便于比较。\nbind_rows(hotline_key_audit, population_key_audit)\n\n\n  \n\n\n\n接着找出人口表中出现多次的键。\n\nduplicate_population_keys &lt;- population_raw |&gt;\n\n  # 统计每个 district 出现的次数。\n  count(district, name = \"n\") |&gt;\n\n  # 正常情况下，右表中的每个 district 应只出现一次。\n  filter(n &gt; 1)\n\nduplicate_population_keys\n\n\n  \n\n\n\n\n\n\n\n\n\n为什么右表键重复很危险？\n\n\n\n如果左表中一个区县的汇总记录与右表中两条同名人口记录连接，连接结果会扩张为两行，进而造成重复计算。即使代码没有报错，结果也可能已经错误。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第二步用双向-anti_join-检查匹配",
+    "href": "bigdata/dataclean/dataclean.html#第二步用双向-anti_join-检查匹配",
+    "title": "数据获取与预处理",
+    "section": "8.3 第二步：用双向 anti_join() 检查匹配",
+    "text": "8.3 第二步：用双向 anti_join() 检查匹配\n第一次从热线表出发，找出“热线表中有、人口表中没有”的键。\n\nunmatched_hotline_keys &lt;- hotline_clean |&gt;\n\n  # 一种区县只保留一行，避免输出大量重复名称。\n  distinct(district) |&gt;\n\n  # anti_join() 只保留在右表中找不到匹配的左表记录。\n  anti_join(\n    population_raw,\n    by = \"district\"\n  )\n\nunmatched_hotline_keys\n\n\n  \n\n\n\n第二次反向检查，找出“人口表中有、热线表中没有”的键。\n\nunused_population_keys &lt;- population_raw |&gt;\n\n  # 人口表中可能存在重复区县，先保留不同名称。\n  distinct(district) |&gt;\n\n  # 将人口表放在左侧，就能发现没有出现在热线表中的键。\n  anti_join(\n    distinct(hotline_clean, district),\n    by = \"district\"\n  )\n\nunused_population_keys\n\n\n  \n\n\n\n两个方向的 anti_join() 回答不同问题，不能互相替代。这里应当发现：热线表的“翔安区”匹配不到，而人口表中的“翔安”和“试验区”没有被热线表使用。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第三步根据证据修正人口表",
+    "href": "bigdata/dataclean/dataclean.html#第三步根据证据修正人口表",
+    "title": "数据获取与预处理",
+    "section": "8.4 第三步：根据证据修正人口表",
+    "text": "8.4 第三步：根据证据修正人口表\n本例假定数据字典确认“翔安”就是“翔安区”，“湖里区”的两行完全重复，而“试验区”不属于研究范围。\n\npopulation &lt;- population_raw |&gt;\n  mutate(\n    # 统一连接键的正式名称。\n    district = recode(\n      district,\n      \"翔安\" = \"翔安区\"\n    )\n  ) |&gt;\n\n  # 根据研究范围排除不应进入分析的地区。\n  filter(district != \"试验区\") |&gt;\n\n  # 本例中的湖里区两行完全一致，因此可以删除完全重复记录。\n  # 如果同一区县人口值不同，就不能直接 distinct()，必须核对年份和口径。\n  distinct()\n\npopulation\n\n\n  \n\n\n\n修正后再次检查键。正式连接必须建立在这些检查通过之后。\n\n# 检查右表连接键是否唯一。\nstopifnot(!anyDuplicated(population$district))\n\n# 检查热线表中的区县是否全部能够在人口表中找到。\nstopifnot(\n  nrow(\n    anti_join(\n      distinct(hotline_clean, district),\n      population,\n      by = \"district\"\n    )\n  ) == 0\n)\n\n\"连接前的键检查已通过。\"\n\n[1] \"连接前的键检查已通过。\""
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第四步正式连接并限制连接关系",
+    "href": "bigdata/dataclean/dataclean.html#第四步正式连接并限制连接关系",
+    "title": "数据获取与预处理",
+    "section": "8.5 第四步：正式连接并限制连接关系",
+    "text": "8.5 第四步：正式连接并限制连接关系\n\n# 先把案件级数据汇总成区县级数据。\n# 此时一行代表一个区县，而不再代表一个案件。\nhotline_by_district &lt;- hotline_clean |&gt;\n  count(district, name = \"complaints\")\n\n# 保存连接前的行数，用于连接后核查。\nn_before_join &lt;- nrow(hotline_by_district)\n\ndistrict_summary &lt;- hotline_by_district |&gt;\n\n  # 保留左表的所有区县，并按照 district 加入人口数据。\n  # relationship = \"many-to-one\" 明确声明：\n  # 左表可有多个匹配需求，但右表每个键必须唯一。\n  # 如果右表出现重复键，dplyr 会提醒或阻止错误连接。\n  left_join(\n    population,\n    by = \"district\",\n    relationship = \"many-to-one\"\n  ) |&gt;\n\n  # 计算每万人投诉数。\n  # 先得到每人的投诉数，再乘以10000。\n  mutate(\n    complaints_per_10000 =\n      complaints / population * 10000\n  )\n\n# 保存连接后的行数。\nn_after_join &lt;- nrow(district_summary)\n\ndistrict_summary"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#第五步连接后核查",
+    "href": "bigdata/dataclean/dataclean.html#第五步连接后核查",
+    "title": "数据获取与预处理",
+    "section": "8.6 第五步：连接后核查",
+    "text": "8.6 第五步：连接后核查\n连接后至少检查行数、键唯一性、未匹配值和指标范围。\n\njoin_audit &lt;- tibble(\n  check = c(\n    \"连接前行数\",\n    \"连接后行数\",\n    \"连接后唯一区县数\",\n    \"人口缺失数量\",\n    \"重复区县数量\"\n  ),\n  value = c(\n    n_before_join,\n    n_after_join,\n    n_distinct(district_summary$district),\n    sum(is.na(district_summary$population)),\n    sum(duplicated(district_summary$district))\n  )\n)\n\njoin_audit\n\n\n  \n\n\n\n\nstopifnot(\n  # left_join() 不应使区县汇总表的行数发生变化。\n  n_before_join == n_after_join,\n\n  # 每个区县在连接结果中只能出现一次。\n  !anyDuplicated(district_summary$district),\n\n  # 所有区县都必须获得人口值。\n  !anyNA(district_summary$population),\n\n  # 人口必须为正数，避免分母为0或负数。\n  all(district_summary$population &gt; 0),\n\n  # 计算出的每万人投诉数不能为负数。\n  all(district_summary$complaints_per_10000 &gt;= 0)\n)\n\n\"连接及连接后检查全部通过。\"\n\n[1] \"连接及连接后检查全部通过。\"\n\n\n\n\n\n\n\n\n表格连接的五类常见问题\n\n\n\n\n\n\n\n\n\n\n\n问题\n表现\n检查方法\n\n\n\n\n键值有空格\n\"湖里区\"与\"湖里区 \"不匹配\nstr_squish()、count()\n\n\n键值写法不同\n\"翔安\"与\"翔安区\"不匹配\n双向 anti_join()\n\n\n键的数据类型不同\n一张表为数值，另一张表为字符\nglimpse()、class()\n\n\n右表键不唯一\n连接后行数意外增加\ncount()、anyDuplicated()\n\n\n连接方向错误\n需要保留的记录被删除\n明确为什么使用 left_join()\n\n\n\n\n\n注意：这里的投诉率只用于演示，小样本并不代表真实行政统计。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#从原始数据到分析数据的对象变化",
+    "href": "bigdata/dataclean/dataclean.html#从原始数据到分析数据的对象变化",
+    "title": "数据获取与预处理",
+    "section": "11.1 从原始数据到分析数据的对象变化",
+    "text": "11.1 从原始数据到分析数据的对象变化\n\npipeline_trace &lt;- tibble(\n  stage = c(\n    \"1 原始导入\",\n    \"2 名称与空格清理\",\n    \"3 特殊缺失值处理\",\n    \"4 类别与类型转换\",\n    \"5 主键去重\",\n    \"6 排除待核查异常\",\n    \"7 区县汇总并连接人口\"\n  ),\n\n  # 使用 nrow() 观察每一步的数据行数是否发生变化。\n  # 如果行数发生变化，应当能够解释原因。\n  n_rows = c(\n    nrow(hotline_raw),\n    nrow(hotline_step1),\n    nrow(hotline_step2),\n    nrow(hotline_step4),\n    nrow(hotline_unique),\n    nrow(hotline_clean),\n    nrow(district_summary)\n  ),\n\n  # 使用 ncol() 观察每一步增加、转换或删除了多少变量。\n  n_columns = c(\n    ncol(hotline_raw),\n    ncol(hotline_step1),\n    ncol(hotline_step2),\n    ncol(hotline_step4),\n    ncol(hotline_unique),\n    ncol(hotline_clean),\n    ncol(district_summary)\n  ),\n\n  purpose = c(\n    \"保留原始记录\",\n    \"建立稳定变量名\",\n    \"统一 NA 表示\",\n    \"形成可计算变量\",\n    \"保证案件编号唯一\",\n    \"生成案件级分析数据\",\n    \"生成区县级指标\"\n  )\n)\n\npipeline_trace\n\n\n  \n\n\n\n这张表提醒我们：\n\n名称清理和类型转换通常不应改变行数；\n去重后行数减少，必须能说明删除了哪些记录；\n排除异常记录后行数减少，应保留待核查表；\n区县汇总会改变分析单位，因此不能再用案件行数理解结果。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#一次完整运行的检查顺序",
+    "href": "bigdata/dataclean/dataclean.html#一次完整运行的检查顺序",
+    "title": "数据获取与预处理",
+    "section": "11.2 一次完整运行的检查顺序",
+    "text": "11.2 一次完整运行的检查顺序\n建议课堂现场演示按下面的顺序进行，每一步都暂停查看结果：\n\n重启 R 会话，清除先前对象的影响；\n从项目根目录打开 .qmd 或 .R 文件；\n加载 tidyverse 和 lubridate；\n导入原始数据并运行 glimpse()；\n检查行数、变量名、变量类型和主键；\n定义清理规则，生成新的中间对象；\n检查缺失值、重复值和逻辑异常；\n连接外部表并进行双向匹配检查；\n运行 stopifnot()；\n只有检查全部通过后才输出处理后的数据。\n\n\n\n\n\n\n\n课堂运行规范\n\n\n\n每段代码都采用“预测—运行—观察—解释—修改—验证”的顺序。学生先预测对象会怎样变化，教师再现场运行；随后学生复制运行，并修改一个条件观察结果。不要只展示已经生成的图表或最终数据。"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#常见报错的定位顺序",
+    "href": "bigdata/dataclean/dataclean.html#常见报错的定位顺序",
+    "title": "数据获取与预处理",
+    "section": "11.3 常见报错的定位顺序",
+    "text": "11.3 常见报错的定位顺序\n\n# 1. 检查对象是否存在以及名称是否拼写正确。\nls()\n\n# 2. 查看数据中真实存在的变量名。\nnames(hotline_clean)\n\n# 3. 查看变量类型和部分取值。\nglimpse(hotline_clean)\n\n# 4. 查看最近一次 dplyr / tidyverse 错误的调用路径。\n# 只有前面刚出现错误时才运行。\nrlang::last_trace()\n\n# 5. 查看当前 R、操作系统和软件包版本。\nsessionInfo()\n\n常见问题及其优先检查方法如下：\n\n\n\n报错或异常表现\n优先检查\n\n\n\n\nobject not found\n前面的代码块是否运行、对象名是否拼错\n\n\nCan't join ... incompatible types\n两张表连接键的类型是否一致\n\n\n连接后行数突然增加\n右表连接键是否重复\n\n\n汇总结果全部是 NA\n是否需要 na.rm = TRUE，以及这样处理是否合理\n\n\n找不到文件\n是否使用项目和相对路径\n\n\n教师能运行、学生不能运行\n包版本、隐藏对象、绝对路径和运行顺序"
+  },
+  {
+    "objectID": "bigdata/dataclean/dataclean.html#ai辅助代码撰写与排错",
+    "href": "bigdata/dataclean/dataclean.html#ai辅助代码撰写与排错",
+    "title": "数据获取与预处理",
+    "section": "11.4 AI辅助代码撰写与排错",
+    "text": "11.4 AI辅助代码撰写与排错\n使用 AI 时，应提供足够的技术上下文，但不要上传含有姓名、电话、地址等敏感信息的行政数据。一个较好的排错提问包括四部分：\n任务：我想按 district 连接热线案件汇总表与人口表。\n\n数据结构：\n- 左表：district、complaints\n- 右表：district、population\n- 右表的 district 应当唯一\n\n代码：\n[粘贴能够复现问题的最小代码]\n\n完整错误信息：\n[粘贴 R 控制台中的完整错误]\n\n要求：请先解释错误原因，再给出最小修改；\n不要重写整个程序，并说明如何验证修改后的结果。\n可以先生成不含真实记录的结构信息：\n\n# names() 只提供变量名，不包含具体个人记录。\nnames(hotline_clean)\n\n# glimpse() 主要展示变量类型和少量示例。\n# 对敏感数据，分享前仍应检查输出中是否含个人信息。\nglimpse(hotline_clean)\n\n# 用 slice_head() 生成少量结构示例时，\n# 应先删除姓名、电话、地址等敏感变量。\nhotline_clean |&gt;\n  select(-any_of(c(\"name\", \"phone\", \"address\"))) |&gt;\n  slice_head(n = 3)\n\nAI生成的代码必须经过三层验证：代码能否运行、数据是否按预期变化、统计口径是否符合公共管理问题。能运行不等于分析正确。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#本讲要解决的问题",
+    "href": "bigdata/visualization/visualization.html#本讲要解决的问题",
+    "title": "数据描述与可视化",
+    "section": "",
+    "text": "数据可视化不仅是“把数据画出来”，而是把公共管理问题、统计证据和政策沟通连接起来。本讲围绕一份模拟的某市 12345 政务热线数据，完成以下过程：\n\n明确问题 → 判断变量 → 选择图形 → 完成图形 → 检查误导 → 解释结果\n\n\n\n\n\n\n\n课堂原则：一图一问一结论\n\n\n\n每张图都必须回答一个明确问题，并附上一句主要发现和一句限制。图形漂亮不等于证据可靠。\n\n\n\n\n完成本讲后，你应该能够：\n\n根据研究问题和变量类型选择合适的图形；\n理解 ggplot2 的数据、映射、几何对象、刻度、标签和主题；\n绘制并解释条形图、点图、直方图、箱线图、散点图和折线图；\n使用分组、切片和误差线表达比较与不确定性；\n识别坐标轴、分母、颜色、缺失值和因果表述造成的误导；\n输出一份可直接用于课程项目的“三图一表”简报。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#分钟检索练习",
+    "href": "bigdata/visualization/visualization.html#分钟检索练习",
+    "title": "数据描述与可视化",
+    "section": "1.1 3分钟检索练习",
+    "text": "1.1 3分钟检索练习\n不运行代码，独立回答：\n\nfilter()、group_by() 和 summarise() 分别改变数据的什么部分？\n为什么比较各区县热线诉求时，案件总量和每万人案件量可能给出不同结论？\nNA 会怎样影响 mean()？\n一行数据在热线案件表中代表什么？\n\n\n\n参考答案\n\n\nfilter() 选择行，group_by() 建立分组，summarise() 把多行压缩成汇总结果。\n各区县人口规模不同，总量较高可能只是人口较多。\n默认返回 NA，通常需要结合数据含义决定是否使用 na.rm = TRUE。\n一行代表一个热线案件；分析单位改变时，图形和解释也必须改变。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#绘图前只检查四件事",
+    "href": "bigdata/visualization/visualization.html#绘图前只检查四件事",
+    "title": "数据描述与可视化",
+    "section": "2.1 绘图前只检查四件事",
+    "text": "2.1 绘图前只检查四件事\n\n# glimpse() 同时显示变量名、变量类型和部分取值，\n# 用于确认绘图变量是否已经采用正确的数据类型。\nglimpse(hotline)\n\nRows: 480\nColumns: 8\n$ case_id            &lt;chr&gt; \"C0001\", \"C0002\", \"C0003\", \"C0004\", \"C0005\", \"C0006…\n$ submitted_date     &lt;date&gt; 2025-03-23, 2025-03-21, 2025-03-15, 2025-04-06, 20…\n$ district           &lt;chr&gt; \"同安区\", \"同安区\", \"同安区\", \"思明区\", \"翔安区\", \"湖里区\", \"思明区\", \"思…\n$ issue_type         &lt;chr&gt; \"交通出行\", \"公共服务\", \"住房建设\", \"公共服务\", \"交通出行\", \"住房建设\", \"住房…\n$ response_hours     &lt;dbl&gt; 21.4, 25.6, 16.8, 13.3, 7.3, 20.0, 21.1, 7.9, 14.7,…\n$ status             &lt;chr&gt; \"已办结\", \"已办结\", \"已办结\", \"已办结\", \"已办结\", \"已办结\", \"已办结\", \"已…\n$ satisfaction_score &lt;dbl&gt; 3, 3, 4, 4, 3, 2, 3, 4, 4, 4, 3, 4, 4, 2, 4, 4, NA,…\n$ channel            &lt;chr&gt; \"网站\", \"电话\", \"电话\", \"微信\", \"微信\", \"微信\", \"网站\", \"网站\", \"电话…\n\n# stopifnot() 用程序化规则检查最低数据质量要求。\n# 只要任何一个条件为 FALSE，代码就会停止并提示错误。\nstopifnot(\n\n  # 每个案件编号必须唯一。\n  !anyDuplicated(hotline$case_id),\n\n  # submitted_date 必须是能够进行日期计算的 Date 类型。\n  inherits(hotline$submitted_date, \"Date\"),\n\n  # 回应时间不能为负数。\n  all(hotline$response_hours &gt;= 0),\n\n  # 满意度可以缺失；非缺失值必须处于1到4之间。\n  all(is.na(hotline$satisfaction_score) |\n        between(hotline$satisfaction_score, 1, 4))\n)\n\n绘图前确认：分析单位、变量类型、缺失情况和异常范围。发现问题时应返回清理脚本，而不是在绘图代码里悄悄修补。\n\n\n\n\n\n\n关于模拟数据\n\n\n\n本页所有数值仅用于教学。政策节点前后的差异是模拟设置，不能被当作真实政策效果，也不能据此形成实际城市排名。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#用图形检查缺失情况",
+    "href": "bigdata/visualization/visualization.html#用图形检查缺失情况",
+    "title": "数据描述与可视化",
+    "section": "2.2 用图形检查缺失情况",
+    "text": "2.2 用图形检查缺失情况\n上一讲已经用代码计算缺失数量和缺失比例。本讲进一步把审计结果画出来，以便快速发现缺失集中的变量。\n\nmissing_by_variable &lt;- hotline |&gt;\n  summarise(\n    across(\n      everything(),\n\n      # is.na(.x) 判断当前变量的每个值是否缺失。\n      # mean() 把 TRUE 当作1、FALSE当作0，\n      # 因此结果就是该变量的缺失比例。\n      ~ mean(is.na(.x))\n    )\n  ) |&gt;\n\n  # summarise() 生成的是一行多列的宽表。\n  # pivot_longer() 将变量名和缺失率整理成两列，便于ggplot绘图。\n  pivot_longer(\n    everything(),\n    names_to = \"variable\",\n    values_to = \"missing_rate\"\n  ) |&gt;\n\n  # 让缺失率最高的变量排在前面。\n  arrange(desc(missing_rate))\n\nmissing_by_variable\n\n# A tibble: 8 × 2\n  variable           missing_rate\n  &lt;chr&gt;                     &lt;dbl&gt;\n1 satisfaction_score        0.181\n2 case_id                   0    \n3 submitted_date            0    \n4 district                  0    \n5 issue_type                0    \n6 response_hours            0    \n7 status                    0    \n8 channel                   0    \n\n\n\nggplot(\n  missing_by_variable,\n\n  # 横轴表示缺失比例；纵轴变量按照缺失率重新排序。\n  aes(\n    x = missing_rate,\n    y = reorder(variable, missing_rate)\n  )\n) +\n\n  # 数据已经计算好缺失率，因此使用 geom_col()，\n  # 而不是自动计数的 geom_bar()。\n  geom_col(fill = \"#2C7FB8\", width = .7) +\n\n  # 将0.20之类的小数显示为20%。\n  scale_x_continuous(\n    labels = label_percent(accuracy = 1),\n    limits = c(0, 1)\n  ) +\n  labs(\n    title = \"满意度是模拟热线数据中主要的缺失变量\",\n    subtitle = \"缺失率高不等于数据错误，还需要解释缺失产生的制度过程\",\n    x = \"缺失率\",\n    y = NULL,\n    caption = \"数据：模拟12345政务热线数据\"\n  )\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n缺失图形只能发现问题，不能自动决定处理方式\n\n\n\n满意度缺失可能集中在“处理中”的案件或某种评价渠道。下一步应按状态、渠道等变量分组检查，而不是看到缺失后立即删除或插补。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#长表和宽表为什么可视化通常偏好长表",
+    "href": "bigdata/visualization/visualization.html#长表和宽表为什么可视化通常偏好长表",
+    "title": "数据描述与可视化",
+    "section": "2.3 长表和宽表：为什么可视化通常偏好长表",
+    "text": "2.3 长表和宽表：为什么可视化通常偏好长表\n下面先生成“区县 × 事项类型”的长表。一行代表一个区县中的一种事项类型。\n\ndistrict_issue_long_demo &lt;- hotline |&gt;\n\n  # 按 district 和 issue_type 的组合统计案件数。\n  count(district, issue_type, name = \"n\")\n\ndistrict_issue_long_demo\n\n# A tibble: 24 × 3\n   district issue_type     n\n   &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt;\n 1 同安区   交通出行      26\n 2 同安区   住房建设      15\n 3 同安区   公共服务      23\n 4 同安区   市容环境      24\n 5 思明区   交通出行      22\n 6 思明区   住房建设      11\n 7 思明区   公共服务      26\n 8 思明区   市容环境      32\n 9 海沧区   交通出行      17\n10 海沧区   住房建设      13\n# ℹ 14 more rows\n\n\n将事项类型展开为多列，就得到更适合人工阅读的宽表。\n\ndistrict_issue_wide_demo &lt;- district_issue_long_demo |&gt;\n  pivot_wider(\n\n    # issue_type 中的每个类别将变成新的列名。\n    names_from = issue_type,\n\n    # 新单元格填写对应组合的案件数 n。\n    values_from = n,\n\n    # 某区县没有某类案件时，用0填充。\n    values_fill = 0\n  )\n\ndistrict_issue_wide_demo\n\n# A tibble: 6 × 5\n  district 交通出行 住房建设 公共服务 市容环境\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 同安区         26       15       23       24\n2 思明区         22       11       26       32\n3 海沧区         17       13       11       25\n4 湖里区         21       15       22       32\n5 翔安区         24        6       14       23\n6 集美区         22       11       21       24\n\n\n作图时通常需要再次转成长表，因为 ggplot2 更容易把一个变量映射为颜色、切片或图例。\n\ndistrict_issue_long_again &lt;- district_issue_wide_demo |&gt;\n  pivot_longer(\n\n    # district 是区县标识，不参与展开；\n    # 其余事项类型列全部转为行。\n    cols = -district,\n\n    # 原来的列名存入 issue_type。\n    names_to = \"issue_type\",\n\n    # 原来单元格中的数字存入 n。\n    values_to = \"n\"\n  )\n\ndistrict_issue_long_again\n\n# A tibble: 24 × 3\n   district issue_type     n\n   &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt;\n 1 同安区   交通出行      26\n 2 同安区   住房建设      15\n 3 同安区   公共服务      23\n 4 同安区   市容环境      24\n 5 思明区   交通出行      22\n 6 思明区   住房建设      11\n 7 思明区   公共服务      26\n 8 思明区   市容环境      32\n 9 海沧区   交通出行      17\n10 海沧区   住房建设      13\n# ℹ 14 more rows\n\n\n可以用程序化检查确认转换没有损失案件数：\n\nstopifnot(\n  # 长表、宽表再转回的结果应具有相同总案件数。\n  sum(district_issue_long_demo$n) ==\n    sum(district_issue_long_again$n),\n\n  # 总案件数还应与原始案件表的行数相同。\n  sum(district_issue_long_again$n) == nrow(hotline)\n)\n\n\"长宽表转换检查通过。\"\n\n[1] \"长宽表转换检查通过。\"\n\n\n\n\n\n\n\n\n长宽表转换前先回答\n\n\n\n一行代表什么？哪些变量负责识别一条记录？哪些列实际上是同一个变量的不同类别？如果不能回答这些问题，就不应直接运行 pivot_longer() 或 pivot_wider()。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#问题变量图形",
+    "href": "bigdata/visualization/visualization.html#问题变量图形",
+    "title": "数据描述与可视化",
+    "section": "3.1 问题—变量—图形",
+    "text": "3.1 问题—变量—图形\n\n\n\n想回答的问题\n主要变量\n推荐图形\n\n\n\n\n哪类案件最多？\n一个类别变量\n排序条形图\n\n\n哪个地区的标准化指标更高？\n类别＋比率\n点图或条形图\n\n\n回应时间如何分布？\n一个数值变量\n直方图或箱线图\n\n\n不同事项的回应时间是否不同？\n类别＋数值\n箱线图＋抖动点\n\n\n两个数值变量是否相关？\n两个数值变量\n散点图＋趋势线\n\n\n指标如何随时间变化？\n日期＋数值\n折线图\n\n\n各组构成是否不同？\n两个类别变量\n百分比堆叠条形图\n\n\n估计值有多精确？\n分组估计＋区间\n点图＋误差线"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#分钟图形诊断",
+    "href": "bigdata/visualization/visualization.html#分钟图形诊断",
+    "title": "数据描述与可视化",
+    "section": "3.2 12分钟图形诊断",
+    "text": "3.2 12分钟图形诊断\n对下面四种做法作出判断，并说明理由：\n\n用饼图比较12个部门的案件占比；\n用案件总量评价人口不同的区县；\n用折线连接没有时间顺序的四类事项；\n用散点图中的拟合线证明回应速度提高了满意度。\n\n\n\n诊断提示\n\n\n类别过多时角度和面积难以比较，排序条形图通常更清楚；\n应同时考虑人口、服务对象或其他合理分母；\n折线暗示连续顺序，不适合无序类别；\n拟合线只能显示相关模式，不能自动排除选择偏差和混杂因素。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#从空画布到完整图形",
+    "href": "bigdata/visualization/visualization.html#从空画布到完整图形",
+    "title": "数据描述与可视化",
+    "section": "4.1 从空画布到完整图形",
+    "text": "4.1 从空画布到完整图形\n\nggplot(\n  data = hotline,\n  mapping = aes(x = response_hours)\n)\n\n\n\n\n\n\n\n\n指定数据和映射后，还需要几何对象决定“怎样画”。\n\nggplot(hotline, aes(x = response_hours)) +\n  geom_histogram(binwidth = 5)\n\n\n\n\n\n\n\n\n\nggplot(hotline, aes(x = response_hours)) +\n  geom_histogram(\n    binwidth = 5,\n    fill = \"#2C7FB8\",\n    color = \"white\"\n  ) +\n  scale_x_continuous(breaks = seq(0, 80, 10)) +\n  labs(\n    title = \"热线案件首次回应时间分布\",\n    subtitle = \"多数案件在较短时间内回应，分布呈右偏\",\n    x = \"首次回应时间（小时）\",\n    y = \"案件数\",\n    caption = \"数据：模拟12345政务热线数据\"\n  )\n\n\n\n\n\n\n\n\n\n4.1.1 映射和固定属性不能混淆\n\n# issue_type 在 aes() 内：颜色表达数据类别\nggplot(hotline, aes(x = response_hours, color = issue_type)) +\n  geom_density(linewidth = 1) +\n  labs(x = \"首次回应时间（小时）\", y = \"密度\", color = \"事项类型\")\n\n\n\n\n\n\n\n# color 在 aes() 外：所有线使用同一种固定颜色\nggplot(hotline, aes(x = response_hours)) +\n  geom_density(color = \"#2C7FB8\", linewidth = 1) +\n  labs(x = \"首次回应时间（小时）\", y = \"密度\")"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#哪类诉求最多",
+    "href": "bigdata/visualization/visualization.html#哪类诉求最多",
+    "title": "数据描述与可视化",
+    "section": "5.1 哪类诉求最多？",
+    "text": "5.1 哪类诉求最多？\n先汇总，再使用 geom_col()：\n\nissue_counts &lt;- hotline |&gt;\n  count(issue_type, sort = TRUE)\n\nggplot(\n  issue_counts,\n  aes(x = n, y = reorder(issue_type, n))\n) +\n  geom_col(fill = \"#2C7FB8\", width = .7) +\n  geom_text(aes(label = n), hjust = -0.2) +\n  scale_x_continuous(expand = expansion(mult = c(0, .10))) +\n  labs(\n    title = \"市容环境类诉求数量最多\",\n    subtitle = \"按模拟样本中的案件数量排序\",\n    x = \"案件数\",\n    y = NULL,\n    caption = \"数据：模拟12345政务热线数据\"\n  )\n\n\n\n\n\n\n\n\ngeom_bar() 会对原始行自动计数；geom_col() 使用已经计算好的纵轴数值。正式图形尽量把结论写进标题，而不是只写“事项类型分布”。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#总量还是每万人案件量",
+    "href": "bigdata/visualization/visualization.html#总量还是每万人案件量",
+    "title": "数据描述与可视化",
+    "section": "5.2 总量还是每万人案件量？",
+    "text": "5.2 总量还是每万人案件量？\n\ndistrict_summary &lt;- hotline |&gt;\n  count(district, name = \"cases\") |&gt;\n  left_join(population, by = \"district\") |&gt;\n  mutate(cases_per_10000 = cases / population * 10000)\n\ndistrict_summary\n\n# A tibble: 6 × 4\n  district cases population cases_per_10000\n  &lt;chr&gt;    &lt;int&gt;      &lt;dbl&gt;           &lt;dbl&gt;\n1 同安区      88     912000           0.965\n2 思明区      91    1068000           0.852\n3 海沧区      66     618000           1.07 \n4 湖里区      90    1036000           0.869\n5 翔安区      67     642000           1.04 \n6 集美区      78    1091000           0.715\n\n\n\nggplot(\n  district_summary,\n  aes(x = cases_per_10000,\n      y = reorder(district, cases_per_10000))\n) +\n  geom_segment(\n    aes(x = 0, xend = cases_per_10000, yend = district),\n    color = \"grey80\"\n  ) +\n  geom_point(size = 3, color = \"#D95F0E\") +\n  labs(\n    title = \"考虑人口规模后，区县排序可能发生变化\",\n    subtitle = \"模拟样本案件数除以常住人口\",\n    x = \"每万人案件数\",\n    y = NULL,\n    caption = \"数据：模拟热线数据与模拟人口数据\"\n  )\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n分母也是研究设计\n\n\n\n每万人案件量不一定就是最合适的绩效指标。还可以考虑服务对象数量、流动人口、热线使用率和事项暴露机会。分母必须由研究问题决定。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#组距会改变我们看到的形状",
+    "href": "bigdata/visualization/visualization.html#组距会改变我们看到的形状",
+    "title": "数据描述与可视化",
+    "section": "6.1 组距会改变我们看到的形状",
+    "text": "6.1 组距会改变我们看到的形状\n\nggplot(hotline, aes(x = response_hours)) +\n  geom_histogram(\n    binwidth = 4,\n    boundary = 0,\n    fill = \"#74A9CF\",\n    color = \"white\"\n  ) +\n  labs(\n    title = \"回应时间分布呈右偏\",\n    subtitle = \"组距为4小时；改变组距后应再次检查分布\",\n    x = \"首次回应时间（小时）\",\n    y = \"案件数\"\n  )\n\n\n\n\n\n\n\n\n运行前先预测：把 binwidth 改成2和12，图形会怎样变化？哪一种更容易隐藏局部结构？"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#比较不同事项的回应时间",
+    "href": "bigdata/visualization/visualization.html#比较不同事项的回应时间",
+    "title": "数据描述与可视化",
+    "section": "6.2 比较不同事项的回应时间",
+    "text": "6.2 比较不同事项的回应时间\n\nggplot(\n  hotline,\n  aes(\n    x = reorder(issue_type, response_hours, FUN = median),\n    y = response_hours\n  )\n) +\n  geom_boxplot(\n    width = .55,\n    outlier.shape = NA,\n    fill = \"#D9EAF4\"\n  ) +\n  geom_jitter(\n    width = .13,\n    alpha = .28,\n    size = 1.4,\n    color = \"#2C7FB8\"\n  ) +\n  coord_flip() +\n  labs(\n    title = \"不同事项类型的回应时间分布存在差异\",\n    subtitle = \"箱线图显示中位数和四分位距，散点保留原始案件\",\n    x = NULL,\n    y = \"首次回应时间（小时）\"\n  )\n\n\n\n\n\n\n\n\n箱线图比“各组均值条形图”保留更多分布信息。超出须线的点是值得检查的观测，不应自动称为错误并删除。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#用箱线图规则标记极端观测",
+    "href": "bigdata/visualization/visualization.html#用箱线图规则标记极端观测",
+    "title": "数据描述与可视化",
+    "section": "6.3 用箱线图规则标记极端观测",
+    "text": "6.3 用箱线图规则标记极端观测\n箱线图通常把低于 \\(Q_1-1.5\\times IQR\\) 或高于 \\(Q_3+1.5\\times IQR\\) 的观测标记为极端值。下面在每种事项类型内部计算这一规则。\n\nhotline_extreme &lt;- hotline |&gt;\n\n  # 不同事项的正常回应时间可能不同，\n  # 因此在每种 issue_type 内部分别计算四分位数。\n  group_by(issue_type) |&gt;\n  mutate(\n\n    # 第一四分位数：25%的案件低于这个值。\n    q1 = quantile(response_hours, .25, na.rm = TRUE),\n\n    # 第三四分位数：75%的案件低于这个值。\n    q3 = quantile(response_hours, .75, na.rm = TRUE),\n\n    # 四分位距 IQR = Q3 - Q1。\n    iqr = q3 - q1,\n\n    # 计算箱线图上下界。\n    lower_limit = q1 - 1.5 * iqr,\n    upper_limit = q3 + 1.5 * iqr,\n\n    # 只要超出任意一侧界限，就标记为统计极端值。\n    statistical_extreme =\n      response_hours &lt; lower_limit |\n      response_hours &gt; upper_limit\n  ) |&gt;\n\n  # 取消分组，避免后续操作继续按事项类型分别执行。\n  ungroup()\n\n将普通观测和统计极端观测使用不同颜色显示。\n\nggplot(\n  hotline_extreme,\n  aes(\n    x = reorder(issue_type, response_hours, FUN = median),\n    y = response_hours\n  )\n) +\n\n  # outlier.shape = NA 只是不让箱线图重复画出极端点，\n  # 并没有从数据中删除这些案件。\n  geom_boxplot(\n    width = .55,\n    outlier.shape = NA,\n    fill = \"grey92\"\n  ) +\n\n  # 使用颜色突出被 IQR 规则标记的记录。\n  geom_jitter(\n    aes(color = statistical_extreme),\n    width = .13,\n    alpha = .65,\n    size = 1.8\n  ) +\n  scale_color_manual(\n    values = c(`FALSE` = \"grey65\", `TRUE` = \"#D95F0E\"),\n    labels = c(`FALSE` = \"常规观测\", `TRUE` = \"统计极端值\")\n  ) +\n  coord_flip() +\n  labs(\n    title = \"统计极端值需要进一步核查，而不是自动删除\",\n    subtitle = \"在每种事项类型内部使用1.5倍四分位距规则\",\n    x = NULL,\n    y = \"首次回应时间（小时）\",\n    color = NULL\n  )\n\n\n\n\n\n\n\n\n列出需要核查的具体案件：\n\nextreme_cases &lt;- hotline_extreme |&gt;\n\n  # 只保留被标记的案件。\n  filter(statistical_extreme) |&gt;\n\n  # 回查时保留案件编号、类别、状态和回应时间。\n  select(\n    case_id,\n    submitted_date,\n    district,\n    issue_type,\n    status,\n    response_hours,\n    upper_limit\n  ) |&gt;\n\n  # 回应时间最长的记录排在前面。\n  arrange(desc(response_hours))\n\nextreme_cases\n\n# A tibble: 18 × 7\n   case_id submitted_date district issue_type status response_hours upper_limit\n   &lt;chr&gt;   &lt;date&gt;         &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;       &lt;dbl&gt;\n 1 C0396   2025-04-29     集美区   住房建设   已办结           58.8        43.4\n 2 C0245   2025-03-12     同安区   住房建设   已办结           55.6        43.4\n 3 C0067   2025-04-16     湖里区   市容环境   已办结           51.4        30.2\n 4 C0383   2025-04-11     集美区   住房建设   已办结           51.3        43.4\n 5 C0197   2025-03-17     思明区   公共服务   已办结           48.5        39.2\n 6 C0216   2025-05-18     海沧区   交通出行   已办结           44.3        33.6\n 7 C0054   2025-05-30     海沧区   市容环境   已办结           43.6        30.2\n 8 C0259   2025-04-12     同安区   公共服务   已办结           42.1        39.2\n 9 C0034   2025-03-14     海沧区   交通出行   已办结           41.5        33.6\n10 C0274   2025-03-28     湖里区   市容环境   已办结           40.2        30.2\n11 C0423   2025-04-06     翔安区   交通出行   已办结           38.7        33.6\n12 C0266   2025-03-29     湖里区   交通出行   已办结           38.4        33.6\n13 C0264   2025-03-28     湖里区   交通出行   已办结           38.2        33.6\n14 C0260   2025-04-06     湖里区   市容环境   已办结           36.1        30.2\n15 C0281   2025-05-17     海沧区   市容环境   已办结           34.8        30.2\n16 C0023   2025-05-05     思明区   市容环境   已办结           33.3        30.2\n17 C0172   2025-05-07     集美区   市容环境   已办结           30.8        30.2\n18 C0082   2025-03-28     湖里区   市容环境   已办结           30.2        30.2"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#统计极端值不等于录入错误",
+    "href": "bigdata/visualization/visualization.html#统计极端值不等于录入错误",
+    "title": "数据描述与可视化",
+    "section": "6.4 统计极端值不等于录入错误",
+    "text": "6.4 统计极端值不等于录入错误\n\n\n\n\n\n\n\n\n情形\n判断依据\n推荐处理\n\n\n\n\n回应时间为负数\n不符合时间逻辑\n回查日期和单位，确认后修正或设为缺失\n\n\n回应时间很长，但对应复杂积案\n业务上可能真实存在\n保留，必要时单独解释\n\n\n数值比同组高，但原始记录完整\n只是统计极端\n保留并进行稳健性分析\n\n\n小时误填成分钟或相反\n单位和其他记录不一致\n回查后统一单位\n\n\n无法回查来源\n无法判断真实性\n标记为待核查，比较保留与排除后的结果\n\n\n\n可以把“违反业务规则”和“统计上极端”分成两个变量：\n\nhotline_review &lt;- hotline_extreme |&gt;\n  mutate(\n\n    # 业务规则判断：回应时间小于0在逻辑上不可能。\n    rule_invalid = response_hours &lt; 0,\n\n    # 根据两类判断生成核查状态。\n    review_status = case_when(\n      rule_invalid ~ \"违反业务规则\",\n      statistical_extreme ~ \"统计极端，待核查\",\n      TRUE ~ \"常规范围\"\n    )\n  )\n\nhotline_review |&gt;\n  count(review_status)\n\n# A tibble: 2 × 2\n  review_status        n\n  &lt;chr&gt;            &lt;int&gt;\n1 常规范围           462\n2 统计极端，待核查    18\n\n\n\n\n\n\n\n\n可视化负责发现线索，清理规则负责决定处理\n\n\n\n箱线图只能告诉我们某条记录与多数记录差异较大。是否删除必须结合原始记录、变量单位、行政流程和研究目的判断，并在清理日志中记录决定。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#图形解释的三层边界",
+    "href": "bigdata/visualization/visualization.html#图形解释的三层边界",
+    "title": "数据描述与可视化",
+    "section": "7.1 图形解释的三层边界",
+    "text": "7.1 图形解释的三层边界\n\n描述：样本中两个变量呈负相关；\n关联解释：不同事项、渠道或案件难度可能同时影响回应和满意度；\n因果判断：需要更强的研究设计，不能由一条趋势线直接推出。\n\n\n\n\n\n\n\n缺失值的选择偏差\n\n\n\n只绘制已评价案件，可能排除仍在处理、没有评价入口或不愿评价的市民。正式报告应同时给出满意度缺失率。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#先把案件汇总到周",
+    "href": "bigdata/visualization/visualization.html#先把案件汇总到周",
+    "title": "数据描述与可视化",
+    "section": "8.1 先把案件汇总到周",
+    "text": "8.1 先把案件汇总到周\n\nweekly_summary &lt;- hotline |&gt;\n  mutate(week = floor_date(submitted_date, \"week\", week_start = 1)) |&gt;\n  group_by(week) |&gt;\n  summarise(\n    cases = n(),\n    median_response = median(response_hours, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\nweekly_summary\n\n# A tibble: 14 × 3\n   week       cases median_response\n   &lt;date&gt;     &lt;int&gt;           &lt;dbl&gt;\n 1 2025-02-24    13            13.7\n 2 2025-03-03    33            14.4\n 3 2025-03-10    35            18.3\n 4 2025-03-17    33            17.1\n 5 2025-03-24    31            16.2\n 6 2025-03-31    24            13.2\n 7 2025-04-07    43            16.9\n 8 2025-04-14    36            14.8\n 9 2025-04-21    43            13.2\n10 2025-04-28    41            11.2\n11 2025-05-05    41            14.5\n12 2025-05-12    35            13.9\n13 2025-05-19    43            13.7\n14 2025-05-26    29            11.8"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#案件数量趋势",
+    "href": "bigdata/visualization/visualization.html#案件数量趋势",
+    "title": "数据描述与可视化",
+    "section": "8.2 案件数量趋势",
+    "text": "8.2 案件数量趋势\n\nggplot(weekly_summary, aes(x = week, y = cases)) +\n  geom_line(color = \"#2C7FB8\", linewidth = 1) +\n  geom_point(color = \"#2C7FB8\", size = 2) +\n  scale_x_date(date_breaks = \"2 weeks\", date_labels = \"%m-%d\") +\n  labs(\n    title = \"热线案件数量存在周际波动\",\n    x = \"周\",\n    y = \"案件数\",\n    caption = \"数据：模拟12345政务热线数据\"\n  )"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#标注政策节点",
+    "href": "bigdata/visualization/visualization.html#标注政策节点",
+    "title": "数据描述与可视化",
+    "section": "8.3 标注政策节点",
+    "text": "8.3 标注政策节点\n\nggplot(weekly_summary, aes(x = week, y = median_response)) +\n  geom_line(color = \"#2C7FB8\", linewidth = 1) +\n  geom_point(color = \"#2C7FB8\", size = 2) +\n  geom_vline(\n    xintercept = as.numeric(policy_date),\n    linetype = \"dashed\",\n    color = \"#D95F0E\"\n  ) +\n  annotate(\n    \"text\",\n    x = policy_date + 3,\n    y = Inf,\n    label = \"模拟流程调整\",\n    hjust = 0,\n    vjust = 1.4,\n    color = \"#D95F0E\"\n  ) +\n  scale_x_date(date_breaks = \"2 weeks\", date_labels = \"%m-%d\") +\n  labs(\n    title = \"流程调整后回应时间有所下降\",\n    subtitle = \"时间上的同步变化不等于政策因果效应\",\n    x = \"周\",\n    y = \"首次回应时间中位数（小时）\"\n  )\n\n\n\n\n\n\n\n\n政策节点图可以提出问题，但前后变化还可能来自季节、案件构成或其他同期措施。后续因果推断模块将讨论如何加强识别。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#各区县事项构成",
+    "href": "bigdata/visualization/visualization.html#各区县事项构成",
+    "title": "数据描述与可视化",
+    "section": "9.1 各区县事项构成",
+    "text": "9.1 各区县事项构成\n\ndistrict_issue &lt;- hotline |&gt;\n  count(district, issue_type)\n\nggplot(\n  district_issue,\n  aes(x = district, y = n, fill = issue_type)\n) +\n  geom_col(position = \"fill\") +\n  scale_y_continuous(labels = label_percent()) +\n  scale_fill_brewer(palette = \"Set2\") +\n  labs(\n    title = \"不同区县的热线事项构成\",\n    x = NULL,\n    y = \"区县案件构成\",\n    fill = \"事项类型\"\n  ) +\n  theme(axis.text.x = element_text(angle = 30, hjust = 1))\n\n\n\n\n\n\n\n\n百分比条形图适合比较构成，但隐藏了各区县总量。正式报告可以同时标注样本量，或配合总量图使用。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#用切片减少图形拥挤",
+    "href": "bigdata/visualization/visualization.html#用切片减少图形拥挤",
+    "title": "数据描述与可视化",
+    "section": "9.2 用切片减少图形拥挤",
+    "text": "9.2 用切片减少图形拥挤\n\nggplot(\n  hotline,\n  aes(x = response_hours, fill = issue_type)\n) +\n  geom_histogram(binwidth = 6, color = \"white\", show.legend = FALSE) +\n  facet_wrap(~issue_type, ncol = 2, scales = \"free_y\") +\n  labs(\n    title = \"分事项类型观察回应时间分布\",\n    x = \"首次回应时间（小时）\",\n    y = \"案件数\"\n  )\n\n\n\n\n\n\n\n\n切片比在一张图上叠加许多颜色更容易比较。但使用自由纵轴时，各面板高度不能直接比较。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#均值和95置信区间",
+    "href": "bigdata/visualization/visualization.html#均值和95置信区间",
+    "title": "数据描述与可视化",
+    "section": "10.1 均值和95%置信区间",
+    "text": "10.1 均值和95%置信区间\n\nissue_uncertainty &lt;- hotline |&gt;\n  group_by(issue_type) |&gt;\n  summarise(\n    n = sum(!is.na(response_hours)),\n    mean_response = mean(response_hours, na.rm = TRUE),\n    se = sd(response_hours, na.rm = TRUE) / sqrt(n),\n    lower = mean_response - qt(.975, df = n - 1) * se,\n    upper = mean_response + qt(.975, df = n - 1) * se,\n    .groups = \"drop\"\n  )\n\nissue_uncertainty\n\n# A tibble: 4 × 6\n  issue_type     n mean_response    se lower upper\n  &lt;chr&gt;      &lt;int&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 交通出行     132          15.3 0.730  13.8  16.7\n2 住房建设      71          22.9 1.24   20.4  25.4\n3 公共服务     117          18.6 0.711  17.2  20.0\n4 市容环境     160          12.5 0.679  11.1  13.8\n\n\n\nggplot(\n  issue_uncertainty,\n  aes(\n    x = mean_response,\n    y = reorder(issue_type, mean_response),\n    xmin = lower,\n    xmax = upper\n  )\n) +\n  geom_errorbarh(height = .15, color = \"grey45\") +\n  geom_point(size = 3, color = \"#D95F0E\") +\n  labs(\n    title = \"住房建设类案件平均回应时间较长\",\n    subtitle = \"点为均值，线为95%置信区间\",\n    x = \"平均首次回应时间（小时）\",\n    y = NULL\n  )\n\n\n\n\n\n\n\n\n置信区间反映抽样不确定性，不包括测量误差、分类错误和选择偏差。区间重叠也不能替代正式的组间检验。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#错误一只比较总量不考虑分母",
+    "href": "bigdata/visualization/visualization.html#错误一只比较总量不考虑分母",
+    "title": "数据描述与可视化",
+    "section": "11.1 错误一：只比较总量，不考虑分母",
+    "text": "11.1 错误一：只比较总量，不考虑分母\n\ncount_plot &lt;- ggplot(\n  district_summary,\n  aes(x = cases, y = reorder(district, cases))\n) +\n  geom_col(fill = \"#74A9CF\") +\n  labs(title = \"案件总量\", x = \"案件数\", y = NULL)\n\nrate_plot &lt;- ggplot(\n  district_summary,\n  aes(x = cases_per_10000,\n      y = reorder(district, cases_per_10000))\n) +\n  geom_col(fill = \"#F16913\") +\n  labs(title = \"每万人案件量\", x = \"每万人案件数\", y = NULL)\n\ncount_plot\n\n\n\n\n\n\n\nrate_plot\n\n\n\n\n\n\n\n\n两张图回答不同问题。不能在总量图上使用“治理表现最好”之类的标题。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#错误二截断条形图纵轴",
+    "href": "bigdata/visualization/visualization.html#错误二截断条形图纵轴",
+    "title": "数据描述与可视化",
+    "section": "11.2 错误二：截断条形图纵轴",
+    "text": "11.2 错误二：截断条形图纵轴\n\nbad_axis &lt;- ggplot(issue_counts, aes(x = issue_type, y = n)) +\n  geom_col(fill = \"#D95F0E\") +\n  coord_cartesian(ylim = c(min(issue_counts$n) - 5, max(issue_counts$n) + 5)) +\n  labs(title = \"误导示例：截断条形图纵轴\", x = NULL, y = \"案件数\")\n\ngood_axis &lt;- ggplot(issue_counts, aes(x = issue_type, y = n)) +\n  geom_col(fill = \"#2C7FB8\") +\n  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, .05))) +\n  labs(title = \"改进：条形图从0开始\", x = NULL, y = \"案件数\")\n\nbad_axis\ngood_axis\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n条形长度本身代表数值，因此通常必须从0开始。折线图强调变化趋势，是否从0开始则需要根据问题和标注谨慎判断。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#错误三用-limits-悄悄删除数据",
+    "href": "bigdata/visualization/visualization.html#错误三用-limits-悄悄删除数据",
+    "title": "数据描述与可视化",
+    "section": "11.3 错误三：用 limits 悄悄删除数据",
+    "text": "11.3 错误三：用 limits 悄悄删除数据\n\n# 这会删除范围外的观测，并重新计算统计图层\nscale_x_continuous(limits = c(0, 50))\n\n# 这只是缩放视窗，不删除观测\ncoord_cartesian(xlim = c(0, 50))"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#可信图形检查表",
+    "href": "bigdata/visualization/visualization.html#可信图形检查表",
+    "title": "数据描述与可视化",
+    "section": "11.4 可信图形检查表",
+    "text": "11.4 可信图形检查表\n提交图形前逐项检查：\n\n问题、分析单位和分母是否明确？\n图形类型是否符合变量类型？\n是否诚实显示缺失值、异常值和样本量？\n坐标轴、单位、图例和时间范围是否完整？\n颜色是否有意义，并兼顾色觉差异？\n标题是否陈述了超过证据范围的结论？\n是否把相关关系写成因果关系？\n是否注明数据来源和模拟数据身份？"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#现场运行观察图形对象怎样逐步形成",
+    "href": "bigdata/visualization/visualization.html#现场运行观察图形对象怎样逐步形成",
+    "title": "数据描述与可视化",
+    "section": "11.5 现场运行：观察图形对象怎样逐步形成",
+    "text": "11.5 现场运行：观察图形对象怎样逐步形成\n不要一次性复制整段最终代码。现场演示时先生成绘图数据，再建立基础图，最后逐层添加标签和主题。每一步都运行并查看对象。\n\n# 第一步：生成专门用于绘图的汇总数据。\nlive_plot_data &lt;- hotline |&gt;\n\n  # 统计每种事项类型的案件数。\n  count(issue_type, name = \"n\") |&gt;\n\n  # 按案件数从高到低排列，便于检查结果。\n  arrange(desc(n))\n\n# 在画图之前先查看数据，确认一行代表一种事项类型。\nlive_plot_data\n\n# A tibble: 4 × 2\n  issue_type     n\n  &lt;chr&gt;      &lt;int&gt;\n1 市容环境     160\n2 交通出行     132\n3 公共服务     117\n4 住房建设      71\n\n\n\n# 第二步：只建立数据映射和条形图。\nbase_plot &lt;- ggplot(\n  live_plot_data,\n  aes(\n    x = n,\n    y = reorder(issue_type, n)\n  )\n) +\n  geom_col(fill = \"#2C7FB8\")\n\n# 在控制台直接输入对象名，R才会把图形显示出来。\nbase_plot\n\n\n\n\n\n\n\n\n\n# 第三步：在基础图对象上增加标签和刻度。\nfinal_plot &lt;- base_plot +\n  geom_text(\n    aes(label = n),\n    hjust = -0.2\n  ) +\n  scale_x_continuous(\n    expand = expansion(mult = c(0, .10))\n  ) +\n  labs(\n    title = \"市容环境类诉求数量最多\",\n    subtitle = \"按模拟样本中的案件数量排序\",\n    x = \"案件数\",\n    y = NULL,\n    caption = \"数据：模拟12345政务热线数据\"\n  )\n\nfinal_plot\n\n\n\n\n\n\n\n\n最后用简单规则检查绘图对象和绘图数据：\n\nstopifnot(\n  # final_plot 应当是一个 ggplot 图形对象。\n  inherits(final_plot, \"ggplot\"),\n\n  # 汇总后的案件数之和应等于原始热线表的行数。\n  sum(live_plot_data$n) == nrow(hotline),\n\n  # 正式图形应当具有标题和坐标轴标签。\n  !is.null(final_plot$labels$title),\n  !is.null(final_plot$labels$x)\n)\n\n\"绘图数据和图形对象检查通过。\"\n\n[1] \"绘图数据和图形对象检查通过。\"\n\n\n\n\n\n\n\n\n复制代码后运行不了时先检查\n\n\n\n确认前面的数据对象是否已经生成、变量名是否一致、所需软件包是否加载，以及代码是否按从上到下的顺序执行。可以运行 names(hotline)、glimpse(hotline) 和 rlang::last_trace() 帮助定位问题。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#练习一渐隐式代码补全25分钟",
+    "href": "bigdata/visualization/visualization.html#练习一渐隐式代码补全25分钟",
+    "title": "数据描述与可视化",
+    "section": "12.1 练习一：渐隐式代码补全（25分钟）",
+    "text": "12.1 练习一：渐隐式代码补全（25分钟）\n任务：绘制各渠道的满意度缺失率，并按缺失率排序。\n\nchannel_missing &lt;- hotline |&gt;\n  # TODO 1：按渠道分组\n  __________(channel) |&gt;\n  # TODO 2：计算案件数和满意度缺失率\n  __________(\n    n = __________,\n    missing_rate = mean(is.na(__________)),\n    .groups = \"drop\"\n  )\n\nggplot(\n  channel_missing,\n  aes(\n    x = __________,\n    y = reorder(__________, __________)\n  )\n) +\n  geom_col(fill = \"#2C7FB8\") +\n  scale_x_continuous(labels = label_percent()) +\n  labs(\n    title = \"________________\",\n    x = \"________________\",\n    y = NULL\n  )\n\n\n\n完成后查看参考答案\n\n\nchannel_missing &lt;- hotline |&gt;\n  group_by(channel) |&gt;\n  summarise(\n    n = n(),\n    missing_rate = mean(is.na(satisfaction_score)),\n    .groups = \"drop\"\n  )\n\nggplot(\n  channel_missing,\n  aes(\n    x = missing_rate,\n    y = reorder(channel, missing_rate)\n  )\n) +\n  geom_col(fill = \"#2C7FB8\") +\n  geom_text(\n    aes(label = percent(missing_rate, accuracy = 1)),\n    hjust = -0.15\n  ) +\n  scale_x_continuous(\n    labels = label_percent(),\n    expand = expansion(mult = c(0, .18))\n  ) +\n  labs(\n    title = \"网站渠道的满意度缺失率较高\",\n    subtitle = \"缺失可能与评价入口和案件状态有关\",\n    x = \"满意度缺失率\",\n    y = NULL\n  )"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#即时检查10分钟",
+    "href": "bigdata/visualization/visualization.html#即时检查10分钟",
+    "title": "数据描述与可视化",
+    "section": "12.2 即时检查（10分钟）",
+    "text": "12.2 即时检查（10分钟）\n\nstopifnot(\n  all(c(\"channel\", \"n\", \"missing_rate\") %in% names(channel_missing)),\n  sum(channel_missing$n) == nrow(hotline),\n  all(between(channel_missing$missing_rate, 0, 1))\n)\n\n然后用两句话解释：\n\n主要发现：……\n解释限制：……"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#练习二两人结对修正误导图25分钟",
+    "href": "bigdata/visualization/visualization.html#练习二两人结对修正误导图25分钟",
+    "title": "数据描述与可视化",
+    "section": "12.3 练习二：两人结对修正误导图（25分钟）",
+    "text": "12.3 练习二：两人结对修正误导图（25分钟）\n角色A负责指出问题，角色B负责修改代码；每解决一个问题交换角色。\n\nwrong_plot &lt;- hotline |&gt;\n  count(district) |&gt;\n  ggplot(aes(x = district, y = n, fill = district)) +\n  geom_col() +\n  coord_cartesian(ylim = c(50, 100)) +\n  labs(\n    title = \"翔安区热线治理表现最差\",\n    x = \"区县\",\n    y = \"热线治理水平\"\n  )\n\n至少修正以下问题：\n\n标题超出证据范围；\n没有考虑人口分母；\n纵轴被截断；\n颜色没有增加信息；\n纵轴标签与实际指标不一致；\n缺少来源和模拟数据说明。\n\n\n\n一种可能的改进\n\n\nggplot(\n  district_summary,\n  aes(\n    x = cases_per_10000,\n    y = reorder(district, cases_per_10000)\n  )\n) +\n  geom_col(fill = \"#2C7FB8\", width = .7) +\n  scale_x_continuous(limits = c(0, NA)) +\n  labs(\n    title = \"模拟样本中各区县每万人案件量\",\n    subtitle = \"该指标反映热线使用记录，不等同于治理绩效\",\n    x = \"每万人案件数\",\n    y = NULL,\n    caption = \"数据：模拟热线数据与模拟人口数据\"\n  )"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#练习三独立完成三图一表30分钟",
+    "href": "bigdata/visualization/visualization.html#练习三独立完成三图一表30分钟",
+    "title": "数据描述与可视化",
+    "section": "12.4 练习三：独立完成“三图一表”（30分钟）",
+    "text": "12.4 练习三：独立完成“三图一表”（30分钟）\n从下列任务中完成三张图：\n\n诉求结构：哪类事项最多？\n地区比较：总量与标准化指标有何不同？\n分布比较：哪类事项回应较慢？\n时间趋势：政策节点前后发生了什么变化？\n数据质量：哪些渠道满意度缺失较多？\n\n同时填写图形解释表：\n\n\n\n图形\n回答的问题\n主要发现\n不能得出的结论\n下一步需要的数据\n\n\n\n\n图1\n\n\n\n\n\n\n图2\n\n\n\n\n\n\n图3\n\n\n\n\n\n\n\n\n12.4.1 同伴检查标准\n每张图按0—2分评价：\n\n问题与图形匹配；\n分母和分析单位正确；\n标签、单位和来源完整；\n结论没有超过证据范围；\n代码能够从清理数据重新生成图形。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#保存可复现图形",
+    "href": "bigdata/visualization/visualization.html#保存可复现图形",
+    "title": "数据描述与可视化",
+    "section": "13.1 保存可复现图形",
+    "text": "13.1 保存可复现图形\n\nfinal_plot &lt;- ggplot(\n  district_summary,\n  aes(x = cases_per_10000,\n      y = reorder(district, cases_per_10000))\n) +\n  geom_point(size = 3, color = \"#D95F0E\") +\n  labs(\n    title = \"各区县每万人热线案件量\",\n    x = \"每万人案件数\",\n    y = NULL,\n    caption = \"数据：模拟热线与人口数据\"\n  )\n\ndir.create(\"figures\", showWarnings = FALSE)\n\nggsave(\n  \"figures/district_hotline_rate.png\",\n  plot = final_plot,\n  width = 8,\n  height = 5,\n  dpi = 300,\n  bg = \"white\"\n)\n\n不要在Word或PowerPoint中反复截图。保留生成图形的代码，修改数据后即可重新输出。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#课程项目可视化卡",
+    "href": "bigdata/visualization/visualization.html#课程项目可视化卡",
+    "title": "数据描述与可视化",
+    "section": "13.2 课程项目可视化卡",
+    "text": "13.2 课程项目可视化卡\n下课前填写：\n\n\n\n项目\n你的回答\n\n\n\n\n研究问题\n\n\n\n分析单位\n\n\n\n核心结果变量\n\n\n\n比较对象或时间维度\n\n\n\n合理的分母\n\n\n\n最适合的三张图\n\n\n\n可能的缺失或选择偏差\n\n\n\n一项不能从图中得出的结论\n\n\n\n\n这张卡和课堂完成的三张图可以直接进入课程项目初稿，避免课后重新开始。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#退出卡",
+    "href": "bigdata/visualization/visualization.html#退出卡",
+    "title": "数据描述与可视化",
+    "section": "13.3 退出卡",
+    "text": "13.3 退出卡\n独立提交：\n\n今天最有用的一条选图原则是什么？\n你修改了一张图的哪个部分？为什么？\n写出一个“相关不等于因果”的具体例子。\n下节课开始时希望再次演示哪一步？"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#核密度图",
+    "href": "bigdata/visualization/visualization.html#核密度图",
+    "title": "数据描述与可视化",
+    "section": "15.1 核密度图",
+    "text": "15.1 核密度图\n\nggplot(hotline, aes(x = response_hours, fill = issue_type)) +\n  geom_density(alpha = .28) +\n  labs(\n    title = \"各事项类型回应时间的核密度\",\n    x = \"首次回应时间（小时）\",\n    y = \"密度\",\n    fill = \"事项类型\"\n  )\n\n\n\n\n\n\n\n\n密度图适合观察形状，但不直接显示样本量，并且结果受带宽影响。"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#小提琴图与箱线图",
+    "href": "bigdata/visualization/visualization.html#小提琴图与箱线图",
+    "title": "数据描述与可视化",
+    "section": "15.2 小提琴图与箱线图",
+    "text": "15.2 小提琴图与箱线图\n\nggplot(hotline, aes(x = issue_type, y = response_hours)) +\n  geom_violin(fill = \"#D9EAF4\", color = \"grey50\") +\n  geom_boxplot(width = .12, outlier.shape = NA) +\n  coord_flip() +\n  labs(\n    title = \"不同事项回应时间分布\",\n    x = NULL,\n    y = \"首次回应时间（小时）\"\n  )"
+  },
+  {
+    "objectID": "bigdata/visualization/visualization.html#克利夫兰点图",
+    "href": "bigdata/visualization/visualization.html#克利夫兰点图",
+    "title": "数据描述与可视化",
+    "section": "15.3 克利夫兰点图",
+    "text": "15.3 克利夫兰点图\n\nggplot(\n  district_summary,\n  aes(x = cases_per_10000,\n      y = reorder(district, cases_per_10000))\n) +\n  geom_segment(\n    aes(x = 0, xend = cases_per_10000, yend = district),\n    color = \"grey80\"\n  ) +\n  geom_point(size = 3, color = \"#2C7FB8\") +\n  labs(\n    title = \"区县每万人案件量排序\",\n    x = \"每万人案件数\",\n    y = NULL\n  )"
   }
 ]

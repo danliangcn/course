@@ -1,1240 +1,1492 @@
 ---
 title: "数据描述与可视化"
+subtitle: "从公共管理问题到可信的数据图形"
 author: ""
-date: "`r Sys.Date()`"
-format: 
+date: today
+lang: zh
+format:
   html:
-    toc-depth: 5
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-copy: true
+    code-overflow: wrap
+execute:
+  echo: true
+  message: false
+  warning: false
+  cache: false
+editor: visual
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```{r setup}
+#| include: false
 
-library(showtext)
-library(sysfonts)
+# 防止之前启用的 showtext 继续干预新的绘图设备
+if (requireNamespace("showtext", quietly = TRUE)) {
+  showtext::showtext_auto(FALSE)
+}
 
-# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
-font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 8,
+  fig.height = 5,
+  dpi = 144,
 
-# 启用 showtext 自动渲染
-showtext_auto()
-```
-
-## 数据准备  
-
-可视化数据之前，需要准备数据，包括导入数据并进行清洗。  
-
-### 导入数据  
-R 几乎可以导入任何格式的数据，包括文本、Excel、SPSS和STATA等统计软件等。
-  
-#### 文本文件
-readr包提供了将分隔文本文件导入 R 数据框的函数选择。  
-
-```{r importbytext}
-library(readr)
-
-# 导入逗号分割的数据
-#cgss2017 <- read_csv("cgss2017.csv")
-
-# 导入制表符分割的数据
-#cgss2017 <- read_tsv("cgss2017.txt")
-```
-
-#### Excel文件  
-
-readxl包可以从 Excel 文件导入数据，支持 xls 和 xlsx 格式。  
-
-```{r importbyexcel}
-library(readxl)
-
-# 从excel工作表导入数据
-#cgss2017 <- read_excel("cgss2017.xlsx", sheet=1)
-```
-
-由于excel文件可以包含多个工作表，因此您可以使用sheet选项指定所需的工作表。默认值为sheet=1。
-  
-#### 专业统计软件数据文件  
-
-haven包提供了从各种统计包导入数据的功能。示例采用的[CGSS2015子数据集](./cgss2015subset.sav)    
-
-```{r importbysoftware}
-library(haven)
-
-# 导入stata数据
-#cgss2017 <- read_dta("cgss2017.dta")
-
-# 导入SPSS数据
-cgss <- read_sav("cgss2015subset.sav")
-
-# 导入SAS数据
-#cgss2017 <- read_sas("cgss2017.sas7bdat")
-```
-
-### 清理数据
-数据清理是数据分析中最耗时的任务。以下列出了最重要的步骤。虽然方法有很多，但使用dplyr和tidyr包是最快捷、最容易学习的方法之一。
-
-|包	    | 函数	   | 用途                     |
-|-------|----------|--------------------------|
-|dplyr	|select    |选择变量/列               |
-|dplyr	|filter    |选择观察值/行             |
-|dplyr	|mutate    |转换或重新编码变量        |
-|dplyr	|summarize |汇总数据                  |
-|dplyr	|group_by	 |识别需要进一步处理的子组  |
-|tidyr 	|gather	   |将宽格式数据集转换为长格式|
-|tidyr	|spread    |将长格式数据集转换为宽格式|
-  
-
-#### 选择变量  
-该select函数从数据集选取指定的变量或列。  
-
-```{r selectvariables, message=F}
-library(dplyr)
-
-# 从数据框cgss中选择变量id，sex和age构成新数据集
-newdata <- select(cgss, id, sex, age)
-
-# 选择变量id以及hp1与hp4之间的所有变量 
-newdata <- select(cgss, id, hp1:hp4)
-
-# 选择除了edu和lnincome以外的所有变量
-newdata <- select(cgss, -edu, -lnincome)
-```
-
-
-#### 选择观测
-该filter函数选择符合特定条件的观测（行）。可以使用&(AND) 和|(OR) 逻辑符号组合多个条件。
-
-```{r filterobservation}
-library(dplyr)
-
-# 为了方便展示，将带有值标签的变量转换为因子(使用值标签作为取值)   
-cgss <- cgss %>% mutate(across(where(is.labelled), as_factor))
-
-# 选择女性观测
-newdata <- filter(cgss, sex == "女")
-
-# 选择来自山东的女性
-newdata <- filter(cgss, sex == "女" & province == "山东省")
-
-# 选择来自东北三省的观测
-newdata <- filter(cgss, 
-                  province == "辽宁省" | 
-                  province == "吉林省" | 
-                  province == "黑龙江省")
-
-# 更简洁的代码
-newdata <- filter(cgss, 
-                  province %in% 
-                    c("辽宁省", "吉林省", "黑龙江省"))
-```
-
-   
-
-#### 变量创建与重新编码
-mutate函数可以创建新变量或转换现有变量。
-
-```{r recodevariables}
-library(dplyr)
-
-# 将身高从厘米转化成英寸，将体重从斤转化成磅 
-newdata <- mutate(cgss, 
-                  height = height * 0.394,
-                  weight   = (weight/2) * 2.205)
-
-# 如果收入高于8万元，则变量incomecat取值为"高"，否则取值为"低"
-
-newdata <- mutate(cgss, 
-                  incomecat = ifelse(income > 80000, 
-                                     "高", 
-                                     "低"))
-                  
-# 将教育程度不是初中、普通高中、中专的转化为其他类别
-newdata <- mutate(cgss, 
-                  edu = ifelse(edu %in% 
-                                     c("初中", "普通高中", "中专"),
-                                     edu,
-                                     "其他"))
-                  
-# 将身高大于200或小于75设定为缺失值
-newdata <- mutate(cgss, 
-                  height = ifelse(height < 75 | height > 200,
-                                     NA,
-                                     height))
-
-```
-
-
-#### 汇总数据
-summarize函数可用于描述性统计的数据汇总。可与by_group函数结合使用，用于按组计算统计值。na.rm=TRUE选项用于在计算平均值之前删除缺失值。  
-
-```{r summarizedata}
-library(dplyr)
-
-# 计算身高和体重的平均值
-newdata <- summarize(cgss, 
-                     mean_ht = mean(height, na.rm=TRUE), 
-                     mean_weight = mean(weight, na.rm=TRUE))
-newdata
-
-# 分性别组计算身高和体重的平均值
-newdata <- group_by(cgss, sex)
-newdata <- summarize(newdata, 
-                     mean_ht = mean(height, na.rm=TRUE), 
-                     mean_wt = mean(weight, na.rm=TRUE))
-newdata
-```
-
-
-#### 使用管道
-dplyr和tidyr软件包允许使用管道运算符以紧凑的格式编写代码%>%，运算符%>%将左边的结果传递给右边的函数的第一个参数。例如：  
-  
-```{r pipes}
-library(dplyr)
-
-newdata <- filter(cgss, 
-                  sex == "女")
-newdata <- group_by(newdata, province)
-newdata <- summarize(newdata, 
-                     mean_ht = mean(height, na.rm = TRUE))
-
-# 采用管道操作符更简洁，也更符合人类思维
-newdata <- cgss %>%
-  filter(sex == "女") %>%
-  group_by(province) %>%
-  summarize(mean_ht = mean(height, na.rm = TRUE))
-```
-
-    
-#### 日期数据的处理  
-在 R 中，日期值以字符的形式输入。例如，记录 3 个人出生日期的简单数据集。
-
-```{r datedata}
-df <- data.frame(
-  dob = c("11/10/1963", "Jan-23-91", "12:1:2001")
+  # 使用对中文字体支持更稳定的 ragg 设备
+  dev = "ragg_png"
 )
 
-str(df) 
-```
-
-   
-将字符变量转换为日期变量的方法有很多。最简单的方法之一是使用lubridate包中提供的函数。这些函数包括ymd、dmy和 ，mdy分别用于导入年-月-日、日-月-年和月-日-年的格式。  
-  
-```{r dateconvert, message=FALSE}
+library(tidyverse)
 library(lubridate)
-# 将dob变量值从字符转化为日期型数据
-df$dob <- mdy(df$dob)
-str(df)
-```
-    
-这些值在R的内部记录为自 1970 年 1 月 1日以来的天数，可以方便地执行日期运算，提取日期元素（月、日、年），重新格式化（例如，1963年10月11日）。
-日期变量对于制作时间相关图表非常重要。
-
-#### 重塑数据
-有些图表要求数据为宽格式，而有些图表则要求数据为长格式，示例如下。
-
-将宽数据集转换为长数据集   
-
-```{r widetolong}
-library(tidyr)
-wide_data <- data.frame(id = c("01", "02", "03"),
-                        name = c("张三", "李四", "王五"),
-                        sex = c("男", "男", "女"),
-                        height = c(70, 72, 62),
-                        weight = c(180, 195, 130))
-knitr::kable(wide_data, caption = "宽数据")
-long_data <- pivot_longer(wide_data,
-                          cols = c("height", "weight"),
-                          names_to = "variable", 
-                          values_to ="value")
-```
-
-将长数据转化为宽数据  
-
-```{r longtowide}
-library(tidyr)
-knitr::kable(long_data, caption = "长数据")
-
-wide_data <- pivot_wider(long_data,
-                         names_from = "variable",
-                         values_from = "value")
-```
-
-
-#### 缺失数据   
-真实数据很可能包含缺失值。处理缺失数据有三种基本方法：特征选择、列删除和插补。ggplot2包中的msleep数据集描述了哺乳动物的睡眠习惯，并且在多个变量上存在缺失值。
-
-- 特征选择
-在特征选择中，可以删除包含太多缺失值的变量（列）。
-
-```{r byfeature}
-data(msleep, package="ggplot2")
-
-# 每个变量中缺失值的比例
-pctmiss <- colSums(is.na(msleep))/nrow(msleep)
-round(pctmiss, 2)
-```
-
-61% 的 sleep_cycle 值缺失。可以决定将其删除。
-   
-- 按列删除  
-整行删除包含缺失值的观测。  
-
-```{r listwise}
-newdata <- select(msleep, genus, vore, conservation)
-newdata <- na.omit(newdata)
-```
-   
-- 补值  
-插补涉及用“合理”的猜测值（假设缺失值不存在时的值）来替换缺失值。有几种方法，详见VIM、mice、Amelia和missForest等包。这里将使用VIMkNN()包中的函数，用插补值替换缺失值。  
-   
-```{r impute, message=FALSE}
-# 用5个最近邻的值插补缺失值
-library(VIM)
-newdata <- kNN(msleep, k=5)
-```
-
-
-基本上，对于每个有缺失值的案例，都会选择k个最相似的、没有缺失值的案例。如果缺失值为数值型，则使用这k 个案例的中位数作为插补值。如果缺失值为类别值，则使用这k 个案例中出现频率最高的值。该过程会迭代所有观测和变量，直到结果收敛（趋于稳定）。   
-
-重要提示：缺失值可能会对研究结果造成偏差（有时甚至非常严重）。如果有大量缺失数据，在删除观测或填补缺失值之前，要慎重考虑其合理性。  
-
-
-## ggplot2 软件包简介  
-本部分简要概述了ggplot2包的工作原理，该软件包具有强大的绘图功能。  
-
-### 示例  
-ggplot2包中的函数可以分层分步构建图形，先从简单的图形开始，逐个添加其他元素，从而构建复杂的图形。
-
-在使用 ggplot2 制图时，只需使用ggplot和geom两个函数。其他函数是可选的，可以按需求添加。
-
-### ggplot
-ggplot函数指定要使用的数据框、变量到图形视觉属性的映射。这些映射位于aes函数内部。
-
-```{r ggplot}
-library(ggplot2)
-# 为了制图美观，剔除收入过高的人群
-cgss <- cgss %>% filter(income <=200000)
-
-# 确定数据集和映射
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, y = income))
-```
-
-
-图表是空的,因为只是指定映射，教育年限变量映射到x轴，收入映射到y轴，但还没有指定图上要显示的内容。  
-
-### 几何对象
-几何对象 (Geoms) 是可以放置在图上的几何形状（点、线、条形等），它们是以geom_开头的函数。先看看用geom_point函数添加点，创建散点图。  
-
-在 ggplot2 制图时，可以使用+号（容易忘记添加）将不同的函数链接在一起，一步一步构建复杂的图。
-
-```{r scatterplot}
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, y = income)) +
-  geom_point()
-```
-
-- 几何对象函数中可以指定参数（选项）控制其外观。下面的geom_point函数的选项包括color、size和alpha，分别控制点的颜色、大小和透明度。透明度的范围从 0（完全透明）到 1（完全不透明）。增加透明度有助于可视化重叠点密度。  
-
-```{r}
-
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, y = income)) +
-  geom_point(color = "cornflowerblue",
-             alpha = .7,
-             size = 2)
-```
-
-  
-- 添加一条最佳拟合线，可以使用geom_smooth函数来实现。选项控制线的类型（线性、二次、非参数）、线的粗细、线的颜色以及是否包含置信区间。下面添加线性回归（method = lm）线（其中lm代表线性回归模型），默认带置信区间。
-
-```{r}
-
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, y = income)) +
-  geom_point(color = "cornflowerblue",
-             alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm")
-```
-
-
-### 分组  
-除了将变量映射到x轴和y轴（只能有两个变量维度）之外，还可以将变量映射到几何对象的颜色、形状、大小、透明度和其他视觉特征，体现多个变量维度，实现将观测更多的状态叠加到单个图形中。  
-
-
-```{r}
-# 采用颜色体现性别差异
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, 
-                     y = income,
-                     color = sex)) +
-  geom_point(alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm", 
-              se = FALSE, 
-              linewidth = 1.5)
-```
-  
-color = sex选项位于aes函数中，将变量sex映射到图形的视觉特征color上。
-
-### 刻度  
-
-- 先解决中文支持的问题  
-
-```{r message=FALSE, eval=(Sys.info()["sysname"] == "Darwin")}
-library(showtext)
-library(sysfonts)
-
-# 加载黑体，最好找到字体的路径再加载 mac可用fc-list :lang=zh命令查看
-font_add("Heiti SC", "/System/Library/Fonts/STHeiti Medium.ttc")  
-
-# 启用 showtext 自动渲染
-showtext_auto()
-```
-
-刻度控制变量通过以scale_开头的刻度函数来修改x轴和y轴的缩放比例和单位，以及图例所使用的颜色等刻度视觉特征。  
-
-```{r}
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, 
-                     y = income,
-                     color = sex)) +
-  geom_point(alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm", 
-              se = FALSE, 
-              linewidth = 1.5) +
-  scale_x_continuous(breaks = seq(0, 20, 5)) +
-  scale_y_continuous(breaks = seq(0, 200000, 50000),
-                     label = scales::label_currency(prefix = "￥",suffix = "元")) +
-  scale_color_manual(values = c("indianred3", 
-                                "cornflowerblue"))
-```
-
-
-
-
-### 切片
-切片会为给定变量（或成对的变量）的每个级别生成一个图表，方便对比。切片以facet_开头的函数创建。下面采用region变量的取值进行城乡切片。
-
-```{r}
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, 
-                     y = income,
-                     color = sex)) +
-  geom_point(alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm", 
-              se = FALSE, 
-              linewidth = 1.5) +
-  scale_x_continuous(breaks = seq(0, 20, 5)) +
-  scale_y_continuous(breaks = seq(0, 200000, 50000),
-                     label = scales::label_currency(prefix = "￥")) +
-  scale_color_manual(values = c("indianred3", 
-                                "cornflowerblue")) +
-  facet_wrap(~region)
-```
-
-   
-### 标签  
-信息丰富的标签可以帮助图表的理解。labs功能为轴和图例提供自定义标签，还可以添加自定义标题、副标题和说明等。   
-
-```{r}
-
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, 
-                     y = income,
-                     color = sex)) +
-  geom_point(alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm", 
-              se = FALSE, 
-              linewidth = 1.5) +
-scale_x_continuous(breaks = seq(0, 20, 5)) +
-  scale_y_continuous(breaks = seq(0, 200000, 50000),
-                     label = scales::label_currency(prefix = "￥")) +
-  scale_color_manual(values = c("indianred3", 
-                                "cornflowerblue")) +
-  facet_wrap(~region) +
-  # 增加制图标题，坐标标签等
-  labs(title = "教育回报的影响因素",
-       subtitle = "CGSS2017",
-       caption = "来源：CGSS网站",
-       x = " 教育年限（年）",
-       y = "个人收入（元）",
-       color = "城乡差别") 
-```
-
-  
-### 主题  
-最后，可以使用以theme_开头的主题函数来微调图表的外观。主题函数控制图表的背景颜色、字体、网格线、图例位置以及其他与数据无关的功能。下面是简洁主题的运用。
-
-```{r}
-ggplot(data = cgss,
-       mapping = aes(x = eduyear, 
-                     y = income,
-                     color = sex)) +
-  geom_point(alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm", 
-              se = FALSE, 
-              linewidth = 1.5) +
-scale_x_continuous(breaks = seq(0, 20, 5)) +
-  scale_y_continuous(breaks = seq(0, 200000, 50000),
-                     label = scales::label_currency(prefix = "￥")) +
-  scale_color_manual(values = c("indianred3", 
-                                "cornflowerblue")) +
-  facet_wrap(~region) +
-  # 增加制图标题，坐标标签等
-  labs(title = "教育回报的影响因素",
-       subtitle = "CGSS2017",
-       caption = "来源：CGSS网站",
-       x = " 教育年限（年）",
-       y = "个人收入（元）",
-       color = "城乡差别") +
-  theme_minimal()
-```
-
-- 图表展现的结果：  
-  - 教育年限与个人收入之间存在正向线性关系。但是男性的教育回报更高。  
-  - 在较高教育水平上，城市男性的个人收入更高。  
-  - 性别与城乡之间可能存在交互作用。城市似乎缩小了性别之间的教育回报的差异。  
-  - 在较高教育水平上，两个性别的个人收入都存在一些非常高的异常值。  
-  - 这些仅仅是初步发现，样本量有限，并且未采用统计检验来评估差异是否由偶然变异造成。  
-
-### 放置data和mapping选项  
-使用 ggplot2 创建的绘图始终以ggplot函数开头。在上面的示例中，data和mapping选项位于此函数中。在这种情况下，它们适用于其geom_后的每个函数。但是，也可以将这些选项直接放在geom函数中。在此情况下，它们仅适用于该特定的几何对象。
-
-```{r}
-# 颜色映射放在ggplot函数中
-ggplot(cgss,
-       aes(x = eduyear, 
-           y = income,
-           color = sex)) +
-  geom_point(alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm",
-              se = FALSE, 
-              linewidth = 1.5)
-```
-  
-颜色映射适用于点和趋势线。
-
-```{r}
-# 颜色映射放在geom_point函数中
-ggplot(cgss,
-       aes(x = eduyear, 
-           y = income)) +
-  geom_point(aes(color = sex),
-             alpha = .5,
-             size = 2) +
-  geom_smooth(method = "lm",
-              se = FALSE, 
-              linewidth = 1.5)
-```
-
-颜色映射只适用于点的分类，不适用趋势线，所以只有一条趋势线。
-
-
-### 图作为对象
-ggplot2 图表可以保存为 R 对象（如同数据框），进一步操作，然后绘制或存取。
-
-```{r}
-# 创建散点图并保存为对象
-myplot <- ggplot(data = cgss,
-                  aes(x = eduyear, y = income)) +
-             geom_point()
-
-# 绘制
-myplot
-
-# 更改点的大小和颜色并绘制
-
-myplot <- myplot + geom_point(size = 2, color = "blue")
-myplot
-
-# 添加标题和趋势线后绘制，但不保存到对象
-myplot + geom_smooth(method = "lm") +
-  labs(title = "示例图")
-
-# 采用黑白主题绘制，不保存
-myplot + theme_bw()
-```
-
-
-## 单变量图  
-
-### 定类变量  
-
-单个定类变量分布通常用条形图来展示。  
-
-#### 条形图  
-
-```{r}
-ggplot(cgss, aes(x = health)) + 
-  geom_bar()
-```
-
-- 可以添加选项来修改条形填充和边框的颜色、绘图标签和标题等。  
-
-```{r}
-ggplot(cgss, aes(x=health)) + 
-  geom_bar(fill = "cornflowerblue", 
-           color="black") +
-  labs(x = "健康状况", 
-       y = "频次", 
-       title = "调查人群健康状况")
-```
-
-- 百分比条形图，代码aes(x=health)实际上是aes(x = health, y = after_stat(count))，其中count是一个特殊变量，表示每个类别中的频次。可以通过给y明确指定如何计算百分比。  
-
-```{r}
-ggplot(cgss, 
-       aes(x = health, y = after_stat(count/sum(count)))) + 
-  geom_bar() +
-  labs(x = "健康状况", 
-       y = "频率", 
-       title = "调查人群健康状况") +
-# 采用刻度函数添加百分比符号
-    scale_y_continuous(labels = scales::percent)
-```
-
-- 排序类别  
-某些情况下希望按频次对条形图进行排序，可以使用reorder函数按频次对类别进行排序。选项stat="identity"告诉绘图函数不要计数，因为它们是直接提供的。  
-
-```{r}
-# 计算健康状态每个类别的频次
-plotdata <- cgss %>%
- count(health)
-#使用新数据集来创建图表
-ggplot(plotdata, 
-       aes(x = reorder(health, n), y = n)) + 
-  geom_bar(stat="identity") +
-  labs(x = "健康状况", 
-       y = "频次", 
-       title  = "调查人群健康状况")
-```
-
-图表条形按升序排列。使用reorder(health, -n)可按降序排列。
-
-- 标签，带有数字标签的条形图  
-
-```{r}
-ggplot(plotdata, 
-       aes(x = health, y = n)) + 
-  geom_bar(stat="identity") +
-# 添加数值标签
-  geom_text(aes(label = n), vjust=-0.5) +
-  labs(x = "健康状况", 
-       y = "频次", 
-       title  = "调查人群健康状况")
-```
-
-此处geom_text添加标签，并用vjust控制垂直对齐。
-
-```{r}
-plotdata <- cgss %>%
-  count(health) %>%
-  mutate(pct = n / sum(n),
-         pctlabel = paste0(round(pct*100), "%"))
-
-ggplot(plotdata, 
-       aes(x = reorder(health, -pct), y = pct)) + 
-  geom_bar(stat="identity", fill="indianred3", color="black") +
-  geom_text(aes(label = pctlabel), vjust=-0.25) +
-  scale_y_continuous(labels = scales::percent) +
-  labs(x = "健康状况", 
-       y = "频率", 
-       title  = "调查人群健康状况")
-```
-
-   
-- 重叠标签的调整  
-如果类别过多或标签很长，类别标签可能会重叠，可以采用旋转坐标解决。
-
-```{r}
-ggplot(cgss, aes(x = province)) + 
-  geom_bar() +
-  labs(x = "省份",
-       y = "频次",
-       title = "调查人群分布") +
-  coord_flip()
-```
-
-此外，可以ggpieggpie包中的函数创建饼图；结合ggplot2，使用treemapify包创建树状图，使用waffle包创建华夫饼图。
-
-```{r}
-library(ggpie)
-ggpie(cgss, group_key = "health", count_type = "full", label_info = "ratio")
-
-library(treemapify)
-
-plotdata <- cgss %>%
-  count(edu)
-
-ggplot(plotdata, 
-       aes(fill = edu, area = n)) +
-  geom_treemap() + 
-  labs(title = "调查人群教育程度")
-
-library(waffle)
-ggplot(plotdata, aes(fill = edu, values=n)) +
-  geom_waffle(na.rm=TRUE)
-```
-
-
-
-### 尺度变量  
-单个尺度变量的分布通常用直方图、核密度图或点图来绘制。  
-
-#### 直方图  
-
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_histogram() + 
-  labs(title = "调查人群年龄分布",
-       x = "年龄")
-```
-
-
-- 可以使用两个选项修改直方图颜色，fill为条形填充颜色，color为条形周围的边框颜色。  
-
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_histogram(fill = "cornflowerblue", 
-                 color = "white") + 
-  labs(title = "调查人群年龄分布",
-       x = "年龄")
-```
-
-- 分组和组距  
-直方图最重要的选项是分组（bins），它控制将尺度变量划分成的多个分组（即图中的条形数）。默认值为 30，但尝试较小或较大的数字有助于更好地了解分布的形状。还可以指定组距binwidth间接控制分组个数。  
-
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_histogram(fill = "cornflowerblue", 
-                 color = "white",
-                 bins = 20) + 
-  labs(title = "调查人群年龄分布",
-       x = "年龄")
-```
-  
-与条形图一样，y轴可以表示计数或总数的百分比。  
-
-```{r}
 library(scales)
-ggplot(cgss, 
-       aes(x = age, y= after_stat(count/sum(count)))) +
-  geom_histogram(fill = "cornflowerblue", 
-                 color = "white", 
-                 binwidth = 5) + 
-  labs(title="调查人群年龄分布", 
-       y = "比例",
-       x = "年龄") +
-  scale_y_continuous(labels = percent)
-```
-   
-#### 核密度图
-从技术上讲，核密度估计是一种非参数方法，用于估计连续随机变量的概率密度函数。绘制一个平滑的直方图，其中曲线下的面积等于1。  
 
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_density() + 
-  labs(title = "调查人群年龄分布")
-```
-  
-- 填充颜色  
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_density(fill = "indianred3") + 
-  labs(title = "调查人群年龄分布")
-```
-   
-- 平滑参数  
-平滑度由带宽参数bw控制。值越大，平滑度越高，值越小，平滑度越低。  
+# 按顺序查找本机已经安装的中文字体
+font_candidates <- c(
+  "PingFang SC",          # macOS 首选
+  "Heiti SC",
+  "Songti SC",
+  "Noto Sans CJK SC",
+  "Source Han Sans SC",
+  "Microsoft YaHei",     # Windows
+  "SimHei"
+)
 
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_density(fill = "deepskyblue", 
-               bw = 1) + 
-  labs(title = "调查人群年龄分布",
-       subtitle = "bandwidth = 1")
-```
+available_fonts <- unique(systemfonts::system_fonts()$family)
 
-#### 点状图  
-直方图的一种替代方案是点图。同样，尺度变量被分成多个组，但每个观测值都用一个点来表示，而不是用汇总条形图。默认情况下，点的宽度与分组的宽度相对应，并且点是堆叠的，每个点代表一个观测值。当观测值数量较少（例如少于 150 个）时，这种方法效果比较好。  
+cn_family <- font_candidates[
+  font_candidates %in% available_fonts
+][1]
 
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_dotplot(binwidth = 1) + 
-  labs(title = "调查人群年龄分布",
-       y = "比例",
-       x = "年龄")
+# 不再静默退回 sans；找不到字体时直接提示
+if (is.na(cn_family)) {
+  stop(
+    "没有找到可用的中文字体。",
+    "请安装 Noto Sans CJK SC，或检查 systemfonts::system_fonts()。"
+  )
+}
+
+theme_set(
+  theme_minimal(
+    base_size = 13,
+    base_family = cn_family
+  ) +
+    theme(
+      plot.title.position = "plot",
+      panel.grid.minor = element_blank(),
+      legend.position = "bottom",
+
+      # 明确要求图中所有文字使用同一中文字体
+      text = element_text(family = cn_family)
+    )
+)
 ```
 
-fill和选项color可分别用于指定每个点的填充色和边框色。  
+## 本讲要解决的问题 {.unnumbered}
 
-```{r}
-ggplot(cgss, aes(x = age)) +
-  geom_dotplot(binwidth = 1,
-               fill = "gold", 
-               color="black") + 
-  labs(title = "调查人群年龄分布",
-       y = "比例",
-       x = "年龄")
+数据可视化不仅是“把数据画出来”，而是把公共管理问题、统计证据和政策沟通连接起来。本讲围绕一份**模拟的某市 12345 政务热线数据**，完成以下过程：
+
+> 明确问题 → 判断变量 → 选择图形 → 完成图形 → 检查误导 → 解释结果
+
+::: {.callout-important title="课堂原则：一图一问一结论"}
+每张图都必须回答一个明确问题，并附上一句主要发现和一句限制。图形漂亮不等于证据可靠。
+:::
+
+### 学习目标
+
+完成本讲后，你应该能够：
+
+1.  根据研究问题和变量类型选择合适的图形；
+2.  理解 `ggplot2` 的数据、映射、几何对象、刻度、标签和主题；
+3.  绘制并解释条形图、点图、直方图、箱线图、散点图和折线图；
+4.  使用分组、切片和误差线表达比较与不确定性；
+5.  识别坐标轴、分母、颜色、缺失值和因果表述造成的误导；
+6.  输出一份可直接用于课程项目的“三图一表”简报。
+
+# 进入课堂：激活已有知识
+
+## 3分钟检索练习
+
+不运行代码，独立回答：
+
+1.  `filter()`、`group_by()` 和 `summarise()` 分别改变数据的什么部分？
+2.  为什么比较各区县热线诉求时，案件总量和每万人案件量可能给出不同结论？
+3.  `NA` 会怎样影响 `mean()`？
+4.  一行数据在热线案件表中代表什么？
+
+<details>
+
+<summary>参考答案</summary>
+
+1.  `filter()` 选择行，`group_by()` 建立分组，`summarise()` 把多行压缩成汇总结果。
+2.  各区县人口规模不同，总量较高可能只是人口较多。
+3.  默认返回 `NA`，通常需要结合数据含义决定是否使用 `na.rm = TRUE`。
+4.  一行代表一个热线案件；分析单位改变时，图形和解释也必须改变。
+
+</details>
+
+# 教学数据与最低限度检查
+
+上一讲已经完成数据获取与清理，本讲不再重复导入格式、缺失值插补和复杂重塑。为了使本页面可以独立渲染，下面生成一份与上一讲相同情境的模拟教学数据。
+
+```{r create-data}
+#| code-fold: true
+#| code-summary: "展开：生成本讲使用的模拟热线数据"
+
+# 本代码块只用于生成可重复的教学数据，
+# 学生不需要在本讲掌握随机数据生成方法。
+set.seed(20250928)
+
+n_cases <- 480
+policy_date <- as.Date("2025-04-15")
+
+hotline <- tibble(
+  case_id = sprintf("C%04d", 1:n_cases),
+  submitted_date = as.Date("2025-03-01") +
+    sample(0:90, n_cases, replace = TRUE),
+  district = sample(
+    c("思明区", "湖里区", "集美区", "海沧区", "同安区", "翔安区"),
+    n_cases,
+    replace = TRUE,
+    prob = c(.20, .19, .18, .13, .16, .14)
+  ),
+  issue_type = sample(
+    c("市容环境", "交通出行", "公共服务", "住房建设"),
+    n_cases,
+    replace = TRUE,
+    prob = c(.34, .28, .23, .15)
+  ),
+  channel = sample(
+    c("电话", "微信", "网站"),
+    n_cases,
+    replace = TRUE,
+    prob = c(.46, .34, .20)
+  )
+) |>
+  mutate(
+    issue_delay = case_when(
+      issue_type == "住房建设" ~ 12,
+      issue_type == "公共服务" ~ 7,
+      issue_type == "交通出行" ~ 4,
+      TRUE ~ 0
+    ),
+    response_hours = rgamma(n_cases, shape = 2.4, scale = 6) + issue_delay,
+    response_hours = if_else(
+      submitted_date >= policy_date,
+      response_hours * 0.78,
+      response_hours
+    ),
+    response_hours = round(response_hours, 1),
+    status = if_else(
+      submitted_date > max(submitted_date) - 7 & runif(n_cases) < .35,
+      "处理中",
+      "已办结"
+    ),
+    satisfaction_score = round(
+      4.4 - response_hours / 28 + rnorm(n_cases, 0, .65)
+    ),
+    satisfaction_score = pmin(4, pmax(1, satisfaction_score)),
+    missing_probability = case_when(
+      status == "处理中" ~ .75,
+      channel == "网站" ~ .28,
+      TRUE ~ .12
+    ),
+    satisfaction_score = if_else(
+      runif(n_cases) < missing_probability,
+      NA_real_,
+      as.numeric(satisfaction_score)
+    )
+  ) |>
+  select(
+    case_id, submitted_date, district, issue_type,
+    response_hours, status, satisfaction_score, channel
+  )
+
+population <- tribble(
+  ~district, ~population,
+  "思明区", 1068000,
+  "湖里区", 1036000,
+  "集美区", 1091000,
+  "海沧区",  618000,
+  "同安区",  912000,
+  "翔安区",  642000
+)
 ```
 
-## 双变量图  
+## 绘图前只检查四件事
 
-### 两个类别变量  
-绘制两个类别变量之间的关系时，通常使用堆积条形图、分组条形图或分段条形图。  
+```{r check-data}
+# glimpse() 同时显示变量名、变量类型和部分取值，
+# 用于确认绘图变量是否已经采用正确的数据类型。
+glimpse(hotline)
 
-#### 堆积条形图  
+# stopifnot() 用程序化规则检查最低数据质量要求。
+# 只要任何一个条件为 FALSE，代码就会停止并提示错误。
+stopifnot(
 
-```{r}
-library(ggplot2)
+  # 每个案件编号必须唯一。
+  !anyDuplicated(hotline$case_id),
 
-ggplot(cgss, aes(x =region , fill = health)) + 
-  geom_bar(position = "stack")
+  # submitted_date 必须是能够进行日期计算的 Date 类型。
+  inherits(hotline$submitted_date, "Date"),
+
+  # 回应时间不能为负数。
+  all(hotline$response_hours >= 0),
+
+  # 满意度可以缺失；非缺失值必须处于1到4之间。
+  all(is.na(hotline$satisfaction_score) |
+        between(hotline$satisfaction_score, 1, 4))
+)
 ```
 
-#### 分类条形图  
-分类条形图将第二个类别变量的条形并排放置。  
+绘图前确认：分析单位、变量类型、缺失情况和异常范围。发现问题时应返回清理脚本，而不是在绘图代码里悄悄修补。
 
-```{r}
-ggplot(cgss, aes(x = region, fill = health)) + 
-  geom_bar(position = "dodge")
+::: {.callout-note title="关于模拟数据"}
+本页所有数值仅用于教学。政策节点前后的差异是模拟设置，不能被当作真实政策效果，也不能据此形成实际城市排名。
+:::
+
+## 用图形检查缺失情况
+
+上一讲已经用代码计算缺失数量和缺失比例。本讲进一步把审计结果画出来，以便快速发现缺失集中的变量。
+
+```{r missing-variable-data}
+missing_by_variable <- hotline |>
+  summarise(
+    across(
+      everything(),
+
+      # is.na(.x) 判断当前变量的每个值是否缺失。
+      # mean() 把 TRUE 当作1、FALSE当作0，
+      # 因此结果就是该变量的缺失比例。
+      ~ mean(is.na(.x))
+    )
+  ) |>
+
+  # summarise() 生成的是一行多列的宽表。
+  # pivot_longer() 将变量名和缺失率整理成两列，便于ggplot绘图。
+  pivot_longer(
+    everything(),
+    names_to = "variable",
+    values_to = "missing_rate"
+  ) |>
+
+  # 让缺失率最高的变量排在前面。
+  arrange(desc(missing_rate))
+
+missing_by_variable
 ```
 
+```{r missing-variable-plot}
+ggplot(
+  missing_by_variable,
 
-#### 分段条形图  
-分段条形图是一种堆叠条形图，其中每个条形代表 100%。  
+  # 横轴表示缺失比例；纵轴变量按照缺失率重新排序。
+  aes(
+    x = missing_rate,
+    y = reorder(variable, missing_rate)
+  )
+) +
 
-```{r}
-ggplot(cgss, aes(x = region, fill = health)) + 
-  geom_bar(position = "fill") +
-  labs(y = "比例")
+  # 数据已经计算好缺失率，因此使用 geom_col()，
+  # 而不是自动计数的 geom_bar()。
+  geom_col(fill = "#2C7FB8", width = .7) +
+
+  # 将0.20之类的小数显示为20%。
+  scale_x_continuous(
+    labels = label_percent(accuracy = 1),
+    limits = c(0, 1)
+  ) +
+  labs(
+    title = "满意度是模拟热线数据中主要的缺失变量",
+    subtitle = "缺失率高不等于数据错误，还需要解释缺失产生的制度过程",
+    x = "缺失率",
+    y = NULL,
+    caption = "数据：模拟12345政务热线数据"
+  )
 ```
 
-#### 改善颜色和标签
+::: {.callout-important title="缺失图形只能发现问题，不能自动决定处理方式"}
+满意度缺失可能集中在“处理中”的案件或某种评价渠道。下一步应按状态、渠道等变量分组检查，而不是看到缺失后立即删除或插补。
+:::
 
-- factor修改类别变量的地区变量顺序以及健康状态变量的顺序和标签
-- scale_y_continuous修改 y 轴刻度标记标签
-- labs提供标题并更改 x 轴和 y 轴的标签以及图例
-- scale_fill_brewer更改填充颜色方案
-- theme_minimal删除灰色背景并改变网格颜色
+## 长表和宽表：为什么可视化通常偏好长表
 
-```{r}
-ggplot(cgss, aes(x = region, fill = health)) + 
-  geom_bar(position = "fill") +
-  scale_y_continuous(breaks = seq(0, 1, .2), 
-                     label = scales::percent) +
+下面先生成“区县 × 事项类型”的长表。一行代表一个区县中的一种事项类型。
+
+```{r reshape-long-data}
+district_issue_long_demo <- hotline |>
+
+  # 按 district 和 issue_type 的组合统计案件数。
+  count(district, issue_type, name = "n")
+
+district_issue_long_demo
+```
+
+将事项类型展开为多列，就得到更适合人工阅读的宽表。
+
+```{r reshape-wide-data}
+district_issue_wide_demo <- district_issue_long_demo |>
+  pivot_wider(
+
+    # issue_type 中的每个类别将变成新的列名。
+    names_from = issue_type,
+
+    # 新单元格填写对应组合的案件数 n。
+    values_from = n,
+
+    # 某区县没有某类案件时，用0填充。
+    values_fill = 0
+  )
+
+district_issue_wide_demo
+```
+
+作图时通常需要再次转成长表，因为 `ggplot2` 更容易把一个变量映射为颜色、切片或图例。
+
+```{r reshape-back-to-long}
+district_issue_long_again <- district_issue_wide_demo |>
+  pivot_longer(
+
+    # district 是区县标识，不参与展开；
+    # 其余事项类型列全部转为行。
+    cols = -district,
+
+    # 原来的列名存入 issue_type。
+    names_to = "issue_type",
+
+    # 原来单元格中的数字存入 n。
+    values_to = "n"
+  )
+
+district_issue_long_again
+```
+
+可以用程序化检查确认转换没有损失案件数：
+
+```{r reshape-validation}
+stopifnot(
+  # 长表、宽表再转回的结果应具有相同总案件数。
+  sum(district_issue_long_demo$n) ==
+    sum(district_issue_long_again$n),
+
+  # 总案件数还应与原始案件表的行数相同。
+  sum(district_issue_long_again$n) == nrow(hotline)
+)
+
+"长宽表转换检查通过。"
+```
+
+::: {.callout-tip title="长宽表转换前先回答"}
+一行代表什么？哪些变量负责识别一条记录？哪些列实际上是同一个变量的不同类别？如果不能回答这些问题，就不应直接运行 `pivot_longer()` 或 `pivot_wider()`。
+:::
+
+# 先选择图形，再写代码
+
+## 问题—变量—图形
+
+| 想回答的问题                 | 主要变量       | 推荐图形         |
+|------------------------------|----------------|------------------|
+| 哪类案件最多？               | 一个类别变量   | 排序条形图       |
+| 哪个地区的标准化指标更高？   | 类别＋比率     | 点图或条形图     |
+| 回应时间如何分布？           | 一个数值变量   | 直方图或箱线图   |
+| 不同事项的回应时间是否不同？ | 类别＋数值     | 箱线图＋抖动点   |
+| 两个数值变量是否相关？       | 两个数值变量   | 散点图＋趋势线   |
+| 指标如何随时间变化？         | 日期＋数值     | 折线图           |
+| 各组构成是否不同？           | 两个类别变量   | 百分比堆叠条形图 |
+| 估计值有多精确？             | 分组估计＋区间 | 点图＋误差线     |
+
+## 12分钟图形诊断
+
+对下面四种做法作出判断，并说明理由：
+
+1.  用饼图比较12个部门的案件占比；
+2.  用案件总量评价人口不同的区县；
+3.  用折线连接没有时间顺序的四类事项；
+4.  用散点图中的拟合线证明回应速度提高了满意度。
+
+<details>
+
+<summary>诊断提示</summary>
+
+1.  类别过多时角度和面积难以比较，排序条形图通常更清楚；
+2.  应同时考虑人口、服务对象或其他合理分母；
+3.  折线暗示连续顺序，不适合无序类别；
+4.  拟合线只能显示相关模式，不能自动排除选择偏差和混杂因素。
+
+</details>
+
+# ggplot2：用图层表达问题
+
+`ggplot2` 图形可以理解为六个逐步增加的部分：
+
+``` text
+数据 + 映射 + 几何对象 + 刻度 + 标签 + 主题
+```
+
+## 从空画布到完整图形
+
+```{r ggplot-layers-1}
+ggplot(
+  data = hotline,
+  mapping = aes(x = response_hours)
+)
+```
+
+指定数据和映射后，还需要几何对象决定“怎样画”。
+
+```{r ggplot-layers-2}
+ggplot(hotline, aes(x = response_hours)) +
+  geom_histogram(binwidth = 5)
+```
+
+```{r ggplot-layers-3}
+ggplot(hotline, aes(x = response_hours)) +
+  geom_histogram(
+    binwidth = 5,
+    fill = "#2C7FB8",
+    color = "white"
+  ) +
+  scale_x_continuous(breaks = seq(0, 80, 10)) +
+  labs(
+    title = "热线案件首次回应时间分布",
+    subtitle = "多数案件在较短时间内回应，分布呈右偏",
+    x = "首次回应时间（小时）",
+    y = "案件数",
+    caption = "数据：模拟12345政务热线数据"
+  )
+```
+
+### 映射和固定属性不能混淆
+
+```{r mapping-vs-setting}
+# issue_type 在 aes() 内：颜色表达数据类别
+ggplot(hotline, aes(x = response_hours, color = issue_type)) +
+  geom_density(linewidth = 1) +
+  labs(x = "首次回应时间（小时）", y = "密度", color = "事项类型")
+
+# color 在 aes() 外：所有线使用同一种固定颜色
+ggplot(hotline, aes(x = response_hours)) +
+  geom_density(color = "#2C7FB8", linewidth = 1) +
+  labs(x = "首次回应时间（小时）", y = "密度")
+```
+
+# 比较类别：条形图与点图
+
+## 哪类诉求最多？
+
+先汇总，再使用 `geom_col()`：
+
+```{r issue-bar}
+issue_counts <- hotline |>
+  count(issue_type, sort = TRUE)
+
+ggplot(
+  issue_counts,
+  aes(x = n, y = reorder(issue_type, n))
+) +
+  geom_col(fill = "#2C7FB8", width = .7) +
+  geom_text(aes(label = n), hjust = -0.2) +
+  scale_x_continuous(expand = expansion(mult = c(0, .10))) +
+  labs(
+    title = "市容环境类诉求数量最多",
+    subtitle = "按模拟样本中的案件数量排序",
+    x = "案件数",
+    y = NULL,
+    caption = "数据：模拟12345政务热线数据"
+  )
+```
+
+`geom_bar()` 会对原始行自动计数；`geom_col()` 使用已经计算好的纵轴数值。正式图形尽量把结论写进标题，而不是只写“事项类型分布”。
+
+## 总量还是每万人案件量？
+
+```{r district-rate-data}
+district_summary <- hotline |>
+  count(district, name = "cases") |>
+  left_join(population, by = "district") |>
+  mutate(cases_per_10000 = cases / population * 10000)
+
+district_summary
+```
+
+```{r district-rate-plot}
+ggplot(
+  district_summary,
+  aes(x = cases_per_10000,
+      y = reorder(district, cases_per_10000))
+) +
+  geom_segment(
+    aes(x = 0, xend = cases_per_10000, yend = district),
+    color = "grey80"
+  ) +
+  geom_point(size = 3, color = "#D95F0E") +
+  labs(
+    title = "考虑人口规模后，区县排序可能发生变化",
+    subtitle = "模拟样本案件数除以常住人口",
+    x = "每万人案件数",
+    y = NULL,
+    caption = "数据：模拟热线数据与模拟人口数据"
+  )
+```
+
+::: {.callout-warning title="分母也是研究设计"}
+每万人案件量不一定就是最合适的绩效指标。还可以考虑服务对象数量、流动人口、热线使用率和事项暴露机会。分母必须由研究问题决定。
+:::
+
+# 查看分布：直方图与箱线图
+
+## 组距会改变我们看到的形状
+
+```{r histogram-bins}
+ggplot(hotline, aes(x = response_hours)) +
+  geom_histogram(
+    binwidth = 4,
+    boundary = 0,
+    fill = "#74A9CF",
+    color = "white"
+  ) +
+  labs(
+    title = "回应时间分布呈右偏",
+    subtitle = "组距为4小时；改变组距后应再次检查分布",
+    x = "首次回应时间（小时）",
+    y = "案件数"
+  )
+```
+
+运行前先预测：把 `binwidth` 改成2和12，图形会怎样变化？哪一种更容易隐藏局部结构？
+
+## 比较不同事项的回应时间
+
+```{r box-jitter}
+ggplot(
+  hotline,
+  aes(
+    x = reorder(issue_type, response_hours, FUN = median),
+    y = response_hours
+  )
+) +
+  geom_boxplot(
+    width = .55,
+    outlier.shape = NA,
+    fill = "#D9EAF4"
+  ) +
+  geom_jitter(
+    width = .13,
+    alpha = .28,
+    size = 1.4,
+    color = "#2C7FB8"
+  ) +
+  coord_flip() +
+  labs(
+    title = "不同事项类型的回应时间分布存在差异",
+    subtitle = "箱线图显示中位数和四分位距，散点保留原始案件",
+    x = NULL,
+    y = "首次回应时间（小时）"
+  )
+```
+
+箱线图比“各组均值条形图”保留更多分布信息。超出须线的点是值得检查的观测，不应自动称为错误并删除。
+
+## 用箱线图规则标记极端观测
+
+箱线图通常把低于 $Q_1-1.5\times IQR$ 或高于 $Q_3+1.5\times IQR$ 的观测标记为极端值。下面在每种事项类型内部计算这一规则。
+
+```{r flag-statistical-extremes}
+hotline_extreme <- hotline |>
+
+  # 不同事项的正常回应时间可能不同，
+  # 因此在每种 issue_type 内部分别计算四分位数。
+  group_by(issue_type) |>
+  mutate(
+
+    # 第一四分位数：25%的案件低于这个值。
+    q1 = quantile(response_hours, .25, na.rm = TRUE),
+
+    # 第三四分位数：75%的案件低于这个值。
+    q3 = quantile(response_hours, .75, na.rm = TRUE),
+
+    # 四分位距 IQR = Q3 - Q1。
+    iqr = q3 - q1,
+
+    # 计算箱线图上下界。
+    lower_limit = q1 - 1.5 * iqr,
+    upper_limit = q3 + 1.5 * iqr,
+
+    # 只要超出任意一侧界限，就标记为统计极端值。
+    statistical_extreme =
+      response_hours < lower_limit |
+      response_hours > upper_limit
+  ) |>
+
+  # 取消分组，避免后续操作继续按事项类型分别执行。
+  ungroup()
+```
+
+将普通观测和统计极端观测使用不同颜色显示。
+
+```{r plot-statistical-extremes}
+ggplot(
+  hotline_extreme,
+  aes(
+    x = reorder(issue_type, response_hours, FUN = median),
+    y = response_hours
+  )
+) +
+
+  # outlier.shape = NA 只是不让箱线图重复画出极端点，
+  # 并没有从数据中删除这些案件。
+  geom_boxplot(
+    width = .55,
+    outlier.shape = NA,
+    fill = "grey92"
+  ) +
+
+  # 使用颜色突出被 IQR 规则标记的记录。
+  geom_jitter(
+    aes(color = statistical_extreme),
+    width = .13,
+    alpha = .65,
+    size = 1.8
+  ) +
+  scale_color_manual(
+    values = c(`FALSE` = "grey65", `TRUE` = "#D95F0E"),
+    labels = c(`FALSE` = "常规观测", `TRUE` = "统计极端值")
+  ) +
+  coord_flip() +
+  labs(
+    title = "统计极端值需要进一步核查，而不是自动删除",
+    subtitle = "在每种事项类型内部使用1.5倍四分位距规则",
+    x = NULL,
+    y = "首次回应时间（小时）",
+    color = NULL
+  )
+```
+
+列出需要核查的具体案件：
+
+```{r list-statistical-extremes}
+extreme_cases <- hotline_extreme |>
+
+  # 只保留被标记的案件。
+  filter(statistical_extreme) |>
+
+  # 回查时保留案件编号、类别、状态和回应时间。
+  select(
+    case_id,
+    submitted_date,
+    district,
+    issue_type,
+    status,
+    response_hours,
+    upper_limit
+  ) |>
+
+  # 回应时间最长的记录排在前面。
+  arrange(desc(response_hours))
+
+extreme_cases
+```
+
+## 统计极端值不等于录入错误
+
+| 情形 | 判断依据 | 推荐处理 |
+|----|----|----|
+| 回应时间为负数 | 不符合时间逻辑 | 回查日期和单位，确认后修正或设为缺失 |
+| 回应时间很长，但对应复杂积案 | 业务上可能真实存在 | 保留，必要时单独解释 |
+| 数值比同组高，但原始记录完整 | 只是统计极端 | 保留并进行稳健性分析 |
+| 小时误填成分钟或相反 | 单位和其他记录不一致 | 回查后统一单位 |
+| 无法回查来源 | 无法判断真实性 | 标记为待核查，比较保留与排除后的结果 |
+
+可以把“违反业务规则”和“统计上极端”分成两个变量：
+
+```{r classify-extreme-records}
+hotline_review <- hotline_extreme |>
+  mutate(
+
+    # 业务规则判断：回应时间小于0在逻辑上不可能。
+    rule_invalid = response_hours < 0,
+
+    # 根据两类判断生成核查状态。
+    review_status = case_when(
+      rule_invalid ~ "违反业务规则",
+      statistical_extreme ~ "统计极端，待核查",
+      TRUE ~ "常规范围"
+    )
+  )
+
+hotline_review |>
+  count(review_status)
+```
+
+::: {.callout-warning title="可视化负责发现线索，清理规则负责决定处理"}
+箱线图只能告诉我们某条记录与多数记录差异较大。是否删除必须结合原始记录、变量单位、行政流程和研究目的判断，并在清理日志中记录决定。
+:::
+
+# 观察关系：散点图与趋势线
+
+满意度是1—4级有序评分。下面的图只用于探索，不应把评分间距直接理解为完全相等。
+
+```{r scatter-satisfaction}
+evaluated_cases <- hotline |>
+  filter(!is.na(satisfaction_score))
+
+ggplot(
+  evaluated_cases,
+  aes(x = response_hours, y = satisfaction_score)
+) +
+  geom_jitter(
+    height = .08,
+    width = 0,
+    alpha = .35,
+    color = "#2C7FB8"
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "#D95F0E",
+    linewidth = 1
+  ) +
+  scale_y_continuous(breaks = 1:4) +
+  labs(
+    title = "回应较慢的已评价案件往往满意度较低",
+    subtitle = "趋势仅表示相关关系，并且未评价案件未进入图中",
+    x = "首次回应时间（小时）",
+    y = "满意度评分（1—4）"
+  )
+```
+
+## 图形解释的三层边界
+
+1.  **描述**：样本中两个变量呈负相关；
+2.  **关联解释**：不同事项、渠道或案件难度可能同时影响回应和满意度；
+3.  **因果判断**：需要更强的研究设计，不能由一条趋势线直接推出。
+
+::: {.callout-note title="缺失值的选择偏差"}
+只绘制已评价案件，可能排除仍在处理、没有评价入口或不愿评价的市民。正式报告应同时给出满意度缺失率。
+:::
+
+# 观察变化：时间趋势图
+
+## 先把案件汇总到周
+
+```{r weekly-summary}
+weekly_summary <- hotline |>
+  mutate(week = floor_date(submitted_date, "week", week_start = 1)) |>
+  group_by(week) |>
+  summarise(
+    cases = n(),
+    median_response = median(response_hours, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+weekly_summary
+```
+
+## 案件数量趋势
+
+```{r weekly-cases-plot}
+ggplot(weekly_summary, aes(x = week, y = cases)) +
+  geom_line(color = "#2C7FB8", linewidth = 1) +
+  geom_point(color = "#2C7FB8", size = 2) +
+  scale_x_date(date_breaks = "2 weeks", date_labels = "%m-%d") +
+  labs(
+    title = "热线案件数量存在周际波动",
+    x = "周",
+    y = "案件数",
+    caption = "数据：模拟12345政务热线数据"
+  )
+```
+
+## 标注政策节点
+
+```{r policy-annotation}
+ggplot(weekly_summary, aes(x = week, y = median_response)) +
+  geom_line(color = "#2C7FB8", linewidth = 1) +
+  geom_point(color = "#2C7FB8", size = 2) +
+  geom_vline(
+    xintercept = as.numeric(policy_date),
+    linetype = "dashed",
+    color = "#D95F0E"
+  ) +
+  annotate(
+    "text",
+    x = policy_date + 3,
+    y = Inf,
+    label = "模拟流程调整",
+    hjust = 0,
+    vjust = 1.4,
+    color = "#D95F0E"
+  ) +
+  scale_x_date(date_breaks = "2 weeks", date_labels = "%m-%d") +
+  labs(
+    title = "流程调整后回应时间有所下降",
+    subtitle = "时间上的同步变化不等于政策因果效应",
+    x = "周",
+    y = "首次回应时间中位数（小时）"
+  )
+```
+
+政策节点图可以提出问题，但前后变化还可能来自季节、案件构成或其他同期措施。后续因果推断模块将讨论如何加强识别。
+
+# 比较构成：百分比条形图与切片
+
+## 各区县事项构成
+
+```{r composition-plot}
+district_issue <- hotline |>
+  count(district, issue_type)
+
+ggplot(
+  district_issue,
+  aes(x = district, y = n, fill = issue_type)
+) +
+  geom_col(position = "fill") +
+  scale_y_continuous(labels = label_percent()) +
   scale_fill_brewer(palette = "Set2") +
-  labs(y = "比例", 
-       fill="健康状态",
-       x = "地区",
-       title = "调查人群分地区健康状态") +
-  theme_minimal()
+  labs(
+    title = "不同区县的热线事项构成",
+    x = NULL,
+    y = "区县案件构成",
+    fill = "事项类型"
+  ) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
-  
-### 两个尺度变量  
-两个尺度变量之间的关系通常使用散点图和折线图来显示。
+百分比条形图适合比较构成，但隐藏了各区县总量。正式报告可以同时标注样本量，或配合总量图使用。
 
-#### 散点图
-```{r}
-ggplot(cgss, 
-       aes(x = age, y = income)) +
-  geom_point()
+## 用切片减少图形拥挤
+
+```{r facet-plot}
+ggplot(
+  hotline,
+  aes(x = response_hours, fill = issue_type)
+) +
+  geom_histogram(binwidth = 6, color = "white", show.legend = FALSE) +
+  facet_wrap(~issue_type, ncol = 2, scales = "free_y") +
+  labs(
+    title = "分事项类型观察回应时间分布",
+    x = "首次回应时间（小时）",
+    y = "案件数"
+  )
 ```
 
-- geom_point函数的选项  
-  - color- 点颜色  
-  - size- 点大小  
-  - shape- 点的形状  
-  - alpha- 点透明度。透明度范围从 0（透明）到 1（不透明）。  
-- 函数scale_x_continuous和分别控制x轴和yscale_y_continuous轴上的缩放。  
+切片比在一张图上叠加许多颜色更容易比较。但使用自由纵轴时，各面板高度不能直接比较。
 
-```{r}
-ggplot(cgss, 
-       aes(x = age, y = income)) +
-  geom_point(color="cornflowerblue", 
-             size = 2, 
-             alpha=.8) +
-  scale_y_continuous(label = scales::label_currency(prefix="￥",suffix = "元"), 
-                     limits = c(0, 200000)) +
-  scale_x_continuous(breaks = seq(0, 90, 10), 
-                     limits=c(15, 90)) + 
-  labs(x = "年龄",
-       y = "",
-       title = "年龄与收入的关系",
-       subtitle = "基于CGSS2015抽样数据")
-```
-  
-- 添加最佳拟合线，支持多种类型的拟合线，包括线性、多项式和非参数 (loess)。默认情况下，显示这些线的 95% 置信限度。  
-  
-```{r}
-ggplot(cgss, aes(x = age, y = income)) +
-  geom_point(color= "steelblue") +
-  geom_smooth(method = "lm")
+# 表达估计与不确定性
+
+## 均值和95%置信区间
+
+```{r uncertainty-data}
+issue_uncertainty <- hotline |>
+  group_by(issue_type) |>
+  summarise(
+    n = sum(!is.na(response_hours)),
+    mean_response = mean(response_hours, na.rm = TRUE),
+    se = sd(response_hours, na.rm = TRUE) / sqrt(n),
+    lower = mean_response - qt(.975, df = n - 1) * se,
+    upper = mean_response + qt(.975, df = n - 1) * se,
+    .groups = "drop"
+  )
+
+issue_uncertainty
 ```
 
-   
-
-很奇怪的，收入会随着年龄的增加而降低。然而，在30-40岁间似乎出现了一个峰值，说明35岁之前可能是上升的。直线无法反映这种非线性效应，曲线更适合。通常使用二次（一次弯曲）或三次（两次弯曲）线。很少需要使用高阶（>3）多项式。   
-
-```{r}
-ggplot(cgss, aes(x = age, y = income)) +
-  geom_point(color= "steelblue") +
-  geom_smooth(method = "lm", 
-              formula = y ~ poly(x, 2), 
-              color = "indianred3")
+```{r uncertainty-plot}
+ggplot(
+  issue_uncertainty,
+  aes(
+    x = mean_response,
+    y = reorder(issue_type, mean_response),
+    xmin = lower,
+    xmax = upper
+  )
+) +
+  geom_errorbarh(height = .15, color = "grey45") +
+  geom_point(size = 3, color = "#D95F0E") +
+  labs(
+    title = "住房建设类案件平均回应时间较长",
+    subtitle = "点为均值，线为95%置信区间",
+    x = "平均首次回应时间（小时）",
+    y = NULL
+  )
 ```
 
-   
-很可惜，二次曲线也没有证据反映这种变化，平滑的非参数拟合线也许可以更好地描述这种关系。默认的非参数拟合是Loess线，代表局部加权散点图平滑。  
+置信区间反映抽样不确定性，不包括测量误差、分类错误和选择偏差。区间重叠也不能替代正式的组间检验。
 
-```{r}
-ggplot(cgss, aes(x = age, y = income)) +
-  geom_point(color= "steelblue") +
-  geom_smooth(color = "tomato")
+# 避免误导性可视化
+
+## 错误一：只比较总量，不考虑分母
+
+```{r count-vs-rate}
+count_plot <- ggplot(
+  district_summary,
+  aes(x = cases, y = reorder(district, cases))
+) +
+  geom_col(fill = "#74A9CF") +
+  labs(title = "案件总量", x = "案件数", y = NULL)
+
+rate_plot <- ggplot(
+  district_summary,
+  aes(x = cases_per_10000,
+      y = reorder(district, cases_per_10000))
+) +
+  geom_col(fill = "#F16913") +
+  labs(title = "每万人案件量", x = "每万人案件数", y = NULL)
+
+count_plot
+rate_plot
 ```
 
-### 类别与尺度变量
-针对类别变量和尺度变量之间的关系，可以使用汇总统计数据的条形图、分组核密度图、并排箱线图、并排小提琴图、均值/标准差图、脊线图和克利夫兰图。  
+两张图回答不同问题。不能在总量图上使用“治理表现最好”之类的标题。
 
-#### 条形图（汇总统计数据）  
-可以使用条形图显示尺度变量在分类变量各个水平上的汇总统计数据（例如，均值或中位数）。
+## 错误二：截断条形图纵轴
 
-```{r}
-library(dplyr)
-plotdata <- cgss %>%
-  group_by(health) %>%
-  summarize(mean_income = mean(income))
+```{r truncated-axis}
+#| fig-show: hold
 
-ggplot(plotdata, aes(x = health, y = mean_income)) +
-  geom_bar(stat = "identity")
-```
-  
+bad_axis <- ggplot(issue_counts, aes(x = issue_type, y = n)) +
+  geom_col(fill = "#D95F0E") +
+  coord_cartesian(ylim = c(min(issue_counts$n) - 5, max(issue_counts$n) + 5)) +
+  labs(title = "误导示例：截断条形图纵轴", x = NULL, y = "案件数")
 
-- factor函数可以修改每个健康状态的标签  
-- scale_y_continuous函数可以改进 y 轴的标签  
-- geom_text函数可以为每个条形图添加平均值  
+good_axis <- ggplot(issue_counts, aes(x = issue_type, y = n)) +
+  geom_col(fill = "#2C7FB8") +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, .05))) +
+  labs(title = "改进：条形图从0开始", x = NULL, y = "案件数")
 
-```{r}
-library(scales)
-ggplot(plotdata, 
-       aes(x = health, y = mean_income)) +
-  geom_bar(stat = "identity", 
-           fill = "cornflowerblue") +
-  geom_text(aes(label = label_currency(accuracy = 1, prefix = "￥")(mean_income)), 
-            vjust = -0.25) +
-  scale_y_continuous(breaks = seq(0, 40000, 5000), 
-                     label = label_currency(prefix = "￥")) +
-  labs(title = "各健康水平的平均收入", 
-       subtitle = "",
-       x = "",
-       y = "")
+bad_axis
+good_axis
 ```
 
-条形图的局限性是不显示数据的分布，仅显示每个组的汇总统计数据。分组核密度图在一定程度上纠正了这一缺陷。  
+条形长度本身代表数值，因此通常必须从0开始。折线图强调变化趋势，是否从0开始则需要根据问题和标注谨慎判断。
 
-#### 分组核密度图  
+## 错误三：用 `limits` 悄悄删除数据
 
-```{r}
-ggplot(cgss, aes(x = income, fill = health)) +
-  geom_density(alpha = 0.4) +
-  labs(title = "各健康水平的收入分布")
-```
-  
-#### 箱线图  
+```{r limits-vs-zoom}
+#| eval: false
 
-- 箱线图显示分布的第 25 个百分位数、中位数和第75 个百分位数。须线（垂直线）可捕捉正态分布的约 99%，超出此范围的观测值则绘制为表示异常值的点。  
+# 这会删除范围外的观测，并重新计算统计图层
+scale_x_continuous(limits = c(0, 50))
 
-- 箱线图适用于比较数值变量的组（即分类变量的级别）。  
-
-```{r}
-ggplot(cgss, aes(x = health, y = income)) +
-  geom_boxplot() +
-  labs(title = "各健康水平的收入分布")
-```
-   
-
-- 缺口箱线图提供了一种近似方法来直观地显示组间是否存在差异。虽然这不是正式的检验方法，但如果两个箱线图的缺口不重叠，则有强有力的证据（置信度为 95%）表明两组的中位数存在差异。  
-
-```{r}
-ggplot(cgss, aes(x = health, y = income)) +
-  geom_boxplot(notch = TRUE, 
-               fill = "cornflowerblue", 
-               alpha = .7) +
-  labs(title = "各健康水平的收入分布")
-```
-  
-
-#### 小提琴图  
-小提琴图与核密度图类似，但是镜像并旋转了 90度。
-
-```{r}
-ggplot(cgss, aes(x = health, y = income)) +
-  geom_violin() +
-  labs(title = "各健康水平的收入分布")
+# 这只是缩放视窗，不删除观测
+coord_cartesian(xlim = c(0, 50))
 ```
 
-- 组合箱线图和小提琴图  
+## 可信图形检查表
 
-```{r}
-ggplot(cgss, aes(x = health, y = income)) +
-  geom_violin(fill = "cornflowerblue") +
-  geom_boxplot(width = .15, 
-               fill = "orange",
-               outlier.color = "orange",
-               outlier.size = 2) + 
-  labs(title = "各健康水平的收入分布")
+提交图形前逐项检查：
+
+- 问题、分析单位和分母是否明确？
+- 图形类型是否符合变量类型？
+- 是否诚实显示缺失值、异常值和样本量？
+- 坐标轴、单位、图例和时间范围是否完整？
+- 颜色是否有意义，并兼顾色觉差异？
+- 标题是否陈述了超过证据范围的结论？
+- 是否把相关关系写成因果关系？
+- 是否注明数据来源和模拟数据身份？
+
+## 现场运行：观察图形对象怎样逐步形成
+
+不要一次性复制整段最终代码。现场演示时先生成绘图数据，再建立基础图，最后逐层添加标签和主题。每一步都运行并查看对象。
+
+```{r live-coding-plot-data}
+# 第一步：生成专门用于绘图的汇总数据。
+live_plot_data <- hotline |>
+
+  # 统计每种事项类型的案件数。
+  count(issue_type, name = "n") |>
+
+  # 按案件数从高到低排列，便于检查结果。
+  arrange(desc(n))
+
+# 在画图之前先查看数据，确认一行代表一种事项类型。
+live_plot_data
 ```
-   
 
-有时候需要设置调试geom_boxplot的width参数，确保箱线图与小提琴图契合。
+```{r live-coding-base-plot}
+# 第二步：只建立数据映射和条形图。
+base_plot <- ggplot(
+  live_plot_data,
+  aes(
+    x = n,
+    y = reorder(issue_type, n)
+  )
+) +
+  geom_col(fill = "#2C7FB8")
 
-#### 山脊线图  
+# 在控制台直接输入对象名，R才会把图形显示出来。
+base_plot
+```
 
-脊线图（也称为 joyplot）显示多个组中尺度变量的分布。它们类似于带有垂直刻面的核密度图，但占用的空间较小。脊线图使用ggridges包创建。
+```{r live-coding-final-plot}
+# 第三步：在基础图对象上增加标签和刻度。
+final_plot <- base_plot +
+  geom_text(
+    aes(label = n),
+    hjust = -0.2
+  ) +
+  scale_x_continuous(
+    expand = expansion(mult = c(0, .10))
+  ) +
+  labs(
+    title = "市容环境类诉求数量最多",
+    subtitle = "按模拟样本中的案件数量排序",
+    x = "案件数",
+    y = NULL,
+    caption = "数据：模拟12345政务热线数据"
+  )
 
-```{r}
-library(ggplot2)
+final_plot
+```
+
+最后用简单规则检查绘图对象和绘图数据：
+
+```{r live-coding-validation}
+stopifnot(
+  # final_plot 应当是一个 ggplot 图形对象。
+  inherits(final_plot, "ggplot"),
+
+  # 汇总后的案件数之和应等于原始热线表的行数。
+  sum(live_plot_data$n) == nrow(hotline),
+
+  # 正式图形应当具有标题和坐标轴标签。
+  !is.null(final_plot$labels$title),
+  !is.null(final_plot$labels$x)
+)
+
+"绘图数据和图形对象检查通过。"
+```
+
+::: {.callout-tip title="复制代码后运行不了时先检查"}
+确认前面的数据对象是否已经生成、变量名是否一致、所需软件包是否加载，以及代码是否按从上到下的顺序执行。可以运行 `names(hotline)`、`glimpse(hotline)` 和 `rlang::last_trace()` 帮助定位问题。
+:::
+
+# 课堂练习：从模仿到独立完成
+
+## 练习一：渐隐式代码补全（25分钟）
+
+任务：绘制各渠道的满意度缺失率，并按缺失率排序。
+
+```{r faded-practice}
+#| eval: false
+
+channel_missing <- hotline |>
+  # TODO 1：按渠道分组
+  __________(channel) |>
+  # TODO 2：计算案件数和满意度缺失率
+  __________(
+    n = __________,
+    missing_rate = mean(is.na(__________)),
+    .groups = "drop"
+  )
+
+ggplot(
+  channel_missing,
+  aes(
+    x = __________,
+    y = reorder(__________, __________)
+  )
+) +
+  geom_col(fill = "#2C7FB8") +
+  scale_x_continuous(labels = label_percent()) +
+  labs(
+    title = "________________",
+    x = "________________",
+    y = NULL
+  )
+```
+
+<details>
+
+<summary>完成后查看参考答案</summary>
+
+```{r faded-solution}
+channel_missing <- hotline |>
+  group_by(channel) |>
+  summarise(
+    n = n(),
+    missing_rate = mean(is.na(satisfaction_score)),
+    .groups = "drop"
+  )
+
+ggplot(
+  channel_missing,
+  aes(
+    x = missing_rate,
+    y = reorder(channel, missing_rate)
+  )
+) +
+  geom_col(fill = "#2C7FB8") +
+  geom_text(
+    aes(label = percent(missing_rate, accuracy = 1)),
+    hjust = -0.15
+  ) +
+  scale_x_continuous(
+    labels = label_percent(),
+    expand = expansion(mult = c(0, .18))
+  ) +
+  labs(
+    title = "网站渠道的满意度缺失率较高",
+    subtitle = "缺失可能与评价入口和案件状态有关",
+    x = "满意度缺失率",
+    y = NULL
+  )
+```
+
+</details>
+
+## 即时检查（10分钟）
+
+```{r practice-check}
+#| eval: false
+
+stopifnot(
+  all(c("channel", "n", "missing_rate") %in% names(channel_missing)),
+  sum(channel_missing$n) == nrow(hotline),
+  all(between(channel_missing$missing_rate, 0, 1))
+)
+```
+
+然后用两句话解释：
+
+> 主要发现：……\
+> 解释限制：……
+
+## 练习二：两人结对修正误导图（25分钟）
+
+角色A负责指出问题，角色B负责修改代码；每解决一个问题交换角色。
+
+```{r misleading-practice}
+#| eval: false
+
+wrong_plot <- hotline |>
+  count(district) |>
+  ggplot(aes(x = district, y = n, fill = district)) +
+  geom_col() +
+  coord_cartesian(ylim = c(50, 100)) +
+  labs(
+    title = "翔安区热线治理表现最差",
+    x = "区县",
+    y = "热线治理水平"
+  )
+```
+
+至少修正以下问题：
+
+1.  标题超出证据范围；
+2.  没有考虑人口分母；
+3.  纵轴被截断；
+4.  颜色没有增加信息；
+5.  纵轴标签与实际指标不一致；
+6.  缺少来源和模拟数据说明。
+
+<details>
+
+<summary>一种可能的改进</summary>
+
+```{r misleading-solution}
+ggplot(
+  district_summary,
+  aes(
+    x = cases_per_10000,
+    y = reorder(district, cases_per_10000)
+  )
+) +
+  geom_col(fill = "#2C7FB8", width = .7) +
+  scale_x_continuous(limits = c(0, NA)) +
+  labs(
+    title = "模拟样本中各区县每万人案件量",
+    subtitle = "该指标反映热线使用记录，不等同于治理绩效",
+    x = "每万人案件数",
+    y = NULL,
+    caption = "数据：模拟热线数据与模拟人口数据"
+  )
+```
+
+</details>
+
+## 练习三：独立完成“三图一表”（30分钟）
+
+从下列任务中完成三张图：
+
+1.  诉求结构：哪类事项最多？
+2.  地区比较：总量与标准化指标有何不同？
+3.  分布比较：哪类事项回应较慢？
+4.  时间趋势：政策节点前后发生了什么变化？
+5.  数据质量：哪些渠道满意度缺失较多？
+
+同时填写图形解释表：
+
+| 图形 | 回答的问题 | 主要发现 | 不能得出的结论 | 下一步需要的数据 |
+|------|------------|----------|----------------|------------------|
+| 图1  |            |          |                |                  |
+| 图2  |            |          |                |                  |
+| 图3  |            |          |                |                  |
+
+### 同伴检查标准
+
+每张图按0—2分评价：
+
+- 问题与图形匹配；
+- 分母和分析单位正确；
+- 标签、单位和来源完整；
+- 结论没有超过证据范围；
+- 代码能够从清理数据重新生成图形。
+
+# 保存图形与课程项目衔接
+
+## 保存可复现图形
+
+```{r save-plot}
+#| eval: false
+
+final_plot <- ggplot(
+  district_summary,
+  aes(x = cases_per_10000,
+      y = reorder(district, cases_per_10000))
+) +
+  geom_point(size = 3, color = "#D95F0E") +
+  labs(
+    title = "各区县每万人热线案件量",
+    x = "每万人案件数",
+    y = NULL,
+    caption = "数据：模拟热线与人口数据"
+  )
+
+dir.create("figures", showWarnings = FALSE)
+
+ggsave(
+  "figures/district_hotline_rate.png",
+  plot = final_plot,
+  width = 8,
+  height = 5,
+  dpi = 300,
+  bg = "white"
+)
+```
+
+不要在Word或PowerPoint中反复截图。保留生成图形的代码，修改数据后即可重新输出。
+
+## 课程项目可视化卡
+
+下课前填写：
+
+| 项目                     | 你的回答 |
+|--------------------------|----------|
+| 研究问题                 |          |
+| 分析单位                 |          |
+| 核心结果变量             |          |
+| 比较对象或时间维度       |          |
+| 合理的分母               |          |
+| 最适合的三张图           |          |
+| 可能的缺失或选择偏差     |          |
+| 一项不能从图中得出的结论 |          |
+
+这张卡和课堂完成的三张图可以直接进入课程项目初稿，避免课后重新开始。
+
+## 退出卡
+
+独立提交：
+
+1.  今天最有用的一条选图原则是什么？
+2.  你修改了一张图的哪个部分？为什么？
+3.  写出一个“相关不等于因果”的具体例子。
+4.  下节课开始时希望再次演示哪一步？
+
+# 本讲小结
+
+可信的数据可视化需要同时做到：
+
+1.  **问题先于图形**：先确定想比较、描述还是解释什么；
+2.  **变量决定图形**：类别、数值和时间变量使用不同视觉表达；
+3.  **分母决定含义**：总量、比例和率回答不同问题；
+4.  **展示数据结构**：尽量保留分布、样本量和不确定性；
+5.  **避免视觉误导**：谨慎处理坐标轴、缩放、颜色和缺失值；
+6.  **限制因果语言**：趋势和相关图主要用于描述与提出问题；
+7.  **代码能够复现**：图形、数据和文字解释保持一致。
+
+------------------------------------------------------------------------
+
+# 附录A：更多分布图形
+
+以下图形可以根据研究需要选用，不作为课堂必做内容。
+
+## 核密度图
+
+```{r appendix-density}
+ggplot(hotline, aes(x = response_hours, fill = issue_type)) +
+  geom_density(alpha = .28) +
+  labs(
+    title = "各事项类型回应时间的核密度",
+    x = "首次回应时间（小时）",
+    y = "密度",
+    fill = "事项类型"
+  )
+```
+
+密度图适合观察形状，但不直接显示样本量，并且结果受带宽影响。
+
+## 小提琴图与箱线图
+
+```{r appendix-violin}
+ggplot(hotline, aes(x = issue_type, y = response_hours)) +
+  geom_violin(fill = "#D9EAF4", color = "grey50") +
+  geom_boxplot(width = .12, outlier.shape = NA) +
+  coord_flip() +
+  labs(
+    title = "不同事项回应时间分布",
+    x = NULL,
+    y = "首次回应时间（小时）"
+  )
+```
+
+## 克利夫兰点图
+
+```{r appendix-cleveland}
+ggplot(
+  district_summary,
+  aes(x = cases_per_10000,
+      y = reorder(district, cases_per_10000))
+) +
+  geom_segment(
+    aes(x = 0, xend = cases_per_10000, yend = district),
+    color = "grey80"
+  ) +
+  geom_point(size = 3, color = "#2C7FB8") +
+  labs(
+    title = "区县每万人案件量排序",
+    x = "每万人案件数",
+    y = NULL
+  )
+```
+
+# 附录B：需要额外软件包的图形
+
+山脊图、树状图和华夫饼图可以用于特定场景，但会增加软件包依赖，课堂主体不要求安装。
+
+```{r appendix-extra-packages}
+#| eval: false
+
+# 山脊图
 library(ggridges)
+ggplot(hotline, aes(x = response_hours, y = issue_type, fill = issue_type)) +
+  geom_density_ridges(show.legend = FALSE)
 
-ggplot(cgss, 
-       aes(x = income, y = health, fill = health)) +
-  geom_density_ridges() + 
-  theme_ridges() +
-  labs("各健康水平的收入分布") +
-  theme(legend.position = "none")
+# 树状图
+library(treemapify)
+ggplot(issue_counts, aes(area = n, fill = issue_type, label = issue_type)) +
+  geom_treemap() +
+  geom_treemap_text(color = "white")
+
+# 华夫饼图
+library(waffle)
+ggplot(issue_counts, aes(fill = issue_type, values = n)) +
+  geom_waffle(na.rm = TRUE)
 ```
 
+饼图通常不推荐用于类别较多或差异较小的比较，排序条形图更容易准确判断长度差异。
 
-#### 平均值/SEM 图  
+# 附录C：统一课程图形主题
 
-- 一种常用的比较数值变量组数据的方法是绘制带误差线的均值图。误差线可以表示标准差、均值的标准误差或置信区间。  
+```{r appendix-theme}
+theme_course <- function(base_size = 13, base_family = cn_family) {
+  theme_minimal(base_size = base_size, base_family = base_family) +
+    theme(
+      plot.title.position = "plot",
+      plot.title = element_text(face = "bold"),
+      panel.grid.minor = element_blank(),
+      legend.position = "bottom",
+      axis.title = element_text(color = "grey25"),
+      plot.caption = element_text(color = "grey45", hjust = 0)
+    )
+}
 
-```{r}
-library(dplyr)
-plotdata <- cgss %>%
-  group_by(health) %>%
-  summarize(n = n(),
-         mean = mean(income),
-         sd = sd(income),
-         se = sd / sqrt(n),
-         ci = qt(0.975, df = n - 1) * sd / sqrt(n))
-ggplot(plotdata, 
-       aes(x = health, 
-           y = mean, 
-           group = 1)) +
-  geom_point(size = 3) +
-  geom_line() +
-  geom_errorbar(aes(ymin = mean - se, 
-                    ymax = mean + se), 
-                width = .1)
+ggplot(issue_counts, aes(x = n, y = reorder(issue_type, n))) +
+  geom_col(fill = "#2C7FB8") +
+  labs(
+    title = "热线事项数量",
+    x = "案件数",
+    y = NULL,
+    caption = "数据：模拟12345政务热线数据"
+  ) +
+  theme_course()
 ```
 
+主题只调整非数据元素，不能补救错误的指标、分母或图形类型。
 
-- 比较不性别和健康水平的收入  
+# 附录D：出版与无障碍输出
 
-```{r}
-plotdata <- cgss %>%
-  group_by(health, sex) %>%
-  summarize(n = n(),
-            mean = mean(income),
-            sd = sd(income),
-            se = sd/sqrt(n))
+正式图形还应注意：
 
-# 按性别绘制均值和标准误
-ggplot(plotdata, aes(x = health,
-                     y = mean, 
-                     group=sex, 
-                     color=sex)) +
-  geom_point(size = 3) +
-  geom_line(linewidth = 1) +
-  geom_errorbar(aes(ymin  =mean - se, 
-                    ymax = mean+se), 
-                width = .1)
+- 避免仅依赖红色和绿色区分类别；
+- 保证文字、线条与背景有足够对比度；
+- 在网页中提供简短替代文本；
+- 为论文输出300 dpi以上的PNG或矢量PDF；
+- 固定输出尺寸，避免每次渲染比例不同；
+- 说明数据来源、时间范围和处理口径。
+
+Quarto代码块可以加入替代文本：
+
+``` text
+#| fig-alt: "排序条形图显示四类热线事项数量，市容环境类最高。"
 ```
 
+输出PDF图形时，如果中文字体兼容性不稳定，优先确认 `showtext` 已启用，避免绑定某台电脑的绝对字体路径。
 
+# 附录E：课堂代码模板
 
-- 误差线有重叠，可以稍微避开水平位置来解决。
+```{r appendix-template}
+#| eval: false
 
-```{r}
-pd <- position_dodge(0.2)
-ggplot(plotdata, 
-       aes(x = health, 
-           y = mean, 
-           group=sex, 
-           color=sex)) +
-  geom_point(position = pd, 
-             size = 3) +
-  geom_line(position = pd,
-            linewidth = 1) +
-  geom_errorbar(aes(ymin = mean - se, 
-                    ymax = mean + se), 
-                width = .1, 
-                position= pd)
-```
-
-
-- 美化图表达到出版质量  
-
-```{r}
-pd <- position_dodge(0.2)
-ggplot(plotdata, 
-       aes(x = health, y = mean, group=sex, color=sex)) +
-  geom_point(position=pd, 
-             size=3) +
-  geom_line(position=pd, 
-            linewidth = 1) +
-  geom_errorbar(aes(ymin = mean - se, 
-                    ymax = mean + se), 
-                width = .1, 
-                position=pd, 
-                size=1) +
-  scale_y_continuous(label = scales::label_currency(prefix = "￥")) +
-  scale_color_brewer(palette="Set1") +
-  theme_minimal() +
-  labs(title = "按性别和健康状况划分的平均收入",
-       subtitle = "(均值 +/- 标准误)",
-       x = "", 
-       y = "",
-       color = "性别")
-```
-
-
-#### 带状图    
-
-- 分组变量和数值变量之间的关系也可以用散点图来显示。    
-
-```{r}
-
-ggplot(cgss, aes(y = health, x = income)) +
-  geom_point() + 
-  labs(title = "各健康水平的收入分布")
-```
-  
-
-- 点的重叠会使解释变得困难。可以适当将点错开一点距离，更容易看出关系。操作是在每个 y 坐标上添加一个小的随机数，代码是将geom_point替换为geom_jitter。
-
-```{r}
-
-ggplot(cgss, aes(y = health, x = income)) +
-  geom_jitter() + 
-  labs(title = "各健康水平的收入分布")
-```
-
-- 使用颜色增加组间的对比  
-
-
-```{r}
+library(tidyverse)
+library(lubridate)
 library(scales)
-ggplot(cgss, 
-       aes(y = health, x = income, color = health)) +
-  geom_jitter(alpha = 0.7) + 
-  scale_x_continuous(label = label_currency(prefix = "￥")) +
-  labs(title = "各健康水平的收入分布", 
-       subtitle = "CGSS2015数据",
-       x = "",
-       y = "") +
-  theme_minimal() +
-  theme(legend.position = "none")
+
+# 1. 明确问题 ------------------------------------------------------------
+# 我想比较：
+# 分析单位：
+# 分母：
+
+# 2. 准备绘图数据 --------------------------------------------------------
+plot_data <- clean_data |>
+  group_by(...) |>
+  summarise(..., .groups = "drop")
+
+# 3. 绘图 ----------------------------------------------------------------
+final_plot <- ggplot(plot_data, aes(...)) +
+  geom_...() +
+  scale_...() +
+  labs(
+    title = "用结论表达标题",
+    subtitle = "交代样本、时间或口径",
+    x = "变量名称（单位）",
+    y = "变量名称（单位）",
+    caption = "数据来源：……"
+  ) +
+  theme_course()
+
+# 4. 检查 ----------------------------------------------------------------
+# 图形与问题是否匹配？
+# 分母和单位是否正确？
+# 是否展示缺失、样本量和不确定性？
+# 是否把相关写成因果？
+
+# 5. 保存 ----------------------------------------------------------------
+ggsave(
+  "figures/final_plot.png",
+  final_plot,
+  width = 8,
+  height = 5,
+  dpi = 300,
+  bg = "white"
+)
 ```
 
+# 延伸阅读 {.unnumbered}
 
-- 可以将箱线图叠加在带状图上  
-
-```{r}
-
-library(scales)
-ggplot(cgss, 
-       aes(x = health, 
-           y = income, color = health)) +
-  geom_boxplot(size=1,
-               outlier.shape = 1,
-               outlier.color = "black",
-               outlier.size  = 3) +
-  geom_jitter(alpha = 0.5, 
-              width=.2) + 
-  scale_y_continuous(label = label_currency(prefix = "￥")) +
-  labs(title = "各健康水平的收入分布", 
-       subtitle = "CGSS2015数据",
-       x = "",
-       y = "") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_flip()
-```
-
-
-- ggpol包提供geom_boxjitter函数，可以创建一个混合箱线图（箱线图组合散点图）  
-
-```{r}
-library(ggpol)
-library(scales)
-ggplot(cgss, 
-       aes(x = health, 
-           y = income, 
-           fill=health)) +
-  geom_boxjitter(color="black",
-                 jitter.color = "darkgrey",
-                 errorbar.draw = TRUE) +
-  scale_y_continuous(label = label_currency(prefix = "￥")) +
-  labs(title = "各健康水平的收入分布", 
-       subtitle = "CGSS2015数据",
-       x = "",
-       y = "") +
-  theme_minimal() +
-  theme(legend.position = "none")
-```
-
-
-#### 克利夫兰点图   
-
-- 如果比较数值变量的各个观测值，特别是比较大量数值汇总统计数据时，可以使用克利夫兰图    
-
-
-```{r}
-library(dplyr)
-plotdata <- cgss %>%
-  group_by(province) %>%
-  summarize(mean_income = mean(income, na.rm=T))
-
-ggplot(plotdata, 
-       aes(x= mean_income, y = province)) +
-  geom_point()
-
-# 对数据进行排序会更直观
-ggplot(plotdata, aes(x=mean_income, 
-                     y=reorder(province, mean_income))) +
-  geom_point()
-```
-
-- 美化得到棒棒糖图  
-
-```{r}
-# Fancy Cleveland plot
-ggplot(plotdata, aes(x=mean_income, 
-                     y=reorder(province, mean_income))) +
-  geom_point(color="blue", size = 2) +
-  geom_segment(aes(x = 40, 
-               xend = mean_income, 
-               y = reorder(province, mean_income), 
-               yend = reorder(province, mean_income)),
-               color = "lightgrey") +
-  labs (x = "平均收入（元）",
-        y = "",
-        title = "分地区的平均收入",
-        subtitle = "CGSS2015数据") +
-  theme_minimal() + 
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-```
-
-
-
+- Wickham, Çetinkaya-Rundel, and Grolemund. *R for Data Science (2e)*：Data Visualization。
+- Healy. *Data Visualization: A Practical Introduction*。
+- Wilke. *Fundamentals of Data Visualization*。
+- Tufte. *The Visual Display of Quantitative Information*。
