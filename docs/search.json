@@ -1248,9 +1248,9 @@
   {
     "objectID": "bigdata/machlearn/mlbasics.html",
     "href": "bigdata/machlearn/mlbasics.html",
-    "title": "机器学习基础",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
     "section": "",
-    "text": "机器学习（ML）在公共管理和公共政策领域的重要性日益凸显，在治理实践中也有越来越多的应用场景。以下是几个具体的例子：\n\n社会救助：利用机器学习预测某些低保或临时救助家庭在未来30天内再次申请救助的可能性，从而帮助民政部门优化资源配置，提前介入。\n医疗保障：通过历史医保数据预测患者在出院后30天内再次入院的风险，以便医保局和社区卫生服务中心提前安排随访和健康管理。\n环境治理：根据垃圾投放频率、社区特征等数据，预测垃圾分类政策的居民参与率，帮助城市管理部门有针对性地开展宣传和监管。\n基层治理：将居民按照人口学特征、公共服务需求和社区参与行为进行分群，辅助街道和社区制定更精准的公共服务供给方案。\n公共服务流失预警：预测老年人在养老机构或社区养老服务中的“流失率”，便于民政和养老机构提前采取关怀或服务改进措施，减少老年人脱离公共支持体系。\n\n本质上，这些任务都在于从数据中学习。针对不同问题，我们都可以用一组特征数据来训练算法，进而提取出有价值的治理建议。\n机器学习算法根据训练过程中所需的监督类型分为两类：\n\n监督学习：构建预测模型（如预测再申请救助、预测再入院风险）。\n无监督学习：构建描述模型（如对居民群体进行分群分析）。\n\n至于选择哪种类型的学习方法，则取决于你想要解决的治理任务。\n\n\n预测模型用于那些需要利用数据集中的其他变量（或特征）来预测某个给定输出（或目标）的任务。预测模型中的学习算法试图发现并建模目标变量（即被预测的变量）与其他特征（即预测变量）之间的关系。\n在公共管理和公共政策中的预测建模包括：\n\n根据家庭收入、就业状况等特征，预测某个家庭未来6周内申请最低生活保障的可能性；\n根据社区人口结构、基础设施条件等特征，预测该社区房价或公共住房需求；\n根据公务员个人背景、工作压力和岗位信息，预测其离职或流动的可能性；\n根据居民健康档案和症状数据，预测其在社区医疗机构中再次就诊或住院的风险；\n根据地方财政支出结构和政策实施条件，预测某项公共政策（如农村教育项目）的实施周期或效果达成时间。\n\n这些例子都有明确的学习任务：它们都试图利用特征变量（X）来预测一个结果指标（Y）。\n在机器学习领域经常交替使用以下术语：\n\nX：预测变量、自变量、属性、特征、预测因子\nY：目标变量、因变量、响应、结果指标\n\n上述预测建模的例子属于监督学习。监督的含义在于：目标值在训练过程中起到“监督”作用，指示学习算法需要学习的任务。具体来说，给定一组数据，学习算法会尝试优化一个函数（即算法步骤），以找到特征值的组合，使预测值尽可能接近真实的目标输出。\n在监督学习中，训练数据包含了目标值，因此这些目标值可以帮助“监督”训练过程，找到最优的算法参数。\n大多数监督学习问题可归为两类：回归问题或分类问题。\n\n\n当监督学习目标是预测一个数值型结果时，这类任务被称为回归问题（不要与线性回归建模混淆）。回归问题主要关注预测一个落在连续区间上的输出值。\n在公共管理的情境下，典型的回归问题包括：\n\n根据人口规模、财政投入和教师数量，预测某地区的教育资源人均供给水平；\n根据历史财政支出和经济发展水平，预测某城市的下一年度公共预算支出总额；\n根据居民收入、医保报销比例和就医习惯，预测一个地区的医疗费用平均水平；\n根据城市基础设施条件与人口密度，预测公共交通客流量。\n\n这意味着，在给定一组预测变量的情况下，响应值可能落在某个连续范围内。比如，预测某市的公共预算可能在 100亿元至300亿元 之间。\n\n\n\n当监督学习目标是预测一个类别型结果时，这类任务被称为分类问题。分类问题通常涉及预测一个二分类或多分类的响应变量，例如：\n\n预测某家庭是否会再次申请低保（是/否）；\n预测某居民是否会参加垃圾分类活动（参与/不参与）；\n预测某地区某项公共政策是否能够如期完成（完成/未完成）；\n对市民的政策满意度进行分类：\n\n二分类：满意 vs. 不满意；\n多分类：非常不满意、不满意、一般、满意、非常满意。\n\n\n在机器学习模型中，分类问题不仅仅是预测一个固定类别（如“是”或“否”），我们往往希望预测的是某个类别的概率（例如：居民参加垃圾分类的概率为 0.65，不参加的概率为 0.35）。通常情况下，概率最高的类别会被作为最终预测结果。因此，即便分类问题的本质是预测类别，但其输出仍然是一个数值（概率）。\n虽然确实存在一些只能用于回归问题或只能用于分类问题的机器学习算法，但大多数常用的监督学习算法都可以应用于两者。这些算法也正是近年来公共管理和公共政策分析中最常见的机器学习方法。\n\n\n\n\n与监督学习相对，无监督学习是指一套理解和描述数据的统计工具，其分析过程没有目标变量。本质上，无监督学习关注的是在数据集中识别群体。这些群体可能是基于行（即聚类）或列（即降维）而定义的，但两者的动机有所不同。\n聚类的目标是基于观测到的变量，将观测对象划分为相似的群体。例如，在公共管理中，可以将城市居民划分为不同的同质群体，以便政府制定差异化的公共服务供给方案。\n在降维中，更关注于减少数据集中的变量数量。例如，在社会治理数据中，不同指标可能高度相关（如收入水平、消费能力与住房条件），经典的回归模型在这种情况下会出现问题。一些降维技术可以将变量集合简化为一个更小的不相关变量集，这个新的变量集常常可以作为后续监督学习模型的输入（如主成分回归）。\n无监督学习常常作为 探索性数据分析（EDA）的一部分使用。然而，这种分析更具主观性，因为它不像监督学习那样有一个明确的目标（如预测一个结果）。同时，也很难评估无监督学习结果的质量。原因很简单：在监督学习中（比如线性回归），可以通过检验模型在未使用过的数据上的预测效果来验证结果。但在无监督学习中，并不知道“正确答案”为何，因此也就无法直接验证结果的优劣。\n尽管具有主观性，但无监督学习的重要性不容忽视，它常被用于政府治理和政策分析，例如：\n\n社会服务分群：将居民划分为不同群体（如低收入群体、独居老人群体、新就业人群），以便制定更精准的社会救助或养老服务政策。\n公共健康管理：识别具有相似健康状况和就诊行为的居民群体，从而为特定人群制定差异化的健康干预措施（如糖尿病高风险人群的专项随访）。\n基层治理分类：根据居民的参与行为和诉求模式，将社区居民分为积极参与群体、被动接受群体和边缘群体，以帮助街道和社区设计更有效的治理方式。\n政策指标降维：在涉及大量经济、社会、环境指标的可持续发展评价中，利用降维方法提取几个核心综合指标，为后续政策评估和建模提供更简化的数据输入。\n\n这些问题，以及更多类似的场景，都可以通过无监督学习来解决。此外，无监督学习模型的输出结果往往还能作为输入，供后续的监督学习模型使用。"
+    "text": "本讲的中心问题\n\n\n\n机器学习不是简单地“选择一个算法并运行代码”。它研究的是：怎样利用已有案例学习稳定的规律，并对尚未见过的案例作出尽可能可靠的预测。"
   },
   {
     "objectID": "bigdata/machlearn/mlbasics.html#监督学习",
@@ -3106,5 +3106,180 @@
     "title": "数据描述与可视化",
     "section": "15.3 克利夫兰点图",
     "text": "15.3 克利夫兰点图\n\nggplot(\n  district_summary,\n  aes(x = cases_per_10000,\n      y = reorder(district, cases_per_10000))\n) +\n  geom_segment(\n    aes(x = 0, xend = cases_per_10000, yend = district),\n    color = \"grey80\"\n  ) +\n  geom_point(size = 3, color = \"#2C7FB8\") +\n  labs(\n    title = \"区县每万人案件量排序\",\n    x = \"每万人案件数\",\n    y = NULL\n  )"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#机器学习的基本定义",
+    "href": "bigdata/machlearn/mlbasics.html#机器学习的基本定义",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.1 机器学习的基本定义",
+    "text": "2.1 机器学习的基本定义\n机器学习可以理解为：计算机利用已有数据改进某项任务表现的方法。一个机器学习问题通常包含三部分：\n\n任务（task）：希望机器完成什么，例如判断一条新工单是否可能逾期；\n经验（experience）：可供学习的历史案例，例如过去工单的特征和实际办结结果；\n表现（performance）：用什么标准判断学得好不好，例如能否识别实际逾期工单。\n\n对于监督学习，可以用下面的形式表示：\n\\[\nY = f(X) + \\varepsilon\n\\]\n其中，\\(X\\) 是一组输入特征，\\(Y\\) 是希望预测的目标，\\(f\\) 是两者之间的未知关系，\\(\\varepsilon\\) 是当前数据无法解释的随机性和测量误差。\n机器学习不是寻找现实中唯一正确的 \\(f\\)，而是利用有限数据估计一个 \\(\\hat f\\)，使它对新案例的预测尽可能准确。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#数据算法与模型不是同一个概念",
+    "href": "bigdata/machlearn/mlbasics.html#数据算法与模型不是同一个概念",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.2 数据、算法与模型不是同一个概念",
+    "text": "2.2 数据、算法与模型不是同一个概念\n\n\n\n\n\n\n\n\n概念\n含义\n本讲例子\n\n\n\n\n观测\n数据中的一个分析单位\n一条12345工单\n\n\n特征\n预测时可使用的输入变量\n诉求类型、积压量、值班人数\n\n\n目标\n希望预测的结果\n是否超过48小时办结\n\n\n算法\n从数据中估计规律的计算步骤\n估计逻辑回归系数的过程\n\n\n模型\n对输入与目标关系的表达形式\n逾期概率是多个特征的函数\n\n\n拟合模型\n用具体训练数据估计后的模型\n已经得到系数的逻辑回归\n\n\n参数\n从训练数据中学习得到的数值\n逻辑回归系数\n\n\n超参数\n训练前设定或通过重采样选择的配置\n树深、KNN的邻居数\n\n\n\n“逻辑回归”可以指一种模型形式；软件根据训练数据估计系数，是算法执行的过程；得到具体系数后，才形成可用于预测的拟合模型。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#公共管理与公共政策的应用地图",
+    "href": "bigdata/machlearn/mlbasics.html#公共管理与公共政策的应用地图",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.3 公共管理与公共政策的应用地图",
+    "text": "2.3 公共管理与公共政策的应用地图\n机器学习适合处理具有较多历史案例、可观察特征和明确任务的数据问题。它既可以服务政府内部管理，也可以服务政策研究。\n\n\n\n\n\n\n\n\n\n\n领域\n示例问题\n任务类型\n可能的数据\n特别需要警惕\n\n\n\n\n社会救助\n哪些家庭可能在近期再次申请救助？\n二分类\n申请记录、就业、家庭结构\n历史排除与群体污名\n\n\n公共卫生\n哪些患者存在再次入院风险？\n二分类\n就诊、诊断、用药、随访\n隐私、遗漏弱势群体\n\n\n环境治理\n明日PM2.5浓度是多少？\n回归\n监测、气象、排放、交通\n时间和空间依赖\n\n\n城市运行\n哪些12345工单可能逾期？\n二分类\n工单、积压量、人员、时段\n模型用于辅助还是处罚\n\n\n应急管理\n哪些区域更可能发生积涝？\n分类或回归\n降雨、地形、管网、历史灾情\n极端事件样本稀少\n\n\n财政监管\n哪些采购项目可能异常？\n异常识别或分类\n招标、合同、供应商网络\n异常不等于违法\n\n\n教育治理\n哪些学生存在失学或辍学风险？\n二分类\n出勤、成绩、家庭与资助\n标签可能带来歧视\n\n\n公共人力资源\n哪些岗位可能出现人员流失？\n二分类\n岗位、工作负担、流动记录\n人事决策公平性\n\n\n公共交通\n下一时段的客流量是多少？\n回归\n刷卡、线路、天气、节假日\n突发事件与分布变化\n\n\n政策文本\n一份文件属于哪个政策议题？\n多分类\n政策文件、条款和元数据\n标签标准与语义漂移\n\n\n政民互动\n大量留言包含哪些诉求类型？\n聚类或主题识别\n留言、回复与时间信息\n沉默人群不会出现在数据中\n\n\n空间治理\n哪些区域可能出现违法用地？\n分类\n遥感、地籍、审批、巡查\n空间误差与执法后果\n\n\n\n\n2.3.1 从应用场景中识别三类价值\n\n预测与预警：提前识别风险、需求或工作量；\n分类与自动辅助：给文本、图像或案件分配类别，帮助人工处理；\n模式发现：从大量对象中发现群组、异常或低维结构。\n\n机器学习也有明显边界：历史数据不可得、目标无法可靠测量、干预会改变行为、错误后果极高或需要回答因果问题时，不能仅靠提高算法复杂度解决。\n\n\n2.3.2 课堂检查1：把研究问题写成机器学习任务\n任选一个应用场景，依次写出：\n\n分析单位是什么？\n目标变量是什么？\n在什么时点作出预测？\n当时能够使用哪些特征？\n预测错误会造成什么后果？\n\n只有能够回答这五个问题，一个宽泛的公共管理议题才初步变成可执行的预测任务。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#监督学习与无监督学习",
+    "href": "bigdata/machlearn/mlbasics.html#监督学习与无监督学习",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.4 监督学习与无监督学习",
+    "text": "2.4 监督学习与无监督学习\n\n2.4.1 监督学习\n训练数据中包含目标变量，目标值为模型学习提供“监督”。监督学习主要包括：\n\n回归（regression）：预测连续数值，如响应时间、财政支出或污染浓度；\n分类（classification）：预测类别或类别概率，如是否逾期、是否重复投诉、风险等级。\n\n分类模型通常先给出概率，再根据阈值转成类别。例如逾期概率为0.68，若阈值为0.50，就归为“逾期风险”。\n\n\n2.4.2 无监督学习\n训练数据没有预先给定的目标变量，分析者希望发现数据内部结构：\n\n聚类：把特征相似的居民、地区或诉求分成若干群组；\n降维：把多个相关指标压缩成较少的综合维度；\n异常识别：寻找与多数案例差异明显的观测。\n\n无监督学习没有明确的“标准答案”，结果通常需要结合稳定性、可解释性和领域知识评价。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#回归与分类取决于目标",
+    "href": "bigdata/machlearn/mlbasics.html#回归与分类取决于目标",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.5 回归与分类取决于目标",
+    "text": "2.5 回归与分类取决于目标\n\n\n\n公共管理问题\n目标变量\n任务类型\n\n\n\n\n预测一条诉求需要多少小时办结\n连续数值\n回归\n\n\n预测一条诉求是否超过48小时\n两个类别\n二分类\n\n\n预测诉求的低、中、高风险等级\n三个类别\n多分类\n\n\n根据服务需求对社区进行分群\n没有目标变量\n无监督聚类\n\n\n\n“回归问题”是一类预测任务，不等同于“线性回归算法”。决策树、随机森林和神经网络也能解决回归问题。\n\n2.5.1 课堂检查2：判断任务类型\n\n预测下个月各区县的投诉数量；\n判断一条新诉求是否可能重复投诉；\n按公共服务需求把社区划分成不同类型；\n评估增加值班人员是否缩短响应时间。\n\n\n\n\n\n\n\n参考答案\n\n\n\n\n\n\n回归；2. 分类；3. 聚类；4. 因果问题。第四个问题关心“采取行动后结果是否改变”，不能仅凭预测模型回答。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#预测描述与因果推断",
+    "href": "bigdata/machlearn/mlbasics.html#预测描述与因果推断",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.6 预测、描述与因果推断",
+    "text": "2.6 预测、描述与因果推断\n\n\n\n目的\n典型提问\n判断标准\n\n\n\n\n描述\n哪类诉求的逾期率最高？\n是否准确概括已有数据\n\n\n预测\n哪些新工单可能逾期？\n对新数据的预测是否准确\n\n\n因果\n增加工作人员能否减少逾期？\n是否识别干预造成的变化\n\n\n\n一个变量对预测很有帮助，并不意味着改变它一定能改变结果。例如，“深夜来电”可能与逾期相关，但把来电时间改成白天并不一定消除真正原因。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#定义本讲的预测任务",
+    "href": "bigdata/machlearn/mlbasics.html#定义本讲的预测任务",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.7 定义本讲的预测任务",
+    "text": "2.7 定义本讲的预测任务\n假设某市12345热线希望在工单受理时，识别可能超过48小时仍未办结的诉求，以便进入人工复核或优先分派队列。\n\n\n\n要素\n本讲设定\n\n\n\n\n分析单位\n一条刚进入系统的12345工单\n\n\n预测时点\n工单登记完成、尚未办理时\n\n\n目标变量\n是否超过48小时办结：late_48h\n\n\n可用特征\n区县、诉求类型、渠道、紧急程度、积压量等\n\n\n模型输出\n逾期概率及风险类别\n\n\n后续行动\n人工复核、提醒或优先分派，而非自动处罚\n\n\n\n\n\n\n\n\n\n预测时点决定特征边界\n\n\n\n如果模型在“受理时”预测，就不能使用办结后才知道的信息，例如实际办结时长、最终满意度或是否退回。使用这些信息会造成数据泄漏。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#生成自带的模拟数据",
+    "href": "bigdata/machlearn/mlbasics.html#生成自带的模拟数据",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.8 生成自带的模拟数据",
+    "text": "2.8 生成自带的模拟数据\n下面的数据由代码生成，不需要下载外部文件，仅用于教学。\n\nset.seed(2026)\n# 固定随机种子后，教师和学生会得到同一份模拟数据。\nn &lt;- 1500\n\nhotline_raw &lt;- tibble(\n  # sprintf() 把编号补足为5位，例如 CASE-00001。\n  case_id = sprintf(\"CASE-%05d\", 1:n),\n  # 从半年内的每个小时随机抽取工单受理时间。\n  received_at = sample(\n    seq.POSIXt(\n      as.POSIXct(\"2025-01-01 00:00:00\"),\n      as.POSIXct(\"2025-06-30 23:00:00\"),\n      by = \"hour\"\n    ),\n    size = n,\n    replace = TRUE\n  ),\n  district = sample(\n    c(\"思明区\", \"湖里区\", \"集美区\", \"海沧区\", \"同安区\", \"翔安区\"),\n    n, replace = TRUE,\n    prob = c(0.22, 0.20, 0.18, 0.13, 0.14, 0.13)\n  ),\n  issue_type = sample(\n    c(\"市政设施\", \"环境卫生\", \"住房物业\", \"交通出行\", \"社会保障\"),\n    n, replace = TRUE,\n    prob = c(0.22, 0.20, 0.24, 0.19, 0.15)\n  ),\n  channel = sample(\n    c(\"电话\", \"网站\", \"微信\", \"政务App\"),\n    n, replace = TRUE,\n    prob = c(0.42, 0.18, 0.25, 0.15)\n  ),\n  urgent = sample(c(\"否\", \"是\"), n, replace = TRUE, prob = c(0.82, 0.18)),\n  repeat_case = sample(c(\"否\", \"是\"), n, replace = TRUE, prob = c(0.76, 0.24)),\n  # pmax(0, ...) 保证积压量不会出现负数。\n  backlog = pmax(0, round(rnorm(n, mean = 22, sd = 9))),\n  staff_on_duty = sample(4:12, n, replace = TRUE),\n  # 对数正态分布可以模拟“多数文本较短、少数文本很长”的情况。\n  text_length = pmax(20, round(rlnorm(n, log(115), 0.55)))\n) |&gt;\n  mutate(\n    # 从日期时间中提取在受理时已经知道的特征。\n    hour = lubridate::hour(received_at),\n    weekday = lubridate::wday(\n      received_at, label = TRUE, abbr = FALSE, week_start = 1\n    ),\n    holiday_or_weekend = if_else(\n      lubridate::wday(received_at, week_start = 1) &gt;= 6, \"是\", \"否\"\n    ),\n    # 隐藏规则只用于生成模拟结果，不会提供给模型。\n    risk_score =\n      -2.25 +\n      0.85 * (urgent == \"是\") +\n      0.70 * (repeat_case == \"是\") +\n      0.045 * backlog -\n      0.10 * staff_on_duty +\n      0.45 * (issue_type == \"住房物业\") +\n      0.30 * (issue_type == \"社会保障\") +\n      0.35 * (district == \"翔安区\") +\n      0.30 * (holiday_or_weekend == \"是\"),\n    late_probability = plogis(risk_score),\n    # 每条工单按各自概率随机生成“按时/逾期”结果。\n    late_48h = if_else(runif(n) &lt; late_probability, \"逾期\", \"按时\"),\n    # 办结后才产生，不能用于受理时预测。\n    actual_close_hours = if_else(\n      late_48h == \"逾期\", runif(n, 49, 120), runif(n, 2, 48)\n    )\n  ) |&gt;\n  select(-risk_score, -late_probability)\n\n# 模拟少量缺失记录。\nset.seed(2027)\nhotline_raw$backlog[sample(seq_len(n), 35)] &lt;- NA\nhotline_raw$channel[sample(seq_len(n), 22)] &lt;- NA\n\nhotline_raw\n\n\n  \n\n\n\n\n\n\n\n\n\n如何理解运行结果？\n\n\n\n输出是一张包含1,500条模拟工单的 tibble。每一行是一条工单，每一列是一项属性。页面只显示部分行和部分列，并不表示其他数据没有生成。case_id 是标识符，late_48h 是目标变量，actual_close_hours 是故意保留的泄漏变量。此时看到的只是原始建模数据，还没有划分训练集，也没有训练模型。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#建模前先理解数据",
+    "href": "bigdata/machlearn/mlbasics.html#建模前先理解数据",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "2.9 建模前先理解数据",
+    "text": "2.9 建模前先理解数据\n\n# dim() 返回“行数、列数”。\ndim(hotline_raw)\n#&gt; [1] 1500   15\n\n# glimpse() 纵向展示变量名、类型和部分取值，比直接打印宽表更便于审计。\nglimpse(hotline_raw)\n#&gt; Rows: 1,500\n#&gt; Columns: 15\n#&gt; $ case_id            &lt;chr&gt; \"CASE-00001\", \"CASE-00002\", \"CASE-00003\", \"CASE-000…\n#&gt; $ received_at        &lt;dttm&gt; 2025-06-04 08:00:00, 2025-02-11 08:00:00, 2025-04-…\n#&gt; $ district           &lt;chr&gt; \"集美区\", \"思明区\", \"集美区\", \"海沧区\", \"湖里区\", \"同安区\", \"同安区\", \"集…\n#&gt; $ issue_type         &lt;chr&gt; \"市政设施\", \"市政设施\", \"交通出行\", \"市政设施\", \"交通出行\", \"住房物业\", \"社会…\n#&gt; $ channel            &lt;chr&gt; \"电话\", \"电话\", \"电话\", \"网站\", \"网站\", \"微信\", \"微信\", \"电话\", \"电话…\n#&gt; $ urgent             &lt;chr&gt; \"是\", \"否\", \"否\", \"是\", \"是\", \"否\", \"否\", \"否\", \"否\", \"是\", \"…\n#&gt; $ repeat_case        &lt;chr&gt; \"是\", \"是\", \"是\", \"否\", \"是\", \"是\", \"是\", \"否\", \"否\", \"否\", \"…\n#&gt; $ backlog            &lt;dbl&gt; 32, 26, 16, 24, 28, 21, 23, 7, 14, 25, 26, 14, 22, …\n#&gt; $ staff_on_duty      &lt;int&gt; 10, 5, 11, 7, 5, 8, 7, 10, 8, 12, 9, 9, 4, 10, 11, …\n#&gt; $ text_length        &lt;dbl&gt; 86, 96, 148, 43, 73, 129, 204, 57, 128, 70, 129, 10…\n#&gt; $ hour               &lt;int&gt; 8, 8, 13, 4, 14, 19, 4, 17, 10, 6, 5, 13, 1, 5, 9, …\n#&gt; $ weekday            &lt;ord&gt; Wednesday, Tuesday, Tuesday, Sunday, Monday, Tuesda…\n#&gt; $ holiday_or_weekend &lt;chr&gt; \"否\", \"否\", \"否\", \"是\", \"否\", \"否\", \"否\", \"否\", \"是\", \"是\", \"…\n#&gt; $ late_48h           &lt;chr&gt; \"逾期\", \"按时\", \"按时\", \"按时\", \"按时\", \"按时\", \"逾期\", \"按时\", \"按时…\n#&gt; $ actual_close_hours &lt;dbl&gt; 60.840494, 33.013145, 33.451687, 20.752765, 11.7236…\n\n# 检查工单主键是否唯一。\nhotline_raw |&gt;\n  summarise(\n    rows = n(),\n    unique_ids = n_distinct(case_id),\n    duplicated_ids = n() - n_distinct(case_id)\n  )\n\n\n  \n\n\n\n# 批量统计每个变量的缺失数量。\nhotline_raw |&gt;\n  # across(everything(), ...) 对每一列执行同一缺失值统计函数。\n  summarise(across(everything(), ~ sum(is.na(.x)))) |&gt;\n  # 把“一列一个变量”的宽结果转换成长表，方便排序阅读。\n  pivot_longer(everything(), names_to = \"variable\", values_to = \"missing_n\") |&gt;\n  arrange(desc(missing_n))\n\n\n  \n\n\n\n# 查看目标类别的数量和比例。\nhotline_raw |&gt;\n  count(late_48h) |&gt;\n  mutate(proportion = n / sum(n))\n\n\n  \n\n\n\n\n\n\n\n\n\n如何阅读审计结果？\n\n\n\n\ndim() 应显示1,500行；列数代表当前数据包含多少字段。\nglimpse() 中 &lt;chr&gt;、&lt;dbl&gt;、&lt;dttm&gt; 分别表示字符、数值和日期时间类型。类型异常往往是清洗问题的信号。\nduplicated_ids 应为0；若大于0，说明一条工单可能出现多行，必须先判断是重复记录还是“一对多”的业务结构。\n缺失统计中，backlog 和 channel 会大于0，这是后面演示填补和未知类别处理的依据。\n目标比例用于判断类别是否平衡。若“逾期”明显少于“按时”，高准确率可能只是多数类造成的假象。\n\n\n\n\n2.9.1 课堂检查3：识别变量角色\n请指出目标变量、受理时可用特征、标识符和明显的泄漏变量。\n\n\n\n\n\n\n参考答案\n\n\n\n\n\n\n目标变量：late_48h；\n可用特征：区县、诉求类型、渠道、紧急程度、重复投诉、积压量、值班人数、文本长度及受理时已知的时间信息；\n标识符：case_id；\n泄漏变量：actual_close_hours，因为它在办结后产生并直接决定目标值。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#训练损失与经验风险",
+    "href": "bigdata/machlearn/mlbasics.html#训练损失与经验风险",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.1 训练、损失与经验风险",
+    "text": "3.1 训练、损失与经验风险\n模型训练是利用训练数据寻找参数，使预测与真实目标之间的差异尽量小。这种差异由损失函数衡量。\n对于回归，常见的平方误差是：\n\\[\nL(y, \\hat y)=(y-\\hat y)^2\n\\]\n训练过程可以概括为：\n\\[\n\\hat f=\\arg\\min_f\\frac{1}{n}\\sum_{i=1}^{n}L(y_i,f(x_i))\n\\]\n分类模型通常先预测类别概率，再用对数损失等函数衡量概率与真实类别之间的差异。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#泛化欠拟合与过拟合",
+    "href": "bigdata/machlearn/mlbasics.html#泛化欠拟合与过拟合",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.2 泛化、欠拟合与过拟合",
+    "text": "3.2 泛化、欠拟合与过拟合\n训练误差小并不等于模型好。机器学习真正关心的是泛化：面对未参与训练的新数据时，模型是否仍能保持较好表现。\n\n\n\n状态\n训练数据表现\n新数据表现\n典型原因\n\n\n\n\n欠拟合\n较差\n较差\n模型太简单，重要关系未学到\n\n\n合理拟合\n较好\n较好\n学到相对稳定、可重复的规律\n\n\n过拟合\n很好\n较差\n过度适应训练样本中的噪声\n\n\n\n过拟合并不是由“训练集超过80%”直接造成的。它通常与模型复杂度、样本量、特征数量、噪声、反复调参和数据泄漏有关。\n\n3.2.1 偏差—方差的直观解释\n\n偏差：模型假设过强造成的系统性误差，模型过于简单时往往较高；\n方差：模型对训练样本变化的敏感程度，模型过于复杂时可能较高；\n不可约误差：在现有特征和测量条件下无法消除的随机性。\n\n模型选择不是追求训练误差最低，而是在偏差与方差之间寻找有利于新数据表现的平衡。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#训练集重采样和测试集",
+    "href": "bigdata/machlearn/mlbasics.html#训练集重采样和测试集",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.3 训练集、重采样和测试集",
+    "text": "3.3 训练集、重采样和测试集\n\n\n\n\n\n\n\n\n数据角色\n用途\n是否用于模型选择\n\n\n\n\n训练集\n估计模型参数，建立预处理规则\n是\n\n\n重采样验证数据\n比较模型、选择超参数、估计波动\n是\n\n\n测试集\n最终评价泛化表现\n否，只在最后使用一次\n\n\n\n测试集如果被反复查看，就会逐渐成为模型选择的一部分，不再是独立评价。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#准备并划分数据",
+    "href": "bigdata/machlearn/mlbasics.html#准备并划分数据",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.4 准备并划分数据",
+    "text": "3.4 准备并划分数据\n\nhotline_model &lt;- hotline_raw |&gt;\n  mutate(\n    # 将目标改成因子，并把“逾期”放在第二个水平。\n    # 后续 event_level = \"second\" 就表示把“逾期”视为关注事件。\n    late_48h = factor(late_48h, levels = c(\"按时\", \"逾期\")),\n    # 分类变量转为因子，便于 recipe 识别并进行哑变量编码。\n    across(\n      c(district, issue_type, channel, urgent, repeat_case,\n        weekday, holiday_or_weekend),\n      as.factor\n    )\n  ) |&gt;\n  # 删除办结后才知道的变量，避免泄漏。\n  select(-actual_close_hours)\n\nset.seed(2026)\n# initial_split() 只记录划分方案，不会自动生成两个数据框。\nhotline_split &lt;- initial_split(\n  hotline_model,\n  # 75%用于训练，25%暂时封存为最终测试集。\n  prop = 0.75,\n  # 分层划分使训练集和测试集保留相近的逾期比例。\n  strata = late_48h\n)\n\n# training() 和 testing() 根据同一划分方案提取两部分数据。\ntrain_data &lt;- training(hotline_split)\ntest_data  &lt;- testing(hotline_split)\n\n# 用一个小表核查样本量和目标比例，而不是默认划分一定正确。\ntibble(\n  dataset = c(\"训练集\", \"测试集\"),\n  rows = c(nrow(train_data), nrow(test_data)),\n  late_rate = c(\n    mean(train_data$late_48h == \"逾期\"),\n    mean(test_data$late_48h == \"逾期\")\n  )\n)\n\n\n  \n\n\n\n\n\n\n\n\n\n如何理解划分结果？\n\n\n\n训练集应约占总样本的75%，测试集约占25%。两部分的 late_rate 应非常接近，说明分层划分发挥了作用。这里的75%并不是固定标准；关键是训练集足以学习规律，同时测试集足以形成较稳定的最终评价。测试集从此应暂时封存。\n\n\n\n\n\n\n\n\n随机划分不是唯一选择\n\n\n\n若预测未来月份，应优先考虑时间划分；若同一居民、企业或地区有多条记录，应考虑分组划分，避免同一对象同时进入训练集和测试集。相关代码见附录。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#交叉验证如何估计泛化表现",
+    "href": "bigdata/machlearn/mlbasics.html#交叉验证如何估计泛化表现",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.5 交叉验证如何估计泛化表现？",
+    "text": "3.5 交叉验证如何估计泛化表现？\n在 \\(k\\) 折交叉验证中，训练集被分为 \\(k\\) 份：每次用一份验证，其余部分训练，循环后汇总结果。它能够在不接触测试集的情况下比较模型、选择超参数并观察表现波动。\n\nset.seed(2026)\n# v = 5 表示创建5折；每次用4折训练、1折验证。\n# strata 再次保证每一折的目标类别比例大致稳定。\nhotline_folds &lt;- vfold_cv(\n  train_data,\n  v = 5,\n  strata = late_48h\n)\n\n# 打印对象时会看到 Fold1 至 Fold5 以及各自的划分对象。\nhotline_folds\n\n\n  \n\n\n\n\n\n\n\n\n\n如何理解交叉验证输出？\n\n\n\n输出中的每一行代表一次重采样划分，而不是一条原始工单。splits 保存该折的分析集和评估集，id 标明折号。此时模型尚未训练；这里只是提前制定一套在训练集内部反复训练和验证的计划。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#先建立朴素基准",
+    "href": "bigdata/machlearn/mlbasics.html#先建立朴素基准",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.6 先建立朴素基准",
+    "text": "3.6 先建立朴素基准\n如果多数工单按时办结，一个始终预测“按时”的模型也可能有较高准确率。复杂模型至少应与这个基准比较。\n\nmajority_class &lt;- train_data |&gt;\n  # 统计训练集中两个类别的数量，并按数量从高到低排列。\n  count(late_48h, sort = TRUE) |&gt;\n  # 取数量最多的类别作为朴素预测。\n  slice(1) |&gt;\n  pull(late_48h) |&gt;\n  as.character()\n\n# 这里先在训练数据上展示多数类规则的含义，避免提前查看测试结果。\nbaseline_pred &lt;- train_data |&gt;\n  mutate(\n    # 不看任何特征，对所有测试工单都预测成训练集中的多数类。\n    .pred_class = factor(majority_class, levels = levels(late_48h))\n  )\n\n# 先显示模型始终预测的类别。\nmajority_class\n#&gt; [1] \"按时\"\n\n# metric_set() 把多个评价函数组合起来，一次性计算。\nmetric_set(accuracy, sens, spec)(\n  baseline_pred,\n  truth = late_48h,\n  estimate = .pred_class,\n  event_level = \"second\"\n)\n\n\n  \n\n\n\n\n\n\n\n\n\n如何理解基准结果？\n\n\n\nmajority_class 通常为“按时”，所以模型对所有训练工单都给出同一个答案。其准确率等于训练数据中“按时”工单的比例；特异度可能很高，但敏感度为0，因为它没有识别出任何实际逾期工单。这里的结果只是说明基准规则，最终比较仍应在同一份测试数据上进行。后续模型不仅要关注基准准确率，更重要的是要真正识别少数类。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#把预处理写入-recipe",
+    "href": "bigdata/machlearn/mlbasics.html#把预处理写入-recipe",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.7 把预处理写入 recipe",
+    "text": "3.7 把预处理写入 recipe\nrecipes 包把数据预处理写成一份可重复执行的“配方”。它解决两个问题：哪些变量进入模型，以及这些变量按什么顺序转换。\n一份 recipe 通常经历三个阶段：\n\nrecipe() 声明目标、预测变量和处理步骤，此时只是设计方案；\nprep() 用训练数据估计方案中需要学习的数值，例如中位数、类别水平和哑变量列；\nbake() 把已经估计好的规则应用到训练数据或新数据。\n\n在正式建模时，不需要手工调用 prep() 和 bake()；把 recipe 加入 workflow 后，tidymodels 会在每一个交叉验证折中自动完成它们。这样可以避免用验证集或测试集计算填补值，从而减少数据泄漏。\n本讲的处理顺序如下：\n\n\n\n\n\n\n\n\n步骤\n处理对象\n作用\n\n\n\n\nstep_impute_median()\n数值特征\n用训练样本中位数填补缺失值\n\n\nstep_unknown()\n分类特征\n把原有缺失值转换为“未知”类别\n\n\nstep_novel()\n分类特征\n接纳新数据中训练时未见过的类别\n\n\nstep_dummy()\n分类特征\n将文字类别转换为模型可使用的0/1变量\n\n\nstep_zv()\n全部特征\n删除完全没有变化、没有预测信息的变量\n\n\n\n\nhotline_recipe &lt;- recipe(\n  # 公式左边是目标，右边列出预测时允许使用的特征。\n  late_48h ~ district + issue_type + channel + urgent +\n    repeat_case + backlog + staff_on_duty + text_length +\n    hour + weekday + holiday_or_weekend,\n  # data 用于识别变量类型和角色；这里必须是训练数据。\n  data = train_data\n) |&gt;\n  # all_numeric_predictors() 只选择数值型预测变量，不会处理目标变量。\n  step_impute_median(all_numeric_predictors()) |&gt;\n  # all_nominal_predictors() 选择因子或字符型预测变量。\n  step_unknown(all_nominal_predictors()) |&gt;\n  step_novel(all_nominal_predictors()) |&gt;\n  step_dummy(all_nominal_predictors()) |&gt;\n  step_zv(all_predictors())\n\n# 打印的是“尚未估计”的处理方案，而不是处理后的数据。\nhotline_recipe\n\n打印结果中的 Operation 列列出预处理步骤；Trained 通常显示 FALSE，说明当前只是配方，还没有计算中位数或建立哑变量。\n\n3.7.1 查看 recipe 实际产生的数据\n下面手工执行一次 prep() 和 bake()，仅用于理解 recipe；后续 workflow 会自动重复这些工作。\n\n# 用训练数据估计填补值和分类水平。\nprepared_recipe &lt;- prep(\n  hotline_recipe,\n  training = train_data,\n  retain = TRUE\n)\n\n# 把已估计的规则应用到前5条训练记录。\nrecipe_preview &lt;- bake(\n  prepared_recipe,\n  new_data = slice_head(train_data, n = 5)\n)\n\nglimpse(recipe_preview)\n#&gt; Rows: 5\n#&gt; Columns: 29\n#&gt; $ backlog               &lt;dbl&gt; 16, 24, 28, 21, 7\n#&gt; $ staff_on_duty         &lt;int&gt; 11, 7, 5, 8, 10\n#&gt; $ text_length           &lt;dbl&gt; 148, 43, 73, 129, 57\n#&gt; $ hour                  &lt;int&gt; 13, 4, 14, 19, 17\n#&gt; $ late_48h              &lt;fct&gt; 按时, 按时, 按时, 按时, 按时\n#&gt; $ district_思明区       &lt;dbl&gt; 0, 0, 0, 0, 0\n#&gt; $ district_海沧区       &lt;dbl&gt; 0, 1, 0, 0, 0\n#&gt; $ district_湖里区       &lt;dbl&gt; 0, 0, 1, 0, 0\n#&gt; $ district_翔安区       &lt;dbl&gt; 0, 0, 0, 0, 0\n#&gt; $ district_集美区       &lt;dbl&gt; 1, 0, 0, 0, 1\n#&gt; $ issue_type_住房物业   &lt;dbl&gt; 0, 0, 0, 1, 1\n#&gt; $ issue_type_市政设施   &lt;dbl&gt; 0, 1, 0, 0, 0\n#&gt; $ issue_type_环境卫生   &lt;dbl&gt; 0, 0, 0, 0, 0\n#&gt; $ issue_type_社会保障   &lt;dbl&gt; 0, 0, 0, 0, 0\n#&gt; $ channel_政务App       &lt;dbl&gt; 0, 0, 0, 0, 0\n#&gt; $ channel_电话          &lt;dbl&gt; 1, 0, 0, 0, 1\n#&gt; $ channel_网站          &lt;dbl&gt; 0, 1, 1, 0, 0\n#&gt; $ channel_unknown       &lt;dbl&gt; 0, 0, 0, 0, 0\n#&gt; $ urgent_是             &lt;dbl&gt; 0, 1, 1, 0, 0\n#&gt; $ repeat_case_是        &lt;dbl&gt; 1, 0, 1, 1, 0\n#&gt; $ weekday_1             &lt;dbl&gt; -0.3872983, 0.2581989, -0.5163978, -0.3872983, -…\n#&gt; $ weekday_2             &lt;dbl&gt; 0.1329540, -0.1519474, 0.5318160, 0.1329540, -0.…\n#&gt; $ weekday_3             &lt;dbl&gt; 0.2224746, -0.4131671, -0.4449492, 0.2224746, 0.…\n#&gt; $ weekday_4             &lt;dbl&gt; -0.4693397, -0.2458446, 0.3128931, -0.4693397, 0…\n#&gt; $ weekday_5             &lt;dbl&gt; 0.5084752, 0.1849001, -0.1849001, 0.5084752, -0.…\n#&gt; $ weekday_6             &lt;dbl&gt; -0.38204659, 0.49441323, 0.08989331, -0.38204659…\n#&gt; $ weekday_7             &lt;dbl&gt; 0.20483662, 0.47795212, -0.03413944, 0.20483662,…\n#&gt; $ weekday_8             &lt;dbl&gt; -0.070518118, 0.246813413, 0.008814765, -0.07051…\n#&gt; $ holiday_or_weekend_是 &lt;dbl&gt; 0, 1, 0, 0, 0\n\n\n\n\n\n\n\n如何理解处理后的数据？\n\n\n\n输出中原来的 district、issue_type 等因子不再以一列文字出现，而是变成多个以原变量名开头的0/1哑变量；数值变量仍保留为数值；目标 late_48h 仍存在。前5行若恰好没有缺失值，不容易直接看出填补效果，但配方已经保存了从完整训练集估计的中位数。glimpse() 中列数增加是哑变量展开的正常结果。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#定义逻辑回归及工作流",
+    "href": "bigdata/machlearn/mlbasics.html#定义逻辑回归及工作流",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.8 定义逻辑回归及工作流",
+    "text": "3.8 定义逻辑回归及工作流\n逻辑回归预测事件概率：\n\\[\nP(Y=1\\mid X)=\\frac{1}{1+e^{-(\\beta_0+\\beta_1X_1+\\cdots+\\beta_pX_p)}}\n\\]\n逻辑函数把任意线性组合转换到0与1之间。本讲将它作为透明的基准学习模型；系数和正则化将在下一讲展开。\n\nlogistic_model &lt;- logistic_reg() |&gt;\n  # 使用R自带的广义线性模型引擎估计逻辑回归。\n  set_engine(\"glm\") |&gt;\n  # 明确这是分类任务，而不是连续结果回归。\n  set_mode(\"classification\")\n\nlogistic_workflow &lt;- workflow() |&gt;\n  # workflow 将数据预处理方案与模型规格绑定在一起。\n  add_recipe(hotline_recipe) |&gt;\n  add_model(logistic_model)\n\nlogistic_workflow\n#&gt; ══ Workflow ════════════════════════════════════════════════════════════════════\n#&gt; Preprocessor: Recipe\n#&gt; Model: logistic_reg()\n#&gt; \n#&gt; ── Preprocessor ────────────────────────────────────────────────────────────────\n#&gt; 5 Recipe Steps\n#&gt; \n#&gt; • step_impute_median()\n#&gt; • step_unknown()\n#&gt; • step_novel()\n#&gt; • step_dummy()\n#&gt; • step_zv()\n#&gt; \n#&gt; ── Model ───────────────────────────────────────────────────────────────────────\n#&gt; Logistic Regression Model Specification (classification)\n#&gt; \n#&gt; Computational engine: glm\n\n\n\n\n\n\n\nrecipe、model 和 workflow 的关系\n\n\n\n\nhotline_recipe 回答“原始数据怎样变成模型输入”；\nlogistic_model 回答“使用什么模型形式和计算引擎”；\nlogistic_workflow 把二者组成一个可整体重采样、拟合和预测的对象。\n\n打印 workflow 只是在核查配置。此时还没有估计逻辑回归系数；真正训练发生在后面的 fit_resamples() 或 fit() 中。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#在训练集内部评价",
+    "href": "bigdata/machlearn/mlbasics.html#在训练集内部评价",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.9 在训练集内部评价",
+    "text": "3.9 在训练集内部评价\n\nclassification_metrics &lt;- metric_set(roc_auc, accuracy, sens, spec)\n\nset.seed(2026)\n# fit_resamples() 会对每一折重复以下过程：\n# 1. 只用该折的分析集 prep recipe；\n# 2. 拟合逻辑回归；\n# 3. 对该折的评估集预测并计算指标。\ncv_results &lt;- fit_resamples(\n  logistic_workflow,\n  resamples = hotline_folds,\n  metrics = classification_metrics,\n  # 保存折外预测，便于后续画ROC曲线或选择阈值。\n  control = control_resamples(save_pred = TRUE)\n)\n\n# 汇总5折结果：mean为平均表现，std_err为均值的标准误。\ncv_metrics &lt;- collect_metrics(cv_results)\ncv_metrics\n\n\n  \n\n\n\n\n\n\n\n\n\n如何阅读交叉验证结果？\n\n\n\n\n.metric 是指标名称；.estimate 类型说明是二分类指标；\nmean 是5个验证折的平均值，是当前对新数据表现的主要估计；\nn 是成功参与汇总的折数，正常情况下为5；\nstd_err 越大，说明不同折之间表现越不稳定。\n\nROC AUC 接近0.5表示区分能力接近随机排序，越接近1越好。敏感度和特异度需要一起看：如果准确率较高但敏感度很低，模型仍然可能漏掉大部分逾期工单。交叉验证结果用于比较和修改模型，不是最终对外报告的测试表现。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#分类指标的含义",
+    "href": "bigdata/machlearn/mlbasics.html#分类指标的含义",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.10 分类指标的含义",
+    "text": "3.10 分类指标的含义\n把“逾期”视为需要识别的事件：\n\n\n\n指标\n回答的问题\n局限\n\n\n\n\n准确率\n全部工单中预测正确多少？\n类别不平衡时可能虚高\n\n\n敏感度\n实际逾期工单中识别出多少？\n提高时可能带来更多误报\n\n\n特异度\n实际按时工单中正确排除多少？\n不能反映漏报情况\n\n\nROC AUC\n模型区分两类工单的总体能力如何？\n不直接给出行动阈值\n\n\n\n指标必须结合任务选择。若漏掉高风险工单代价较大，应特别关注敏感度；若误报会直接引发处罚，则应更谨慎地控制误报。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#最后一次使用测试集",
+    "href": "bigdata/machlearn/mlbasics.html#最后一次使用测试集",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.11 最后一次使用测试集",
+    "text": "3.11 最后一次使用测试集\n\n# 配置确定后，使用全部训练数据重新估计recipe并拟合模型。\nfinal_fit &lt;- fit(logistic_workflow, data = train_data)\n\n# type = \"prob\" 返回每个类别的预测概率；\n# type = \"class\" 按默认阈值返回最终类别。\ntest_pred &lt;- bind_cols(\n  test_data,\n  predict(final_fit, new_data = test_data, type = \"prob\"),\n  predict(final_fit, new_data = test_data, type = \"class\")\n)\n\n# 测试指标单独保存，便于与交叉验证均值比较。\ntest_metrics &lt;- classification_metrics(\n  test_pred,\n  truth = late_48h,\n  estimate = .pred_class,\n  .pred_逾期,\n  event_level = \"second\"\n)\n\ntest_metrics\n\n\n  \n\n\n\n# 为了公平比较，在同一测试集上计算多数类基准的分类指标。\ntest_baseline_pred &lt;- test_data |&gt;\n  mutate(\n    .pred_class = factor(majority_class, levels = levels(late_48h))\n  )\n\ntest_baseline_comparison &lt;- metric_set(accuracy, sens, spec)(\n  test_baseline_pred,\n  truth = late_48h,\n  estimate = .pred_class,\n  event_level = \"second\"\n) |&gt;\n  mutate(model = \"多数类基准\")\n\ntest_model_comparison &lt;- metric_set(accuracy, sens, spec)(\n  test_pred,\n  truth = late_48h,\n  estimate = .pred_class,\n  event_level = \"second\"\n) |&gt;\n  mutate(model = \"逻辑回归\")\n\n# 按指标排列，直接比较两个模型。\nbind_rows(test_baseline_comparison, test_model_comparison) |&gt;\n  select(model, .metric, .estimate) |&gt;\n  arrange(.metric, model)\n\n\n  \n\n\n\n\n\n\n\n\n\n如何理解测试结果？\n\n\n\n测试指标是模型面对完全未参与训练和选择的数据时的最终表现。应先与交叉验证的 mean 比较：数值接近说明重采样估计较稳定；测试表现明显较差可能意味着模型选择过度适应训练数据，也可能只是测试样本带来的随机波动。一次测试结果不是永恒结论，真实部署后还需要持续监测。\ntest_pred 中的 .pred_逾期 是模型给出的逾期概率，.pred_class 是根据默认阈值形成的类别。概率保留的信息比单一类别更多，后续可用于风险排序和阈值选择。\n最后的比较表将多数类基准和逻辑回归放在同一测试集上。若逻辑回归的敏感度明显高于0，说明它开始能够识别逾期工单；如果与此同时特异度下降，说明这种识别能力是以增加部分误报为代价取得的。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#混淆矩阵模型错在什么地方",
+    "href": "bigdata/machlearn/mlbasics.html#混淆矩阵模型错在什么地方",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "3.12 混淆矩阵：模型错在什么地方？",
+    "text": "3.12 混淆矩阵：模型错在什么地方？\n\n# truth 指定真实结果，estimate 指定模型预测结果。\nconf_mat(test_pred, truth = late_48h, estimate = .pred_class)\n#&gt;           Truth\n#&gt; Prediction 按时 逾期\n#&gt;       按时  287   73\n#&gt;       逾期   10    5\n\n\n漏报：实际逾期，却预测为按时；\n误报：实际按时，却预测为逾期。\n\n两类错误的治理成本往往不同。模型评价不是寻找脱离情境的“最高分”，而是判断错误能否被实际管理过程接受和纠正。\n\n\n\n\n\n\n如何阅读混淆矩阵？\n\n\n\n先查看输出中标明的 Truth 和 Prediction 方向，不要凭位置猜测。对角线是预测正确的工单，非对角线是错误。真实“逾期”但预测“按时”的单元格是漏报；真实“按时”但预测“逾期”的单元格是误报。将单元格数量与业务成本结合，通常比只报告准确率更有管理含义。\n\n\n\n3.12.1 课堂检查4：解释而不是抄写输出\n\n逻辑回归是否优于多数类基准？依据是什么？\n当前模型更容易漏报还是误报？\n为什么不能根据测试集结果反复修改预处理和模型？\n如果模型只用于人工复核而不是自动处罚，指标选择会有什么不同？"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#离堂检查",
+    "href": "bigdata/machlearn/mlbasics.html#离堂检查",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "4.1 离堂检查",
+    "text": "4.1 离堂检查\n\n什么是模型的泛化能力？\n参数和超参数有什么区别？\n为什么一个准确率很高的模型仍可能没有管理价值？\n选择一个公共管理场景，写出其分析单位、目标和预测时点。\n\n下一讲将在同一案例上进一步学习线性回归、逻辑回归与基础正则化。"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#重复交叉验证",
+    "href": "bigdata/machlearn/mlbasics.html#重复交叉验证",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "5.1 重复交叉验证",
+    "text": "5.1 重复交叉验证\n一次 \\(k\\) 折交叉验证仍受随机分折影响。重复交叉验证多次重新分折，可以更稳定地观察平均表现及波动，但会增加计算时间。\n\nset.seed(2026)\nrepeated_folds &lt;- vfold_cv(\n  train_data, v = 5, repeats = 3, strata = late_48h\n)"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#自助法",
+    "href": "bigdata/machlearn/mlbasics.html#自助法",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "5.2 自助法",
+    "text": "5.2 自助法\n自助法从原数据中有放回抽样。某些观测会被抽到多次，未被抽中的观测可用于评价。它常用于估计统计量不确定性，也可用于模型评价。\n\nset.seed(2026)\nbootstrap_samples &lt;- bootstraps(\n  train_data, times = 100, strata = late_48h\n)"
+  },
+  {
+    "objectID": "bigdata/machlearn/mlbasics.html#时间划分与分组划分",
+    "href": "bigdata/machlearn/mlbasics.html#时间划分与分组划分",
+    "title": "机器学习（一）：基本概念、应用场景与泛化",
+    "section": "5.3 时间划分与分组划分",
+    "text": "5.3 时间划分与分组划分\n\n# 用过去预测未来。\ntime_split &lt;- hotline_model |&gt;\n  arrange(received_at) |&gt;\n  initial_time_split(prop = 0.80)\n\n# 同一居民有多条记录时，可按居民分组划分。\n# grouped_split &lt;- group_initial_split(\n#   citizen_records,\n#   group = citizen_id,\n#   prop = 0.80,\n#   strata = late_48h\n# )"
   }
 ]
