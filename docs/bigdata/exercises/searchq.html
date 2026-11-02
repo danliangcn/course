@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.7.32">
@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="">
-<meta name="dcterms.date" content="2025-09-15">
 
-<title>数据检索与选题探索作业 – course</title>
+<title>课程作业一：公共管理数据探索、清理与可视化 – course</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -41,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-8610558a007458a9b978551a034f4d85.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-89a361d96eafdcf9afa951c8705654df.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -56,19 +90,20 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
   }
 }</script>
+<style>html{ scroll-behavior: smooth; }</style>
 
 
 <link rel="stylesheet" href="../../css/styles.css">
@@ -85,8 +120,8 @@ ul.task-list li input[type="checkbox"] {
     <span class="navbar-title">course</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -112,29 +147,33 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">该页面内容</h2>
    
   <ul>
-  <li><a href="#作业目的" id="toc-作业目的" class="nav-link active" data-scroll-target="#作业目的">1 作业目的</a></li>
-  <li><a href="#作业要求" id="toc-作业要求" class="nav-link" data-scroll-target="#作业要求">2 作业要求</a></li>
-  <li><a href="#评分标准" id="toc-评分标准" class="nav-link" data-scroll-target="#评分标准">3 评分标准</a></li>
-  <li><a href="#开放数据源参考" id="toc-开放数据源参考" class="nav-link" data-scroll-target="#开放数据源参考">4 开放数据源参考</a>
-  <ul>
-  <li><a href="#国内开放数据源" id="toc-国内开放数据源" class="nav-link" data-scroll-target="#国内开放数据源">4.1 国内开放数据源</a>
-  <ul>
-  <li><a href="#政府与公共服务" id="toc-政府与公共服务" class="nav-link" data-scroll-target="#政府与公共服务">1. 政府与公共服务</a></li>
-  <li><a href="#环境与可持续发展" id="toc-环境与可持续发展" class="nav-link" data-scroll-target="#环境与可持续发展">2. 环境与可持续发展</a></li>
-  <li><a href="#社会与民生" id="toc-社会与民生" class="nav-link" data-scroll-target="#社会与民生">3. 社会与民生</a></li>
-  <li><a href="#风险管理与应急" id="toc-风险管理与应急" class="nav-link" data-scroll-target="#风险管理与应急">4. 风险管理与应急</a></li>
+  <li><a href="#一作业目标" id="toc-一作业目标" class="nav-link active" data-scroll-target="#一作业目标"><span class="header-section-number">1</span> 一、作业目标</a></li>
+  <li><a href="#二作业结构与进度" id="toc-二作业结构与进度" class="nav-link" data-scroll-target="#二作业结构与进度"><span class="header-section-number">2</span> 二、作业结构与进度</a></li>
+  <li><a href="#三数据选择方式" id="toc-三数据选择方式" class="nav-link" data-scroll-target="#三数据选择方式"><span class="header-section-number">3</span> 三、数据选择方式</a></li>
+  <li><a href="#四第一阶段数据可行性检查" id="toc-四第一阶段数据可行性检查" class="nav-link" data-scroll-target="#四第一阶段数据可行性检查"><span class="header-section-number">4</span> 四、第一阶段：数据可行性检查</a>
+  <ul class="collapse">
+  <li><a href="#研究问题" id="toc-研究问题" class="nav-link" data-scroll-target="#研究问题"><span class="header-section-number">4.1</span> 4.1 研究问题</a></li>
+  <li><a href="#数据可行性卡" id="toc-数据可行性卡" class="nav-link" data-scroll-target="#数据可行性卡"><span class="header-section-number">4.2</span> 4.2 数据可行性卡</a></li>
+  <li><a href="#必须提供的实际证据" id="toc-必须提供的实际证据" class="nav-link" data-scroll-target="#必须提供的实际证据"><span class="header-section-number">4.3</span> 4.3 必须提供的实际证据</a></li>
   </ul></li>
-  <li><a href="#国际开放数据源" id="toc-国际开放数据源" class="nav-link" data-scroll-target="#国际开放数据源">4.2 国际开放数据源</a>
-  <ul>
-  <li><a href="#政府与公共政策" id="toc-政府与公共政策" class="nav-link" data-scroll-target="#政府与公共政策">1. 政府与公共政策</a></li>
-  <li><a href="#环境与可持续发展-1" id="toc-环境与可持续发展-1" class="nav-link" data-scroll-target="#环境与可持续发展-1">2. 环境与可持续发展</a></li>
-  <li><a href="#社会与民生-1" id="toc-社会与民生-1" class="nav-link" data-scroll-target="#社会与民生-1">3. 社会与民生</a></li>
-  <li><a href="#风险管理与应急-1" id="toc-风险管理与应急-1" class="nav-link" data-scroll-target="#风险管理与应急-1">4. 风险管理与应急</a></li>
+  <li><a href="#五第二阶段完整数据项目" id="toc-五第二阶段完整数据项目" class="nav-link" data-scroll-target="#五第二阶段完整数据项目"><span class="header-section-number">5</span> 五、第二阶段：完整数据项目</a>
+  <ul class="collapse">
+  <li><a href="#问题文献与数据说明" id="toc-问题文献与数据说明" class="nav-link" data-scroll-target="#问题文献与数据说明"><span class="header-section-number">5.1</span> 5.1 问题、文献与数据说明</a></li>
+  <li><a href="#清理前数据审计" id="toc-清理前数据审计" class="nav-link" data-scroll-target="#清理前数据审计"><span class="header-section-number">5.2</span> 5.2 清理前数据审计</a></li>
+  <li><a href="#有理由的数据清理" id="toc-有理由的数据清理" class="nav-link" data-scroll-target="#有理由的数据清理"><span class="header-section-number">5.3</span> 5.3 有理由的数据清理</a></li>
+  <li><a href="#程序化质量验证" id="toc-程序化质量验证" class="nav-link" data-scroll-target="#程序化质量验证"><span class="header-section-number">5.4</span> 5.4 程序化质量验证</a></li>
+  <li><a href="#清理前后比较" id="toc-清理前后比较" class="nav-link" data-scroll-target="#清理前后比较"><span class="header-section-number">5.5</span> 5.5 清理前后比较</a></li>
+  <li><a href="#可视化证据" id="toc-可视化证据" class="nav-link" data-scroll-target="#可视化证据"><span class="header-section-number">5.6</span> 5.6 可视化证据</a></li>
+  <li><a href="#是否适合后续机器学习" id="toc-是否适合后续机器学习" class="nav-link" data-scroll-target="#是否适合后续机器学习"><span class="header-section-number">5.7</span> 5.7 是否适合后续机器学习？</a></li>
   </ul></li>
-  </ul></li>
+  <li><a href="#六提交内容与目录结构" id="toc-六提交内容与目录结构" class="nav-link" data-scroll-target="#六提交内容与目录结构"><span class="header-section-number">6</span> 六、提交内容与目录结构</a></li>
+  <li><a href="#七评分标准" id="toc-七评分标准" class="nav-link" data-scroll-target="#七评分标准"><span class="header-section-number">7</span> 七、评分标准</a></li>
+  <li><a href="#八ai辅助使用规则" id="toc-八ai辅助使用规则" class="nav-link" data-scroll-target="#八ai辅助使用规则"><span class="header-section-number">8</span> 八、AI辅助使用规则</a></li>
+  <li><a href="#九提交前检查清单" id="toc-九提交前检查清单" class="nav-link" data-scroll-target="#九提交前检查清单"><span class="header-section-number">9</span> 九、提交前检查清单</a></li>
+  <li><a href="#十推荐的qmd结构" id="toc-十推荐的qmd结构" class="nav-link" data-scroll-target="#十推荐的qmd结构"><span class="header-section-number">10</span> 十、推荐的QMD结构</a></li>
   </ul>
 </nav>
     </div>
@@ -143,7 +182,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">数据检索与选题探索作业</h1>
+<h1 class="title">课程作业一：公共管理数据探索、清理与可视化</h1>
+<p class="subtitle lead">从数据可行性检查到可复现的视觉证据</p>
 </div>
 
 
@@ -152,9 +192,9 @@ ul.task-list li input[type="checkbox"] {
 
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">发布于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 15, 2025</p>
+      <p class="date">2026年11月2日</p>
     </div>
   </div>
   
@@ -166,176 +206,485 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="作业目的" class="level1">
-<h1>1 作业目的</h1>
-<p>熟悉公共管理领域常见的大数据来源，掌握数据获取与理解的基本方法，并通过结合相关文献，初步提出潜在的研究问题，为课程论文选题和设计奠定基础。</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+作业的中心任务
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>围绕一个具体的公共管理问题，完成“<strong>实际获取数据—判断数据是否可用—审计数据质量—用代码完成清理—验证清理结果—制作可解释图表</strong>”的完整流程。</p>
+<p>本作业不是比较谁使用的清洗函数更多，而是评价每一步是否有数据依据、能否重复运行，以及图表能否支持公共管理判断。</p>
+</div>
+</div>
+<section id="一作业目标" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> 一、作业目标</h1>
+<p>完成本作业后，学生应能：</p>
+<ol type="1">
+<li>将公共管理问题转化为可由数据支持的分析问题；</li>
+<li>判断数据来源、分析单位、时间范围和变量是否适合研究问题；</li>
+<li>使用R完成数据导入、质量审计、清理、重组和验证；</li>
+<li>区分缺失值、异常值、真实极端案例和录入错误；</li>
+<li>使用程序化检查保证主键、连接和逻辑规则正确；</li>
+<li>制作2—3张能够回答问题的图表，并解释证据边界；</li>
+<li>判断该数据是否适合继续用于后续机器学习作业。</li>
+</ol>
+<p>建议课外投入约 <strong>4—6小时</strong>。提交时间和具体平台以课程通知为准。</p>
 </section>
-<section id="作业要求" class="level1">
-<h1>2 作业要求</h1>
+<section id="二作业结构与进度" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> 二、作业结构与进度</h1>
+<p>本作业分为两个阶段，但最终只计算一次正式作业成绩。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>阶段</th>
+<th>时间建议</th>
+<th>主要任务</th>
+<th>反馈方式</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>数据可行性检查</td>
+<td>发布后3—4天内</td>
+<td>提交问题、数据样例和数据检查卡</td>
+<td>通过／修改后通过／更换数据</td>
+</tr>
+<tr class="even">
+<td>完整数据项目</td>
+<td>发布后约两周</td>
+<td>完成审计、清理、验证和可视化</td>
+<td>按评分表计分</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+为什么必须先检查数据源？
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>仅仅找到一个网页或数据库名称，不等于已经获得可分析的数据。未通过可行性检查前，不建议投入大量时间写作或清洗。若首选数据无法下载、授权不清、变量不足或存在隐私风险，应尽早改用备用数据。</p>
+</div>
+</div>
+</section>
+<section id="三数据选择方式" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> 三、数据选择方式</h1>
+<p>数据可以来自：</p>
 <ul>
-<li><p>文献阅读：检索公共管理、公共政策、城市管理等相关领域采用大数据分析的相关文献，选择至少2篇（中英文均可）进行阅读，简要总结其研究问题、数据来源、研究方法和主要发现。</p></li>
-<li><p>数据源探索：从开放数据清单或其他数据来源中选择至少1个数据源，尝试获取并浏览数据，说明其内容、变量特征和可能的研究价值。</p></li>
-<li><p>研究问题提出：结合文献和数据探索，提出 2-3个潜在的研究问题，并简要说明：为什么这个问题在公共管理中有价值？哪类数据可能支持回答？以及可能的分析方法。</p></li>
-<li><p>提交形式：Word 或 PDF 文档（1500字左右），参考文献引用规范，10月26日中午12点前发到助教邮箱</p></li>
+<li>政府开放数据平台；</li>
+<li>统计年鉴或公开调查；</li>
+<li>环境、交通、健康、教育或公共服务监测；</li>
+<li>公开政策文本、政府工作报告或行政公报；</li>
+<li>合法、适度获取的网页公开信息；</li>
+<li>课程论文准备使用的其他公开数据。</li>
+</ul>
+<p>自选数据必须满足：</p>
+<ol type="1">
+<li>已经实际获得，而不是只提供一个平台网址；</li>
+<li>能够说明一行数据代表什么；</li>
+<li>至少包含若干与问题相关的变量；</li>
+<li>不包含未经授权的个人敏感信息；</li>
+<li>可以在合理时间内完成导入和清理；</li>
+<li>数据来源、获取日期和使用限制能够说明。</li>
+</ol>
+</section>
+<section id="四第一阶段数据可行性检查" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> 四、第一阶段：数据可行性检查</h1>
+<p>第一阶段不需要写长报告。提交一份1—2页的检查表和实际数据证据。</p>
+<section id="研究问题" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="研究问题"><span class="header-section-number">4.1</span> 4.1 研究问题</h2>
+<p>提出：</p>
+<ul>
+<li>一个首选问题；</li>
+<li>一个备用问题；</li>
+<li>1—2篇与问题、数据或方法直接相关的文献。</li>
+</ul>
+<p>推荐使用以下句式：</p>
+<blockquote class="blockquote">
+<p>利用________数据，描述／比较／预测________公共管理现象，并分析其在________地区、时期或群体中的差异。</p>
+</blockquote>
+<p>问题必须明确属于：</p>
+<ul>
+<li>描述：发生了什么、分布如何；</li>
+<li>预测：谁或何时更可能出现某种结果；</li>
+<li>因果：某项政策是否改变了结果。</li>
+</ul>
+<p>本作业主要完成描述和探索。可视化中发现关联，不能直接写成政策因果效应。</p>
+</section>
+<section id="数据可行性卡" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="数据可行性卡"><span class="header-section-number">4.2</span> 4.2 数据可行性卡</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>检查内容</th>
+<th>学生填写</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>数据名称与来源</td>
+<td>机构、平台、网址或文献</td>
+</tr>
+<tr class="even">
+<td>获取日期与方式</td>
+<td>下载、API、网页、申请或教师提供</td>
+</tr>
+<tr class="odd">
+<td>分析单位</td>
+<td>一行代表个人、地区、日期、工单、企业还是政策文本</td>
+</tr>
+<tr class="even">
+<td>时间范围</td>
+<td>数据覆盖的起止时间</td>
+</tr>
+<tr class="odd">
+<td>空间范围</td>
+<td>全国、省、市、区县或具体机构</td>
+</tr>
+<tr class="even">
+<td>数据规模</td>
+<td>行数、列数、文件格式和大致大小</td>
+</tr>
+<tr class="odd">
+<td>主键</td>
+<td>是否存在唯一标识；若无，可能由哪些字段组成</td>
+</tr>
+<tr class="even">
+<td>核心变量</td>
+<td>与研究问题直接相关的变量</td>
+</tr>
+<tr class="odd">
+<td>初步质量问题</td>
+<td>缺失、重复、类型、异常编码或多表连接问题</td>
+</tr>
+<tr class="even">
+<td>获取与使用限制</td>
+<td>是否需要申请、引用、匿名化或禁止再分发</td>
+</tr>
+<tr class="odd">
+<td>备用方案</td>
+<td>数据不可用时改用什么数据或调整什么问题</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="必须提供的实际证据" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="必须提供的实际证据"><span class="header-section-number">4.3</span> 4.3 必须提供的实际证据</h2>
+<p>至少提供以下一项：</p>
+<ul>
+<li>原始数据前50—100行；</li>
+<li>可以重复运行的数据下载或导入代码；</li>
+<li>因授权不能提交原始数据时，提供脱敏样例、数据字典和获取说明。</li>
+</ul>
+<p>同时提供：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(raw_data)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(raw_data)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(raw_data)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>只有网页介绍、截图或平台名称，不能视为已经获得数据。</p>
+</section>
+</section>
+<section id="五第二阶段完整数据项目" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> 五、第二阶段：完整数据项目</h1>
+<section id="问题文献与数据说明" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="问题文献与数据说明"><span class="header-section-number">5.1</span> 5.1 问题、文献与数据说明</h2>
+<p>用约500字说明：</p>
+<ol type="1">
+<li>核心公共管理问题；</li>
+<li>问题为什么有公共价值；</li>
+<li>相关文献怎样使用类似数据或方法；</li>
+<li>数据的分析单位、时间和空间范围；</li>
+<li>数据为什么能够支持该问题；</li>
+<li>数据不能回答什么。</li>
+</ol>
+</section>
+<section id="清理前数据审计" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="清理前数据审计"><span class="header-section-number">5.2</span> 5.2 清理前数据审计</h2>
+<p>至少检查：</p>
+<ul>
+<li>行数和变量数；</li>
+<li>主键是否唯一；</li>
+<li>变量类型；</li>
+<li>各变量缺失数量和比例；</li>
+<li>完全重复记录；</li>
+<li>日期范围；</li>
+<li>分类变量的异常取值；</li>
+<li>数值变量的逻辑范围；</li>
+<li>多表连接时的键值唯一性和未匹配记录。</li>
+</ul>
+<p>参考代码：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 数据结构</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(raw_data)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(raw_data)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 主键重复数</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(raw_data<span class="sc">$</span>case_id))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 批量统计缺失值</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>raw_data <span class="sc">|&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.x))))</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看分类变量的异常编码</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>raw_data <span class="sc">|&gt;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(district, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>如果需要连接两张表，必须在连接前后检查：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查左表键值是否唯一</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>left_table <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(district) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 找出无法匹配的键</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>left_table <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(district) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(right_table, <span class="at">by =</span> <span class="st">"district"</span>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="有理由的数据清理" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="有理由的数据清理"><span class="header-section-number">5.3</span> 5.3 有理由的数据清理</h2>
+<p>至少完成3项确有必要的清理，例如：</p>
+<ul>
+<li>变量类型和日期转换；</li>
+<li>主键去重；</li>
+<li>分类变量编码标准化；</li>
+<li>缺失值识别、标记、删除或插补；</li>
+<li>异常值识别和处理；</li>
+<li>正则表达式与 <code>case_when()</code> 合并文本类别；</li>
+<li>多表连接及匹配核查；</li>
+<li>长表与宽表转换；</li>
+<li>构造人均、比例、时长或其他公共管理指标。</li>
+</ul>
+<p>每一步都必须说明：</p>
+<blockquote class="blockquote">
+<p>发现了什么问题？为什么采用该规则？处理后怎样验证？</p>
+</blockquote>
+<p>不要求每个数据集机械地完成所有清理操作。没有必要的Winsorize、插值、表格连接或长宽转换，不应为了凑数量而使用。</p>
+</section>
+<section id="程序化质量验证" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="程序化质量验证"><span class="header-section-number">5.4</span> 5.4 程序化质量验证</h2>
+<p>至少使用一次 <code>stopifnot()</code> 验证核心规则：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">anyDuplicated</span>(clean_data<span class="sc">$</span>case_id),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">is.na</span>(clean_data<span class="sc">$</span>response_hours) <span class="sc">|</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        clean_data<span class="sc">$</span>response_hours <span class="sc">&gt;=</span> <span class="dv">0</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>涉及多表连接时，还应验证不存在无法解释的未匹配键。验证失败时，不应直接删除报错代码，而应检查数据或修正规则。</p>
+</section>
+<section id="清理前后比较" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="清理前后比较"><span class="header-section-number">5.5</span> 5.5 清理前后比较</h2>
+<p>报告下列指标中适用于本数据的项目：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>指标</th>
+<th style="text-align: right;">清理前</th>
+<th style="text-align: right;">清理后</th>
+<th>变化原因</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>记录数</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>变量数</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>重复主键数</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>缺失单元格数</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>逻辑异常数</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>无法匹配记录数</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>记录数减少不自动代表清理正确。需要说明删除了哪些记录、依据是什么，以及是否可能造成选择偏差。</p>
+</section>
+<section id="可视化证据" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="可视化证据"><span class="header-section-number">5.6</span> 5.6 可视化证据</h2>
+<p>制作2—3张图：</p>
+<ol type="1">
+<li>一张展示数据分布或数据质量；</li>
+<li>一张直接回答核心公共管理问题；</li>
+<li>一张可选的时间、地区、群体或多变量比较图。</li>
+</ol>
+<p>每张图必须包括：</p>
+<ul>
+<li>清楚的标题；</li>
+<li>坐标名称、单位和必要的数据来源；</li>
+<li>2—3句结果解释；</li>
+<li>对公共管理问题的含义；</li>
+<li>不能由该图推出的结论。</li>
+</ul>
+<p>评分不以图表种类数量为依据。应根据变量和问题选择合适的图形，避免不必要的饼图、双坐标轴、三维效果和截断尺度。</p>
+</section>
+<section id="是否适合后续机器学习" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="是否适合后续机器学习"><span class="header-section-number">5.7</span> 5.7 是否适合后续机器学习？</h2>
+<p>在报告最后回答：</p>
+<ol type="1">
+<li>是否存在明确的目标变量？</li>
+<li>目标变量是连续值还是类别？</li>
+<li>是否有足够样本和可用特征？</li>
+<li>哪些变量在真实预测时点能够获得？</li>
+<li>是否存在由结果直接生成的泄漏变量？</li>
+<li>应采用随机划分、时间划分还是分组划分？</li>
+</ol>
+<p>如果数据更适合文本、空间、描述或因果分析，可以明确说明“不适合直接用于监督学习”。这不会降低本作业成绩，后续机器学习作业可以改用教师数据。</p>
+</section>
+</section>
+<section id="六提交内容与目录结构" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> 六、提交内容与目录结构</h1>
+<p>统一提交一个可以复现的项目文件夹：</p>
+<pre class="text"><code>assignment01/
+├── assignment01.qmd
+├── assignment01.html
+├── README.md
+├── data/
+│   ├── raw/
+│   └── clean/
+└── figures/</code></pre>
+<p>要求：</p>
+<ul>
+<li><code>raw/</code>保存原始数据，不得手工覆盖；</li>
+<li><code>clean/</code>保存由代码生成的干净数据；</li>
+<li>QMD能够从头运行并生成主要表格和图形；</li>
+<li>数据过大或禁止再分发时，提交下载代码、脱敏样例和说明；</li>
+<li>不再分别提交内容相互重复的R脚本、Word和PDF；</li>
+<li>文件名和相对路径中避免使用个人电脑的绝对路径。</li>
 </ul>
 </section>
-<section id="评分标准" class="level1">
-<h1>3 评分标准</h1>
+<section id="七评分标准" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> 七、评分标准</h1>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>评分内容</th>
+<th style="text-align: right;">比例</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>数据确实可得，研究问题与数据匹配</td>
+<td style="text-align: right;">20%</td>
+</tr>
+<tr class="even">
+<td>清理前数据审计</td>
+<td style="text-align: right;">15%</td>
+</tr>
+<tr class="odd">
+<td>清理规则合理且解释清楚</td>
+<td style="text-align: right;">25%</td>
+</tr>
+<tr class="even">
+<td>程序化质量验证</td>
+<td style="text-align: right;">15%</td>
+</tr>
+<tr class="odd">
+<td>可视化和公共管理解释</td>
+<td style="text-align: right;">20%</td>
+</tr>
+<tr class="even">
+<td>可复现性、代码注释和AI使用说明</td>
+<td style="text-align: right;">5%</td>
+</tr>
+</tbody>
+</table>
+<p>评分重点是判断和验证，不按清洗函数、模型或图表的数量机械加分。</p>
+</section>
+<section id="八ai辅助使用规则" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> 八、AI辅助使用规则</h1>
+<p>允许使用生成式AI：</p>
 <ul>
-<li><p>文献总结（30%）：准确概括研究内容，突出数据与方法。</p></li>
-<li><p>数据源探索（30%）：数据介绍清晰，能说明其潜在研究价值。</p></li>
-<li><p>研究问题提出（30%）：问题具体、有研究意义，体现数据驱动思考。</p></li>
-<li><p>结构与表达（10%）：逻辑清晰，引用格式规范。</p></li>
+<li>解释错误信息；</li>
+<li>建议清理代码；</li>
+<li>帮助理解函数参数；</li>
+<li>检查图表标注；</li>
+<li>改进代码注释和文字表达。</li>
+</ul>
+<p>但必须满足：</p>
+<ol type="1">
+<li>不向AI上传含个人身份或敏感行政信息的数据；</li>
+<li>AI生成代码必须由本人运行和验证；</li>
+<li>能够解释关键代码改变了什么数据；</li>
+<li>在报告末尾简述AI用于哪些环节；</li>
+<li>不得只提交AI生成的代码或解释文字；</li>
+<li>教师可以抽取一段代码进行简短说明或课堂核验。</li>
+</ol>
+</section>
+<section id="九提交前检查清单" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> 九、提交前检查清单</h1>
+<ul class="task-list">
+<li><label><input type="checkbox">数据已经实际获得，不只是提供一个网页地址；</label></li>
+<li><label><input type="checkbox">能清楚说明一行数据代表什么；</label></li>
+<li><label><input type="checkbox">原始数据未被手工覆盖；</label></li>
+<li><label><input type="checkbox">主键、缺失、重复、变量类型和逻辑范围已经检查；</label></li>
+<li><label><input type="checkbox">每项清理规则都有理由；</label></li>
+<li><label><input type="checkbox">使用代码验证了至少一项核心质量规则；</label></li>
+<li><label><input type="checkbox">多表连接前后检查了键值唯一性和未匹配记录；</label></li>
+<li><label><input type="checkbox">图表标题、坐标、单位和来源完整；</label></li>
+<li><label><input type="checkbox">图表解释没有把相关关系写成因果关系；</label></li>
+<li><label><input type="checkbox">QMD可以从头运行；</label></li>
+<li><label><input type="checkbox">已说明AI辅助使用情况；</label></li>
+<li><label><input type="checkbox">已判断数据是否适合后续机器学习。</label></li>
 </ul>
 </section>
-<section id="开放数据源参考" class="level1">
-<h1>4 开放数据源参考</h1>
-<section id="国内开放数据源" class="level2">
-<h2 class="anchored" data-anchor-id="国内开放数据源">4.1 国内开放数据源</h2>
-<section id="政府与公共服务" class="level3">
-<h3 class="anchored" data-anchor-id="政府与公共服务">1. 政府与公共服务</h3>
-<ul>
-<li><p><strong>中国政府网“数据”栏目</strong> <a href="http://data.gov.cn/">http://data.gov.cn/</a></p>
-<ul>
-<li>全国性政府数据平台，涵盖经济、社会、民生、交通等多领域。</li>
-</ul></li>
-<li><p><strong>国家统计局数据</strong> <a href="http://data.stats.gov.cn/">http://data.stats.gov.cn/</a></p>
-<ul>
-<li>各类宏观统计指标（人口、经济、教育、医疗、环境）。</li>
-</ul></li>
-<li><p><strong>地方政府开放数据平台</strong></p>
-<ul>
-<li>如：北京开放数据平台（<a href="https://data.beijing.gov.cn/">https://data.beijing.gov.cn/</a>），上海开放数据服务网（<a href="https://data.sh.gov.cn/">https://data.sh.gov.cn/</a>）</li>
-<li>可用于城市治理、公共服务供给公平研究。</li>
-</ul></li>
-</ul>
-</section>
-<section id="环境与可持续发展" class="level3">
-<h3 class="anchored" data-anchor-id="环境与可持续发展">2. 环境与可持续发展</h3>
-<ul>
-<li><p><strong>中国环境监测总站数据</strong> <a href="http://www.cnemc.cn/">http://www.cnemc.cn/</a></p>
-<ul>
-<li>空气质量、水质、噪音监测数据。</li>
-</ul></li>
-<li><p><strong>中国碳排放数据库（CEADs）</strong> <a href="http://www.ceads.net.cn/">http://www.ceads.net.cn/</a></p>
-<ul>
-<li>各省、市碳排放清单数据。</li>
-</ul></li>
-<li><p><strong>国家地球系统科学数据中心</strong> <a href="https://www.geodata.cn/main/">https://www.geodata.cn</a></p>
-<ul>
-<li>多时空尺度综合性地球系统科学数据库群。</li>
-</ul></li>
-</ul>
-</section>
-<section id="社会与民生" class="level3">
-<h3 class="anchored" data-anchor-id="社会与民生">3. 社会与民生</h3>
-<ul>
-<li><p><strong>中国知网-中国经济社会大数据研究平台</strong> <a href="https://data.cnki.net/">https://data.cnki.net//</a></p>
-<ul>
-<li>统计、普查、调查资料等。</li>
-</ul></li>
-<li><p><strong>中国健康与养老追踪调查（CHARLS）</strong> <a href="http://charls.pku.edu.cn/">http://charls.pku.edu.cn/</a></p>
-<ul>
-<li>大规模面板数据，关注健康、养老、社会保障。</li>
-</ul></li>
-<li><p><strong>中国家庭追踪调查（CFPS）</strong> <a href="http://www.isss.pku.edu.cn/cfps/">http://www.isss.pku.edu.cn/cfps/</a></p>
-<ul>
-<li>涉及教育、就业、家庭结构、收入分配。</li>
-</ul></li>
-</ul>
-</section>
-<section id="风险管理与应急" class="level3">
-<h3 class="anchored" data-anchor-id="风险管理与应急">4. 风险管理与应急</h3>
-<ul>
-<li><p><strong>中国地震局科学数据中心</strong> <a href="http://data.earthquake.cn/">http://data.earthquake.cn/</a></p>
-<ul>
-<li>地震监测数据。</li>
-</ul></li>
-<li><p><strong>中国气象科学数据共享服务网</strong> <a href="http://data.cma.cn/">http://data.cma.cn/</a></p>
-<ul>
-<li>气象监测、灾害预警数据。</li>
-</ul></li>
-<li><p><strong>微博数据（需通过API或爬取）</strong></p>
-<ul>
-<li>可用于应急舆情、社会风险感知研究。</li>
-</ul></li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="国际开放数据源" class="level2">
-<h2 class="anchored" data-anchor-id="国际开放数据源">4.2 国际开放数据源</h2>
-<section id="政府与公共政策" class="level3">
-<h3 class="anchored" data-anchor-id="政府与公共政策">1. 政府与公共政策</h3>
-<ul>
-<li><p><strong>World Bank Open Data</strong> <a href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
-<ul>
-<li>全球发展指标，适合跨国比较。</li>
-</ul></li>
-<li><p><strong>OECD Data</strong> <a href="https://data.oecd.org/">https://data.oecd.org/</a></p>
-<ul>
-<li>涵盖教育、劳动力、环境、治理等主题。</li>
-</ul></li>
-<li><p><strong>UN Data</strong> <a href="https://data.un.org/">https://data.un.org/</a></p>
-<ul>
-<li>联合国各类统计数据库。</li>
-</ul></li>
-</ul>
-</section>
-<section id="环境与可持续发展-1" class="level3">
-<h3 class="anchored" data-anchor-id="环境与可持续发展-1">2. 环境与可持续发展</h3>
-<ul>
-<li><p><strong>NASA Earthdata</strong> <a href="https://earthdata.nasa.gov/">https://earthdata.nasa.gov/</a></p>
-<ul>
-<li>遥感与气候数据。</li>
-</ul></li>
-<li><p><strong>European Environment Agency (EEA) Data</strong> <a href="https://www.eea.europa.eu/data-and-maps">https://www.eea.europa.eu/data-and-maps</a></p>
-<ul>
-<li>欧洲环境、污染、能源数据。</li>
-</ul></li>
-<li><p><strong>Global Carbon Atlas</strong> <a href="http://www.globalcarbonatlas.org/">http://www.globalcarbonatlas.org/</a></p>
-<ul>
-<li>全球碳排放数据。</li>
-</ul></li>
-</ul>
-</section>
-<section id="社会与民生-1" class="level3">
-<h3 class="anchored" data-anchor-id="社会与民生-1">3. 社会与民生</h3>
-<ul>
-<li><p><strong>Pew Research Center Datasets</strong> <a href="https://www.pewresearch.org/download-datasets/">https://www.pewresearch.org/download-datasets/</a></p>
-<ul>
-<li>公共舆论、社会价值观、治理调查。</li>
-</ul></li>
-<li><p><strong>European Social Survey (ESS)</strong> <a href="https://ess-search.nsd.no/">https://ess-search.nsd.no/</a></p>
-<ul>
-<li>欧洲各国社会态度与政策数据。</li>
-</ul></li>
-<li><p><strong>IPUMS (Integrated Public Use Microdata Series)</strong> <a href="https://ipums.org/">https://ipums.org/</a></p>
-<ul>
-<li>全球人口普查与调查微观数据。</li>
-</ul></li>
-</ul>
-</section>
-<section id="风险管理与应急-1" class="level3">
-<h3 class="anchored" data-anchor-id="风险管理与应急-1">4. 风险管理与应急</h3>
-<ul>
-<li><p><strong>EM-DAT: The International Disaster Database</strong> <a href="https://www.emdat.be/">https://www.emdat.be/</a></p>
-<ul>
-<li>全球自然灾害数据库。</li>
-</ul></li>
-<li><p><strong>CrisisNET (Archive)</strong> <a href="https://crisis.net/">https://crisis.net/</a></p>
-<ul>
-<li>人道危机、冲突事件数据。</li>
-</ul></li>
-<li><p><strong>Twitter API</strong> <a href="https://developer.x.com/en/docs/x-api">https://developer.x.com/en/docs/x-api</a></p>
-<ul>
-<li>可用于应急舆情分析。</li>
-</ul></li>
-</ul>
+<section id="十推荐的qmd结构" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> 十、推荐的QMD结构</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. 公共管理问题与数据来源</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. 文献与分析思路</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. 清理前数据审计</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. 数据清理规则与代码</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. 程序化质量验证</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. 清理前后比较</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. 可视化结果与解释</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu"># 8. 数据局限和后续机器学习适用性</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu"># 9. AI辅助使用说明</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># 参考文献</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -364,12 +713,12 @@ ul.task-list li input[type="checkbox"] {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "已复制");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "已复制");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -743,4 +1092,5 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

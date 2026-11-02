@@ -1696,9 +1696,9 @@
   {
     "objectID": "bigdata/exercises/searchq.html",
     "href": "bigdata/exercises/searchq.html",
-    "title": "数据检索与选题探索作业",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
     "section": "",
-    "text": "熟悉公共管理领域常见的大数据来源，掌握数据获取与理解的基本方法，并通过结合相关文献，初步提出潜在的研究问题，为课程论文选题和设计奠定基础。"
+    "text": "作业的中心任务\n\n\n\n围绕一个具体的公共管理问题，完成“实际获取数据—判断数据是否可用—审计数据质量—用代码完成清理—验证清理结果—制作可解释图表”的完整流程。\n本作业不是比较谁使用的清洗函数更多，而是评价每一步是否有数据依据、能否重复运行，以及图表能否支持公共管理判断。"
   },
   {
     "objectID": "bigdata/exercises/searchq.html#一国内开放数据源",
@@ -3540,5 +3540,75 @@
     "title": "机器学习（三）：决策树、剪枝与可解释分类",
     "section": "9.1 离堂检查",
     "text": "9.1 离堂检查\n\n为什么一棵完全生长的树通常不适合直接部署？\nmin_n 增大时，树一般会变简单还是变复杂？\n为什么“全部预测为常规办理”可能有较高准确率却毫无预警价值？\n一条工单满足高风险路径，是否意味着必须自动升级？\n\n下一讲将进入随机森林与梯度提升：如何用许多棵树降低单棵树的不稳定性，并进一步提高非线性预测能力。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#研究问题",
+    "href": "bigdata/exercises/searchq.html#研究问题",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "4.1 4.1 研究问题",
+    "text": "4.1 4.1 研究问题\n提出：\n\n一个首选问题；\n一个备用问题；\n1—2篇与问题、数据或方法直接相关的文献。\n\n推荐使用以下句式：\n\n利用________数据，描述／比较／预测________公共管理现象，并分析其在________地区、时期或群体中的差异。\n\n问题必须明确属于：\n\n描述：发生了什么、分布如何；\n预测：谁或何时更可能出现某种结果；\n因果：某项政策是否改变了结果。\n\n本作业主要完成描述和探索。可视化中发现关联，不能直接写成政策因果效应。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#数据可行性卡",
+    "href": "bigdata/exercises/searchq.html#数据可行性卡",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "4.2 4.2 数据可行性卡",
+    "text": "4.2 4.2 数据可行性卡\n\n\n\n检查内容\n学生填写\n\n\n\n\n数据名称与来源\n机构、平台、网址或文献\n\n\n获取日期与方式\n下载、API、网页、申请或教师提供\n\n\n分析单位\n一行代表个人、地区、日期、工单、企业还是政策文本\n\n\n时间范围\n数据覆盖的起止时间\n\n\n空间范围\n全国、省、市、区县或具体机构\n\n\n数据规模\n行数、列数、文件格式和大致大小\n\n\n主键\n是否存在唯一标识；若无，可能由哪些字段组成\n\n\n核心变量\n与研究问题直接相关的变量\n\n\n初步质量问题\n缺失、重复、类型、异常编码或多表连接问题\n\n\n获取与使用限制\n是否需要申请、引用、匿名化或禁止再分发\n\n\n备用方案\n数据不可用时改用什么数据或调整什么问题"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#必须提供的实际证据",
+    "href": "bigdata/exercises/searchq.html#必须提供的实际证据",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "4.3 4.3 必须提供的实际证据",
+    "text": "4.3 4.3 必须提供的实际证据\n至少提供以下一项：\n\n原始数据前50—100行；\n可以重复运行的数据下载或导入代码；\n因授权不能提交原始数据时，提供脱敏样例、数据字典和获取说明。\n\n同时提供：\nglimpse(raw_data)\ndim(raw_data)\nhead(raw_data)\n只有网页介绍、截图或平台名称，不能视为已经获得数据。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#问题文献与数据说明",
+    "href": "bigdata/exercises/searchq.html#问题文献与数据说明",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.1 5.1 问题、文献与数据说明",
+    "text": "5.1 5.1 问题、文献与数据说明\n用约500字说明：\n\n核心公共管理问题；\n问题为什么有公共价值；\n相关文献怎样使用类似数据或方法；\n数据的分析单位、时间和空间范围；\n数据为什么能够支持该问题；\n数据不能回答什么。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#清理前数据审计",
+    "href": "bigdata/exercises/searchq.html#清理前数据审计",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.2 5.2 清理前数据审计",
+    "text": "5.2 5.2 清理前数据审计\n至少检查：\n\n行数和变量数；\n主键是否唯一；\n变量类型；\n各变量缺失数量和比例；\n完全重复记录；\n日期范围；\n分类变量的异常取值；\n数值变量的逻辑范围；\n多表连接时的键值唯一性和未匹配记录。\n\n参考代码：\n# 数据结构\nglimpse(raw_data)\ndim(raw_data)\n\n# 主键重复数\nsum(duplicated(raw_data$case_id))\n\n# 批量统计缺失值\nraw_data |&gt;\n  summarise(across(everything(), ~ sum(is.na(.x))))\n\n# 查看分类变量的异常编码\nraw_data |&gt;\n  count(district, sort = TRUE)\n如果需要连接两张表，必须在连接前后检查：\n# 检查左表键值是否唯一\nleft_table |&gt;\n  count(district) |&gt;\n  filter(n &gt; 1)\n\n# 找出无法匹配的键\nleft_table |&gt;\n  distinct(district) |&gt;\n  anti_join(right_table, by = \"district\")"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#有理由的数据清理",
+    "href": "bigdata/exercises/searchq.html#有理由的数据清理",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.3 5.3 有理由的数据清理",
+    "text": "5.3 5.3 有理由的数据清理\n至少完成3项确有必要的清理，例如：\n\n变量类型和日期转换；\n主键去重；\n分类变量编码标准化；\n缺失值识别、标记、删除或插补；\n异常值识别和处理；\n正则表达式与 case_when() 合并文本类别；\n多表连接及匹配核查；\n长表与宽表转换；\n构造人均、比例、时长或其他公共管理指标。\n\n每一步都必须说明：\n\n发现了什么问题？为什么采用该规则？处理后怎样验证？\n\n不要求每个数据集机械地完成所有清理操作。没有必要的Winsorize、插值、表格连接或长宽转换，不应为了凑数量而使用。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#程序化质量验证",
+    "href": "bigdata/exercises/searchq.html#程序化质量验证",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.4 5.4 程序化质量验证",
+    "text": "5.4 5.4 程序化质量验证\n至少使用一次 stopifnot() 验证核心规则：\nstopifnot(\n  !anyDuplicated(clean_data$case_id),\n  all(is.na(clean_data$response_hours) |\n        clean_data$response_hours &gt;= 0)\n)\n涉及多表连接时，还应验证不存在无法解释的未匹配键。验证失败时，不应直接删除报错代码，而应检查数据或修正规则。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#清理前后比较",
+    "href": "bigdata/exercises/searchq.html#清理前后比较",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.5 5.5 清理前后比较",
+    "text": "5.5 5.5 清理前后比较\n报告下列指标中适用于本数据的项目：\n\n\n\n指标\n清理前\n清理后\n变化原因\n\n\n\n\n记录数\n\n\n\n\n\n变量数\n\n\n\n\n\n重复主键数\n\n\n\n\n\n缺失单元格数\n\n\n\n\n\n逻辑异常数\n\n\n\n\n\n无法匹配记录数\n\n\n\n\n\n\n记录数减少不自动代表清理正确。需要说明删除了哪些记录、依据是什么，以及是否可能造成选择偏差。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#可视化证据",
+    "href": "bigdata/exercises/searchq.html#可视化证据",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.6 5.6 可视化证据",
+    "text": "5.6 5.6 可视化证据\n制作2—3张图：\n\n一张展示数据分布或数据质量；\n一张直接回答核心公共管理问题；\n一张可选的时间、地区、群体或多变量比较图。\n\n每张图必须包括：\n\n清楚的标题；\n坐标名称、单位和必要的数据来源；\n2—3句结果解释；\n对公共管理问题的含义；\n不能由该图推出的结论。\n\n评分不以图表种类数量为依据。应根据变量和问题选择合适的图形，避免不必要的饼图、双坐标轴、三维效果和截断尺度。"
+  },
+  {
+    "objectID": "bigdata/exercises/searchq.html#是否适合后续机器学习",
+    "href": "bigdata/exercises/searchq.html#是否适合后续机器学习",
+    "title": "课程作业一：公共管理数据探索、清理与可视化",
+    "section": "5.7 5.7 是否适合后续机器学习？",
+    "text": "5.7 5.7 是否适合后续机器学习？\n在报告最后回答：\n\n是否存在明确的目标变量？\n目标变量是连续值还是类别？\n是否有足够样本和可用特征？\n哪些变量在真实预测时点能够获得？\n是否存在由结果直接生成的泄漏变量？\n应采用随机划分、时间划分还是分组划分？\n\n如果数据更适合文本、空间、描述或因果分析，可以明确说明“不适合直接用于监督学习”。这不会降低本作业成绩，后续机器学习作业可以改用教师数据。"
   }
 ]
